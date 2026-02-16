@@ -1,6 +1,6 @@
 ---
 sidebar_position: 1
-title: Graphical Playground Engine Modules
+title: Modules
 description: Modules are the building blocks of GP Engine's software architecture. You can organize your code into modules to create more efficient and maintainable projects.
 tags:
     - c++
