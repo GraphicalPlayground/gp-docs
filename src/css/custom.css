@@ -84,6 +84,8 @@
   --ifm-pre-padding: 1rem;
   --ifm-code-border-radius: 16px;
   --ifm-global-border-radius: 6px;
+  --ifm-navbar-height: 4.5rem;
+  --search-box-width: 30rem;
 }
 
 /* Page background */
@@ -139,11 +141,18 @@ code {
   border-radius: 4px;
 }
 
+@media screen and (max-width: 1200px) {
+  :root {
+    --search-box-width: 20rem;
+  }
+}
+
 /* Responsive adjustments */
 @media screen and (max-width: 768px) {
   :root {
     --ifm-code-border-radius: 12px;
     --ifm-pre-padding: 0.75rem;
+    --search-box-width: auto;
   }
   
   pre {
@@ -245,4 +254,38 @@ mark, :not(.prism-code) > code:not(.prism-code), .mark {
   .footer__links {
     grid-template-columns: 1fr !important;
   }
+}
+
+.DocSearch.DocSearch-Button {
+  align-items: center;
+  outline-offset: 0.125rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, .15);
+  background: rgba(255, 255, 255, .05);
+  color: #ffffff;
+  display: flex;
+  gap: 0.75rem;
+  height: 2.5rem;
+  padding-inline: 1rem;
+  transition: opacity 0.2s ease-in-out;
+  flex-grow: 1;
+  width: var(--search-box-width);
+}
+
+.DocSearch .DocSearch-Button-Container {
+  opacity: 0.65;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.DocSearch.DocSearch-Button:hover .DocSearch-Button-Container {
+  opacity: 0.85;
+}
+
+.DocSearch .DocSearch-Button-Key {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, .15);
+  background: rgba(255, 255, 255, .05);
+  border-radius: 4px;
+  padding: 0.125rem 0.25rem;
 }
