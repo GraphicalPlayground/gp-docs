@@ -30,7 +30,7 @@ GP Engine modules are not related to C++ 20 modules.
 Organizing your project with modules provides the following benefits:
 - Modules enforce good code separation, providing a means to encapsulate functionality and hide internal parts of the code.
 - Modules are compiled as separate compilation units. This means only modules that have changed will need to compile, and build times for larger projects will be significantly faster.
-- Modules are linked together in a dependency graph and limit header includes to code that is actually used, per the [Include What You Use (IWYU)]() standard. This means modules that are not used in your project will be safely excluded from compilation.
+- Modules are linked together in a dependency graph and limit header includes to code that is actually used, per the [Include What You Use (IWYU)](#) standard. This means modules that are not used in your project will be safely excluded from compilation.
 - You can control when specific modules are loaded and unloaded at runtime. This provides a way to optimize the performance of your project by managing which systems are available and active.
 - Modules can be included or excluded from your project based on certain conditions, such as which platform the project is being compiled for.
 

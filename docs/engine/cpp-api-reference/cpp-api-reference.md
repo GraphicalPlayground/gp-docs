@@ -16,7 +16,7 @@ Welcome to the Graphical Playground C++ API Reference! This is a reference manua
 
 Graphical Playground's systems and features are packaged in two ways:
 - [Modules](../programming-with-cpp/engine-architecture/modules.md): The basic building block of Graphical Playground's software and architecture.
-- [Plugins](): Collections of modules and assets that you can enable or disable within the Editor on a per-project basis.
+- [Plugins](#): Collections of modules and assets that you can enable or disable within the Editor on a per-project basis.
 
 Explore all of Graphical Playground's modules, plugins, and their members here, organized hierarchically. You can use the search bar to find a known term, such as a class or function name.
 
