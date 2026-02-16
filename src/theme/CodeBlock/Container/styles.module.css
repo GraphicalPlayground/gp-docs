@@ -1,0 +1,14 @@
+.codeBlockContainer {
+  background: #18181C;
+  color: #abb2bf;
+  margin-bottom: var(--ifm-leading);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 768px) {
+  .codeBlockContainer {
+    border-radius: 12px;
+  }
+}

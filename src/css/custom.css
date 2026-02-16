@@ -4,6 +4,57 @@
  * work well for content-centric websites.
  */
 
+/* EDS Iconfont */
+@font-face {
+  font-family: 'EDS Iconfont';
+  src: url('/fonts/eds-iconfont.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Inter Family */
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/inter-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter Tight';
+  src: url('/fonts/inter-tight.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Recursive Mono */
+@font-face {
+  font-family: 'Recursive Mono';
+  src: url('/fonts/recursive-mono-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* You can override the default Infima variables here. */
 :root {
   --ifm-color-primary: #2e8555;
@@ -13,8 +64,12 @@
   --ifm-color-primary-light: #33925d;
   --ifm-color-primary-lighter: #359962;
   --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --ifm-code-font-size: 0.875em;
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.08);
+  --ifm-font-family-monospace: 'Recursive Mono', monospace;
+  --ifm-pre-padding: 1rem;
+  --ifm-code-border-radius: 16px;
+  --ifm-background-color: #101014;
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -26,5 +81,87 @@
   --ifm-color-primary-light: #29d5b0;
   --ifm-color-primary-lighter: #32d8b4;
   --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.12);
+  --ifm-background-color: #101014;
+}
+
+/* Page background */
+body {
+  background-color: #101014;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.65;
+  color: #ffffff;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Code block specific styles */
+pre {
+  display: block;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  overflow: auto;
+  font-size: 0.875em;
+  color: #abb2bf;
+  background: #282c34;
+  padding: 1rem;
+  border-radius: 16px;
+  font-family: 'Recursive Mono', monospace;
+}
+
+pre, code, kbd, samp {
+  font-family: 'Recursive Mono', monospace;
+  font-size: 1em;
+}
+
+code {
+  font-size: .875em;
+  word-wrap: break-word;
+}
+
+/* Inline code */
+:not(pre) > code {
+  background-color: rgba(40, 44, 52, 0.8);
+  color: #abb2bf;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  :root {
+    --ifm-code-border-radius: 12px;
+    --ifm-pre-padding: 0.75rem;
+  }
+  
+  pre {
+    border-radius: 12px;
+    padding: 0.75rem;
+    font-size: 0.8125em;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  pre {
+    border-radius: 8px;
+    padding: 0.5rem;
+    font-size: 0.75em;
+  }
+}
+
+mark, .mark, :not(.prism-code) > code:not(.prism-code) {
+  border-radius: 6px;
+}
+
+mark, :not(.prism-code) > code:not(.prism-code), .mark {
+  border: .0625rem solid #404044;
+  background: #202024;
+  padding: .125rem .4375rem;
+  color: #fff;
 }

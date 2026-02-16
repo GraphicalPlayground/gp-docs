@@ -1,4 +1,4 @@
-import { themes as prismThemes } from 'prism-react-renderer';
+import unrealTheme from './src/theme/prism-unreal-theme';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
@@ -74,12 +74,13 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     colorMode: {
-      respectPrefersColorScheme: true
+      defaultMode: 'dark',
+      disableSwitch: true
     },
     navbar: {
-      title: 'My Site',
+      title: 'Graphical Playground',
       logo: {
-        alt: 'My Site Logo',
+        alt: 'GP Logo',
         src: 'img/logo.svg'
       },
       items: [
@@ -91,8 +92,12 @@ const config: Config = {
         },
         { to: '/blog', label: 'Blog', position: 'left' },
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/GraphicalPlayground',
           label: 'GitHub',
+          position: 'right'
+        },
+        {
+          type: 'localeDropdown',
           position: 'right'
         }
       ]
@@ -111,20 +116,7 @@ const config: Config = {
         },
         {
           title: 'Community',
-          items: [
-            {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus'
-            },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus'
-            },
-            {
-              label: 'X',
-              href: 'https://x.com/docusaurus'
-            }
-          ]
+          items: []
         },
         {
           title: 'More',
@@ -135,16 +127,31 @@ const config: Config = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus'
+              href: 'https://github.com/GraphicalPlayground'
             }
           ]
         }
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`
+      copyright: `Copyright © ${new Date().getFullYear()} Graphical Playground, Inc.`
     },
     prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula
+      theme: unrealTheme,
+      darkTheme: unrealTheme
+    },
+    algolia: {
+      // The application ID provided by Algolia
+      appId: 'F2NV537VZ4',
+
+      // Public API key: it is safe to commit it
+      apiKey: '7c4933067d38c508bbff2b4e26c78fee',
+
+      indexName: 'Graphical Playground Documentation',
+
+      // Optional: see doc section below
+      contextualSearch: true,
+
+      // Optional: whether the insights feature is enabled or not on Docsearch (`false` by default)
+      insights: false
     }
   } satisfies Preset.ThemeConfig
 };

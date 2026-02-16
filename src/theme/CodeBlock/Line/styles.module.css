@@ -1,0 +1,62 @@
+/* Intentionally has zero specificity, so that to be able to override
+the background in custom CSS file due bug https://github.com/facebook/docusaurus/issues/3678 */
+:where(:root) {
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.08);
+}
+
+:where([data-theme='dark']) {
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.12);
+}
+
+:global(.theme-code-block-highlighted-line) {
+  background-color: var(--docusaurus-highlighted-code-line-bg);
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.codeLine {
+  display: table-row;
+  counter-increment: line-count;
+}
+
+.codeLineNumber {
+  display: table-cell;
+  text-align: right;
+  width: 1%;
+  position: sticky;
+  left: 0;
+  padding: 0 0.75rem 0 1rem;
+  background: #18181C;
+  overflow-wrap: normal;
+}
+
+.codeLineNumber::before {
+  content: counter(line-count);
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+:global(.theme-code-block-highlighted-line) .codeLineNumber::before {
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.codeLineContent {
+  padding-right: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+  :global(.theme-code-block-highlighted-line) {
+    margin: 0;
+    padding: 0;
+  }
+
+  .codeLineNumber {
+    padding: 0 0.5rem 0 0.75rem;
+  }
+
+  .codeLineContent {
+    padding-right: 0.75rem;
+  }
+}

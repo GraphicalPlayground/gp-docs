@@ -1,0 +1,26 @@
+.codeBlockContent {
+  position: relative;
+  /* rtl:ignore */
+  direction: ltr;
+  border-radius: inherit;
+}
+
+.codeBlockTitle {
+  border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.8125em;
+  font-weight: 400;
+  padding: 0.625rem 1rem;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  background: #18181C;
+  color: rgba(171, 178, 191, 0.85);
+  font-family: 'Recursive Mono', monospace;
+  line-height: 1.5;
+}
+
+@media screen and (max-width: 768px) {
+  .codeBlockTitle {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75em;
+  }
+}
