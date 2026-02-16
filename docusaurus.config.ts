@@ -104,22 +104,54 @@ const config: Config = {
     },
     footer: {
       style: 'dark',
+      logo: {
+        alt: 'Graphical Playground Logo',
+        src: 'img/logo-full.svg',
+        width: 160,
+        height: 50
+      },
       links: [
         {
-          title: 'Docs',
+          title: 'Tools',
           items: [
             {
-              label: 'Tutorial',
+              label: 'GP Engine',
+              href: 'https://graphical-playground.com/tools/engine'
+            },
+            {
+              label: 'Documentation',
               to: '/docs/intro'
             }
           ]
         },
         {
-          title: 'Community',
-          items: []
+          title: 'Online Services',
+          items: [
+            {
+              label: 'Platform Services',
+              href: 'https://graphical-playground.com/services'
+            },
+            {
+              label: 'Support',
+              href: 'https://graphical-playground.com/support'
+            }
+          ]
         },
         {
-          title: 'More',
+          title: 'Company',
+          items: [
+            {
+              label: 'About Us',
+              href: 'https://graphical-playground.com/about'
+            },
+            {
+              label: 'Careers',
+              href: 'https://graphical-playground.com/careers'
+            }
+          ]
+        },
+        {
+          title: 'Resources',
           items: [
             {
               label: 'Blog',
@@ -128,11 +160,15 @@ const config: Config = {
             {
               label: 'GitHub',
               href: 'https://github.com/GraphicalPlayground'
+            },
+            {
+              label: 'Learning',
+              href: 'https://graphical-playground.com/learning'
             }
           ]
         }
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Graphical Playground, Inc.`
+      copyright: `© ${new Date().getFullYear()}, Graphical Playground, Inc. All rights reserved.`
     },
     prism: {
       theme: unrealTheme,

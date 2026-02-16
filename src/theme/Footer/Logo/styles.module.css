@@ -1,0 +1,15 @@
+.footerLogoLink {
+  opacity: 1;
+  transition: opacity var(--ifm-transition-fast)
+    var(--ifm-transition-timing-default);
+  display: inline-block;
+}
+
+.footerLogoLink:hover {
+  opacity: 0.8;
+}
+
+:global(.footer__logo) {
+  max-height: 50px;
+  width: auto;
+}

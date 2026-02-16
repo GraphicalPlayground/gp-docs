@@ -57,32 +57,33 @@
 
 /* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
+  --ifm-color-primary: #26bbff;
+  --ifm-color-primary-dark: #00ace6;
+  --ifm-color-primary-darker: #00a2da;
+  --ifm-color-primary-darkest: #0086b3;
+  --ifm-color-primary-light: #4dc7ff;
+  --ifm-color-primary-lighter: #60cdff;
+  --ifm-color-primary-lightest: #99dfff;
+  --ifm-background-color: #101014;
+  --ifm-font-color-base: #ffffff;
+  --ifm-navbar-background-color: #101014;
+  --ifm-footer-background-color: #18181C;
+  --ifm-footer-color: #ffffff;
+  --ifm-footer-link-color: #26bbff;
+  --ifm-footer-link-hover-color: #69d0ff;
+  --ifm-footer-title-color: #ffffff;
+  --ifm-color-success: #45c761;
+  --ifm-color-info: #26bbff;
+  --ifm-color-warning: #ffc229;
+  --ifm-color-danger: #ff3f56;
+  --ifm-hr-background-color: rgba(255, 255, 255, 0.15);
   --ifm-code-font-size: 0.875em;
-  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.08);
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.12);
   --ifm-font-family-monospace: 'Recursive Mono', monospace;
+  --ifm-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   --ifm-pre-padding: 1rem;
   --ifm-code-border-radius: 16px;
-  --ifm-background-color: #101014;
-}
-
-/* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.12);
-  --ifm-background-color: #101014;
+  --ifm-global-border-radius: 6px;
 }
 
 /* Page background */
@@ -98,6 +99,11 @@ body {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.theme-layout-main {
+  background: radial-gradient(ellipse at top center, rgba(0, 255, 221, .3) 0%, rgba(16, 16, 20, .5) 70%) center top/100% 40vh no-repeat;
+  min-height: 100%;
 }
 
 /* Code block specific styles */
@@ -164,4 +170,79 @@ mark, :not(.prism-code) > code:not(.prism-code), .mark {
   background: #202024;
   padding: .125rem .4375rem;
   color: #fff;
+}
+
+/* Footer Specific Styles */
+.footer {
+  --ifm-footer-background-color: #0E0E10;
+  padding: 0;
+}
+
+.footer__title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1.25rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.footer__item {
+  margin-bottom: 0.75rem;
+}
+
+.footer__link-item {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: color 0.15s ease;
+  line-height: 1.5;
+}
+
+.footer__link-item:hover {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+}
+
+.footer__col {
+  padding: 0;
+  margin: 0;
+}
+
+.footer__links {
+  margin-bottom: 0;
+}
+
+.footer__copyright {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.footer__items {
+  margin: 0;
+  padding: 0;
+}
+
+/* Responsive footer adjustments */
+@media screen and (max-width: 996px) {
+  .footer__title {
+    font-size: 0.8125rem;
+  }
+  
+  .footer__link-item {
+    font-size: 0.8125rem;
+  }
+  
+  .footer__links {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 2rem !important;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .footer__links {
+    grid-template-columns: 1fr !important;
+  }
 }
