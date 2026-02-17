@@ -1,0 +1,8 @@
+{
+  "label": "Templates",
+  "position": 4,
+  "link": {
+    "type": "doc",
+    "id": "engine/cpp-api-reference/runtime/core/templates/templates"
+  }
+}
