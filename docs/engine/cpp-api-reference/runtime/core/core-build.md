@@ -221,7 +221,7 @@ Always use these macros instead of compiler-specific keywords. This keeps your c
 | `GP_NOINLINE` | Prevents the compiler from inlining a function (`noinline`) |
 
 :::warning
-Be conservative with `GP_FORCEINLINE`. Overuse can actually hurt performance by bloating code size and preventing the compiler from making better optimization decisions. Use it only for small, performance-critical functions where profiling shows a benefit. See the [Coding Standard](../../programming-with-cpp/coding-standard.md#physical-dependencies) for more guidance.
+Be conservative with `GP_FORCEINLINE`. Overuse can actually hurt performance by bloating code size and preventing the compiler from making better optimization decisions. Use it only for small, performance-critical functions where profiling shows a benefit. See the [Coding Standard](../../../programming-with-cpp/coding-standard.md#physical-dependencies) for more guidance.
 :::
 
 ### Code Optimization Hints
