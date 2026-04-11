@@ -122,6 +122,10 @@ pre {
   font-family: 'Recursive Mono', monospace;
 }
 
+article a > code {
+  background: var(--ifm-color-primary-darkest)!important;
+}
+
 pre, code, kbd, samp {
   font-family: 'Recursive Mono', monospace;
   font-size: 1em;
