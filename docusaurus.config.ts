@@ -114,7 +114,7 @@ const config: Config = {
           type: 'docSidebar',
           sidebarId: 'apiSidebar',
           position: 'left',
-          label: 'API'
+          label: 'Platform API'
         },
         { to: '/blog', label: 'Blog', position: 'left' },
         {
@@ -173,6 +173,10 @@ const config: Config = {
             {
               label: 'Careers',
               href: 'https://graphical-playground.com/careers'
+            },
+            {
+              label: 'Support Us',
+              href: 'https://graphical-playground.com/donate'
             }
           ]
         },

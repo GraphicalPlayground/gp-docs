@@ -1,7 +1,7 @@
 ---
 slug: welcome
 title: Welcome
-authors: [slorber, yangshun]
+authors: [mallory-scotton, hugo-cathelain, ossan-msoili, nathan-fievet, raphael-ostier]
 tags: [facebook, hello, docusaurus]
 ---
 

@@ -1,7 +1,7 @@
 ---
 slug: long-blog-post
 title: Long Blog Post
-authors: yangshun
+authors: mallory-scotton
 tags: [hello, docusaurus]
 ---
 

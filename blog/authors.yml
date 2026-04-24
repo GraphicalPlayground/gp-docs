@@ -1,25 +1,45 @@
-yangshun:
-  name: Yangshun Tay
-  title: Ex-Meta Staff Engineer, Co-founder GreatFrontEnd
-  url: https://linkedin.com/in/yangshun
-  image_url: https://github.com/yangshun.png
-  page: true
-  socials:
-    x: yangshunz
-    linkedin: yangshun
-    github: yangshun
-    newsletter: https://www.greatfrontend.com
-
-slorber:
-  name: Sébastien Lorber
-  title: Docusaurus maintainer
-  url: https://sebastienlorber.com
-  image_url: https://github.com/slorber.png
+mallory-scotton:
+  name: Mallory Scotton
+  title: Founder of Graphical Playground
+  image_url: https://github.com/mallory-scotton.png
   page:
-    # customize the url of the author page at /blog/authors/<permalink>
-    permalink: '/all-sebastien-lorber-articles'
+    permalink: '/all-mallory-scotton-articles'
   socials:
-    x: sebastienlorber
-    linkedin: sebastienlorber
-    github: slorber
-    newsletter: https://thisweekinreact.com
+    github: mallory-scotton
+    linkedin: mallory-scotton
+
+hugo-cathelain:
+  name: Hugo Cathelain
+  title: Co-Founder of Graphical Playground
+  image_url: https://github.com/Hugo-Cathelain.png
+  page:
+    permalink: '/all-hugo-cathelain-articles'
+  socials:
+    github: Hugo-Cathelain
+
+ossan-msoili:
+  name: Ossan Msoili
+  title: Co-Founder of Graphical Playground
+  image_url: https://github.com/Omegalpha28.png
+  page:
+    permalink: '/all-ossan-msoili-articles'
+  socials:
+    github: Omegalpha28
+
+nathan-fievet:
+  name: Nathan Fievet
+  title: Co-Founder of Graphical Playground
+  image_url: https://github.com/natan-fievet.png
+  page:
+    permalink: '/all-nathan-fievet-articles'
+  socials:
+    github: nathan-fievet
+
+raphael-ostier:
+  name: Raphael Ostier
+  title: Co-Founder of Graphical Playground
+  image_url: https://github.com/bombabobo.png
+  page:
+    permalink: '/all-raphael-ostier-articles'
+  socials:
+    github: bombabobo
