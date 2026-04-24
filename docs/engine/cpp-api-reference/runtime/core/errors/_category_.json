@@ -1,8 +1,0 @@
-{
-  "label": "Errors",
-  "position": 0,
-  "link": {
-    "type": "doc",
-    "id": "engine/cpp-api-reference/runtime/core/errors/errors"
-  }
-}

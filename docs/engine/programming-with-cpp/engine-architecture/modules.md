@@ -30,7 +30,7 @@ GP Engine modules are not related to C++ 20 modules.
 Organizing your project with modules provides the following benefits:
 - Modules enforce good code separation, providing a means to encapsulate functionality and hide internal parts of the code.
 - Modules are compiled as separate compilation units. This means only modules that have changed will need to compile, and build times for larger projects will be significantly faster.
-- Modules are linked together in a dependency graph and limit header includes to code that is actually used, per the [Include What You Use (IWYU)](#) standard. This means modules that are not used in your project will be safely excluded from compilation.
+- Modules are linked together in a dependency graph and limit header includes to code that is actually used, per the [Include What You Use (IWYU)](./iwyu.md) standard. This means modules that are not used in your project will be safely excluded from compilation.
 - You can control when specific modules are loaded and unloaded at runtime. This provides a way to optimize the performance of your project by managing which systems are available and active.
 - Modules can be included or excluded from your project based on certain conditions, such as which platform the project is being compiled for.
 
@@ -50,7 +50,10 @@ You can place modules in any subdirectory within your Source folder, at any numb
 3. Create Private and Public subfolders inside your module's root directory.
 4. Create a `[ModuleName]Module.cpp` file in the Private subfolder for your module. Use this to provide methods for starting up and shutting down your module, as well as other common functions that GP Engine uses to manage modules.
 5. List your module as a dependency in the `CMakeList.txt` file for any module that will need to use it.
-// TODO
+
+:::warning
+TODO: Describe how to set up a module to be loaded at runtime instead of startup, and how to set up a module to be included or excluded based on certain conditions.
+:::
 
 ## Understanding the Structure of a Module
 
@@ -63,19 +66,25 @@ The following is an example of the recommended folder structure for a module:
 <FileTree
   data={[
     {
-      name: '[ModuleName]',
+      name: '[modulename]',
       type: 'folder',
       children: [
-        { name: 'CMakeLists.txt', type: 'file', highlight: true },
         {
-          name: 'Private',
+          name: 'private',
           type: 'folder',
           children: [
             { name: '[ModuleName]Module.cpp', type: 'file' }
           ]
         },
         {
-          name: 'Public',
+          name: 'internal',
+          type: 'folder',
+          children: [
+            { name: '[ModuleName]Internal.hpp', type: 'file' }
+          ]
+        },
+        {
+          name: 'public',
           type: 'folder',
           children: [
             { name: '[ModuleName].hpp', type: 'file' },
@@ -83,15 +92,21 @@ The following is an example of the recommended folder structure for a module:
           ]
         },
         {
-          name: 'Docs',
+          name: 'docs',
           type: 'folder',
           children: []
         },
         {
-          name: 'Tests',
+          name: 'tests',
           type: 'folder',
           children: []
-        }
+        },
+        {
+          name: 'benchmarks',
+          type: 'folder',
+          children: []
+        },
+        { name: 'CMakeLists.txt', type: 'file', highlight: true }
       ]
     }
   ]}
@@ -99,7 +114,9 @@ The following is an example of the recommended folder structure for a module:
 
 ### Configuring Dependencies in the CMakeLists.txt File
 
-// TODO
+:::warning
+TODO: Add example of how to set up a module to be loaded at runtime instead of startup, and how to set up a module to be included or excluded based on certain conditions.
+:::
 
 ### Private and Public Dependencies
 

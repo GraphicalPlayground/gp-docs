@@ -1,0 +1,8 @@
+{
+  "label": "Renderer",
+  "position": 4,
+  "link": {
+    "type": "doc",
+    "id": "engine/cpp-api-reference/runtime/renderer/renderer"
+  }
+}

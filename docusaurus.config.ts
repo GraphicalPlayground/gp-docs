@@ -16,6 +16,11 @@ const config: Config = {
     v4: true // Improve compatibility with the upcoming Docusaurus v4
   },
 
+  // Enable Mermaid diagrams in Markdown files
+  markdown: {
+    mermaid: true
+  },
+
   // Set the production url of your site here
   url: 'https://docs.graphical-playground.com',
   // Set the /<baseUrl>/ pathname under which your site is served
@@ -82,6 +87,8 @@ const config: Config = {
       crossorigin: 'anonymous'
     }
   ],
+
+  themes: ['@docusaurus/theme-mermaid'],
 
   themeConfig: {
     // Replace with your project's social card

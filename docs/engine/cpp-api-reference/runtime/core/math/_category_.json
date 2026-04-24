@@ -1,8 +1,0 @@
-{
-  "label": "Math",
-  "position": 1,
-  "link": {
-    "type": "doc",
-    "id": "engine/cpp-api-reference/runtime/core/math/math"
-  }
-}

@@ -2,46 +2,121 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Introduction
 
-Let's discover **Docusaurus in less than 5 minutes**.
+_the following section will just demonstrate docs capacity to render markdown content, and will be removed in the future_
 
-## Getting Started
+## Tabs
 
-Get started by **creating a new site**.
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+<Tabs>
+  <TabItem value="apple" label="Apple" default>
+    This is an apple 🍎
+  </TabItem>
+  <TabItem value="orange" label="Orange">
+    This is an orange 🍊
+  </TabItem>
+  <TabItem value="banana" label="Banana">
+    This is a banana 🍌
+  </TabItem>
+</Tabs>
 
-### What you'll need
+## Code blocks
 
-- [Node.js](https://nodejs.org/en/download/) version 20.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+_Normal code blocks_
 
-## Generate a new site
+```cpp
+#include <iostream>
 
-Generate a new Docusaurus site using the **classic template**.
-
-The classic template will automatically be added to your project after you run the command:
-
-```bash
-npm init docusaurus@latest my-website classic
+int main()
+{
+  std::cout << "Hello World!" << std::endl;
+  return 0;
+}
 ```
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
+_Code blocks with line numbers_
 
-The command also installs all necessary dependencies you need to run Docusaurus.
+```cpp showLineNumbers
+#include <iostream>
 
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
+int main()
+{
+  std::cout << "Hello World!" << std::endl;
+  return 0;
+}
 ```
 
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
+_Code blocks with line numbers and highlights_
 
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
+```cpp showLineNumbers {2-4,6}
+#include <iostream>
 
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+int main()
+{
+  std::cout << "Hello World!" << std::endl;
+  return 0;
+}
+```
+
+_Code blocks with filename_
+
+```cpp title="source/Main.cpp"
+#include <iostream>
+
+int main()
+{
+  std::cout << "Hello World!" << std::endl;
+  return 0;
+}
+```
+
+## Admonitions
+
+:::note
+Some **content** with _Markdown_ `syntax`. Check [this api](#).
+:::
+
+:::tip
+Some **content** with _Markdown_ `syntax`. Check [this api](#).
+:::
+
+:::info
+Some **content** with _Markdown_ `syntax`. Check [this api](#).
+:::
+
+:::warning
+Some **content** with _Markdown_ `syntax`. Check [this api](#).
+:::
+
+:::danger
+Some **content** with _Markdown_ `syntax`. Check [this api](#).
+:::
+
+## Collapsibles
+
+<details>
+  <summary>Click to expand</summary>
+  <p>This is the hidden content that will be revealed when the user clicks on the summary.</p>
+</details>
+
+## Math
+
+Inline math: $E=mc^2$
+
+Block math:
+$$
+\int_{-\infty}^{\infty} e^{-x^2} dx = \sqrt{\pi}
+$$
+
+## Mermaid
+
+```mermaid
+graph TD;
+  A-->B;
+  A-->C;
+  B-->D;
+  C-->D;
+```

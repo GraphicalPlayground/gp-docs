@@ -1,0 +1,8 @@
+{
+  "label": "Hardware Abstraction Layer (HAL)",
+  "position": 2,
+  "link": {
+    "type": "doc",
+    "id": "engine/cpp-api-reference/runtime/hal/hal"
+  }
+}

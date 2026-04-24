@@ -22,4 +22,3 @@ This section assumes that you have some experience with C++.
 :::
 
 This section covers several powerful features that you can use to accelerate your development workflows. You can learn about:
-
