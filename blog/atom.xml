@@ -27,12 +27,19 @@
 <p>The blog supports tags as well!</p>
 <p><strong>And if you don't want a blog</strong>: just delete this directory, and use <code>blog: false</code> in your Docusaurus config.</p>]]></content>
         <author>
-            <name>Sébastien Lorber</name>
-            <uri>https://sebastienlorber.com</uri>
+            <name>Mallory Scotton</name>
         </author>
         <author>
-            <name>Yangshun Tay</name>
-            <uri>https://linkedin.com/in/yangshun</uri>
+            <name>Hugo Cathelain</name>
+        </author>
+        <author>
+            <name>Ossan Msoili</name>
+        </author>
+        <author>
+            <name>Nathan Fievet</name>
+        </author>
+        <author>
+            <name>Raphael Ostier</name>
         </author>
         <category label="Facebook" term="Facebook"/>
         <category label="Hello" term="Hello"/>
@@ -51,8 +58,7 @@
 <div class="language-js codeBlockContainer_APcc theme-code-block" style="--prism-color:#abb2bf;--prism-background-color:#18181C"><div class="codeBlockContent_bxn0"><pre tabindex="0" class="prism-code language-js codeBlock_qGQc thin-scrollbar" style="color:#abb2bf;background-color:#18181C"><code class="codeBlockLines_p187"><span class="token-line" style="color:#abb2bf"><span class="token operator" style="color:#56b6c2">&lt;</span><span class="token plain">button onClick</span><span class="token operator" style="color:#56b6c2">=</span><span class="token punctuation">{</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token plain"> </span><span class="token arrow operator" style="color:#56b6c2">=&gt;</span><span class="token plain"> </span><span class="token function" style="color:#61aeee">alert</span><span class="token punctuation">(</span><span class="token string" style="color:#98c379">'button clicked!'</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token operator" style="color:#56b6c2">&gt;</span><span class="token maybe-class-name">Click</span><span class="token plain"> me</span><span class="token operator" style="color:#56b6c2">!</span><span class="token operator" style="color:#56b6c2">&lt;</span><span class="token operator" style="color:#56b6c2">/</span><span class="token plain">button</span><span class="token operator" style="color:#56b6c2">&gt;</span><br></span></code></pre></div></div>
 <button>Click me!</button>]]></content>
         <author>
-            <name>Sébastien Lorber</name>
-            <uri>https://sebastienlorber.com</uri>
+            <name>Mallory Scotton</name>
         </author>
         <category label="Docusaurus" term="Docusaurus"/>
     </entry>
@@ -81,8 +87,7 @@
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p>
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p>]]></content>
         <author>
-            <name>Yangshun Tay</name>
-            <uri>https://linkedin.com/in/yangshun</uri>
+            <name>Mallory Scotton</name>
         </author>
         <category label="Hello" term="Hello"/>
         <category label="Docusaurus" term="Docusaurus"/>
@@ -96,12 +101,7 @@
         <content type="html"><![CDATA[<p>Lorem ipsum dolor sit amet...</p>
 <p>...consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p>]]></content>
         <author>
-            <name>Sébastien Lorber</name>
-            <uri>https://sebastienlorber.com</uri>
-        </author>
-        <author>
-            <name>Yangshun Tay</name>
-            <uri>https://linkedin.com/in/yangshun</uri>
+            <name>Mallory Scotton</name>
         </author>
         <category label="Hola" term="Hola"/>
         <category label="Docusaurus" term="Docusaurus"/>
