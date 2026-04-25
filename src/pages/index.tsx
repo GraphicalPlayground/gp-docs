@@ -23,7 +23,7 @@ function HomepageHeader() {
               <i className='eds-icon icon-rocket' style={{ marginRight: '0.5rem' }}></i>
               Get Started
             </Link>
-            <Link className={clsx('button button--lg', styles.buttonSecondary)} to='/docs/engine/intro'>
+            <Link className={clsx('button button--lg', styles.buttonSecondary)} to='/docs/gp-engine/Introduction'>
               <i className='eds-icon icon-medal-star' style={{ marginRight: '0.5rem' }}></i>
               Explore Engine
             </Link>
@@ -41,7 +41,7 @@ function FeatureCards() {
       title: 'High Performance',
       description:
         'Built from the ground up for maximum performance with modern rendering techniques and optimizations.',
-      link: '/docs/engine/intro'
+      link: '/docs/gp-engine/Introduction'
     },
     {
       icon: 'icon-code',
@@ -100,13 +100,13 @@ function QuickLinks() {
       icon: 'icon-dictionary',
       title: 'Engine Architecture',
       description: 'Learn about the engine internals',
-      link: '/docs/engine/programming-with-cpp/engine-architecture/modules'
+      link: '/docs/gp-engine/Programming%20With%20C++/Engine%20Architecture/Modules'
     },
     {
       icon: 'icon-lightbulb',
       title: 'Coding Standards',
       description: 'Best practices for engine development',
-      link: '/docs/engine/programming-with-cpp/coding-standard'
+      link: '/docs/gp-engine/Programming%20With%20C++/Coding%20Standard'
     }
   ];
 
