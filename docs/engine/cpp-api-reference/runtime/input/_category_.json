@@ -1,8 +1,0 @@
-{
-  "label": "Input",
-  "position": 9,
-  "link": {
-    "type": "doc",
-    "id": "engine/cpp-api-reference/runtime/input/input"
-  }
-}

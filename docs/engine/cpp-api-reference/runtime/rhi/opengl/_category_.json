@@ -1,8 +1,0 @@
-{
-  "label": "OpenGL Driver",
-  "position": 6,
-  "link": {
-    "type": "doc",
-    "id": "engine/cpp-api-reference/runtime/rhi/opengl/opengl"
-  }
-}

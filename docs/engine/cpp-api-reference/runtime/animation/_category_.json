@@ -1,8 +1,0 @@
-{
-  "label": "Animation",
-  "position": 8,
-  "link": {
-    "type": "doc",
-    "id": "engine/cpp-api-reference/runtime/animation/animation"
-  }
-}
