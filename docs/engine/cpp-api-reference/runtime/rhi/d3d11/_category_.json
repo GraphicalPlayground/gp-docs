@@ -1,8 +1,0 @@
-{
-  "label": "DirectX 11 Driver",
-  "position": 2,
-  "link": {
-    "type": "doc",
-    "id": "engine/cpp-api-reference/runtime/rhi/d3d11/d3d11"
-  }
-}

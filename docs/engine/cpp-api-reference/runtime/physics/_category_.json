@@ -1,8 +1,0 @@
-{
-  "label": "Physics",
-  "position": 6,
-  "link": {
-    "type": "doc",
-    "id": "engine/cpp-api-reference/runtime/physics/physics"
-  }
-}

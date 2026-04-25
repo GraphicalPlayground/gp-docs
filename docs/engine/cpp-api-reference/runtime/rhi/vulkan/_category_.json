@@ -1,8 +1,0 @@
-{
-  "label": "Vulkan Driver",
-  "position": 4,
-  "link": {
-    "type": "doc",
-    "id": "engine/cpp-api-reference/runtime/rhi/vulkan/vulkan"
-  }
-}

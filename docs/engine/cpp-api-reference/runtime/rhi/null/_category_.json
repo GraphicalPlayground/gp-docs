@@ -1,8 +1,0 @@
-{
-  "label": "Null Driver",
-  "position": 1,
-  "link": {
-    "type": "doc",
-    "id": "engine/cpp-api-reference/runtime/rhi/null/null"
-  }
-}
