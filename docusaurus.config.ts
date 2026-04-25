@@ -202,7 +202,8 @@ const config: Config = {
     },
     prism: {
       theme: unrealTheme,
-      darkTheme: unrealTheme
+      darkTheme: unrealTheme,
+      additionalLanguages: ['c', 'cmake', 'glsl', 'git', 'ini', 'regex', 'hlsl']
     },
     algolia: {
       // The application ID provided by Algolia
