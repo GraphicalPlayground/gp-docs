@@ -12,7 +12,7 @@ This documentation is currently in active development, and some sections may be 
 
 Learn about the Graphical Playground engine architecture, programming with C++, and core engine concepts.
 
-[Explore Engine Docs →](./engine/intro.md)
+[Explore Engine Docs →](./gp-engine/Introduction.md)
 
 ### API Reference
 
