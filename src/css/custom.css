@@ -4,16 +4,9 @@
  * work well for content-centric websites.
  */
 
-/* 1. Define the layers */
-@layer theme, base, components, utilities;
-
-/* 2. Import the Theme variables */
-@import 'tailwindcss/theme' layer(theme);
-
-/* OMIT PREFLIGHT: Do not import "tailwindcss/preflight" */
-
-/* 3. Import the Utilities (the actual Tailwind classes) */
-@import 'tailwindcss/utilities' layer(utilities);
+/* Import Tailwind without preflight */
+@import 'tailwindcss/theme';
+@import 'tailwindcss/utilities';
 
 /* EDS Iconfont */
 @font-face {
@@ -1938,3 +1931,4 @@ mark,
   list-style-type: disc;
   margin-inline-start: 0.5rem;
 }
+
