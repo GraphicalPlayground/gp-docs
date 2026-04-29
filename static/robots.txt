@@ -1,0 +1,4 @@
+User-Agent: *
+Disallow: /tags/
+Sitemap: https://graphical-playground.com/sitemap.xml
+Sitemap: https://docs.graphical-playground.com/sitemap.xml
