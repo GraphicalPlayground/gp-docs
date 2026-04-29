@@ -39,7 +39,7 @@ const config: Config = {
   trailingSlash: false,
 
   // Plugins
-  plugins: ["./src/plugins/tailwind-config.js"],
+  plugins: ['./src/plugins/tailwind-config.js'],
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -108,6 +108,11 @@ const config: Config = {
       },
       items: [
         {
+          label: 'Guides',
+          to: 'guides',
+          position: 'left'
+        },
+        {
           type: 'docSidebar',
           sidebarId: 'engineSidebar',
           position: 'left',
@@ -119,7 +124,37 @@ const config: Config = {
           position: 'left',
           label: 'Platform API'
         },
-        { to: '/blog', label: 'Blog', position: 'left' },
+        {
+          label: 'Resources',
+          type: 'dropdown',
+          position: 'left',
+          items: [
+            {
+              label: 'Blog',
+              to: '/blog'
+            },
+            {
+              label: 'Frequently Asked Questions (FAQ)',
+              to: 'https://graphical-playground.com/faq'
+            },
+            {
+              label: 'Sample Projects',
+              to: 'https://github.com/GraphicalPlayground/gp-sample-projects'
+            },
+            {
+              label: 'Release Notes',
+              to: 'https://graphical-playground.com/release-notes'
+            },
+            {
+              label: 'GitHub Organization',
+              to: 'https://github.com/GraphicalPlayground'
+            },
+            {
+              label: 'Learning Resources',
+              to: 'https://graphical-playground.com/learning'
+            }
+          ]
+        },
         {
           href: 'https://github.com/GraphicalPlayground',
           label: 'GitHub',
@@ -145,11 +180,15 @@ const config: Config = {
           items: [
             {
               label: 'GP Engine',
-              href: 'https://graphical-playground.com/tools/engine'
+              to: 'https://graphical-playground.com/tools/engine'
             },
             {
-              label: 'Documentation',
-              to: '/docs/intro'
+              label: 'GP Platform',
+              to: 'https://graphical-playground.com/tools/platform'
+            },
+            {
+              label: 'GPBT',
+              to: 'https://graphical-playground.com/tools/gpbt'
             }
           ]
         },
@@ -158,11 +197,35 @@ const config: Config = {
           items: [
             {
               label: 'Platform Services',
-              href: 'https://graphical-playground.com/services'
+              to: 'https://graphical-playground.com/services'
             },
             {
               label: 'Support',
-              href: 'https://graphical-playground.com/support'
+              to: 'https://graphical-playground.com/support'
+            },
+            {
+              label: 'Security',
+              to: 'https://graphical-playground.com/security'
+            },
+            {
+              label: 'Terms of Service',
+              to: 'https://graphical-playground.com/terms/tos'
+            },
+            {
+              label: 'User Agreements',
+              to: 'https://graphical-playground.com/terms/agreements'
+            },
+            {
+              label: 'Acceptable Use Policy',
+              to: 'https://graphical-playground.com/terms/aup'
+            },
+            {
+              label: 'Privacy Policy',
+              to: 'https://graphical-playground.com/terms/privacy'
+            },
+            {
+              label: 'Subprocessors List',
+              to: 'https://graphical-playground.com/terms/subprocessors'
             }
           ]
         },
@@ -171,15 +234,23 @@ const config: Config = {
           items: [
             {
               label: 'About Us',
-              href: 'https://graphical-playground.com/about'
+              to: 'https://graphical-playground.com/about'
+            },
+            {
+              label: 'Newsroom',
+              to: 'https://graphical-playground.com/news'
             },
             {
               label: 'Careers',
-              href: 'https://graphical-playground.com/careers'
+              to: 'https://graphical-playground.com/careers'
             },
             {
               label: 'Support Us',
-              href: 'https://graphical-playground.com/donate'
+              to: 'https://graphical-playground.com/donate'
+            },
+            {
+              label: 'UX Research Panel',
+              to: 'https://graphical-playground.com/ux-research'
             }
           ]
         },
@@ -192,11 +263,72 @@ const config: Config = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/GraphicalPlayground'
+              to: 'https://github.com/GraphicalPlayground'
             },
             {
               label: 'Learning',
-              href: 'https://graphical-playground.com/learning'
+              to: 'https://graphical-playground.com/learning'
+            },
+            {
+              label: 'Frequently Asked Questions (FAQ)',
+              to: 'https://graphical-playground.com/faq'
+            },
+            {
+              label: 'Sample Projects',
+              to: 'https://graphical-playground.com/sample-projects'
+            },
+            {
+              label: 'Release Notes',
+              to: 'https://graphical-playground.com/release-notes'
+            }
+          ]
+        },
+        {
+          title: "Repositories",
+          items: [
+            {
+              label: 'Organization',
+              to: 'https://github.com/GraphicalPlayground'
+            },
+            {
+              label: 'gp-engine',
+              to: 'https://github.com/GraphicalPlayground/gp-engine'
+            },
+            {
+              label: 'gp-platform',
+              to: 'https://github.com/GraphicalPlayground/gp-platform'
+            },
+            {
+              label: 'gp-docs',
+              to: 'https://github.com/GraphicalPlayground/gp-docs'
+            },
+            {
+              label: 'gp-curriculum',
+              to: 'https://github.com/GraphicalPlayground/gp-curriculum'
+            },
+            {
+              label: 'gp-actions',
+              to: 'https://github.com/GraphicalPlayground/gp-actions'
+            },
+            {
+              label: 'gp-infrastructure',
+              to: 'https://github.com/GraphicalPlayground/gp-infrastructure'
+            },
+            {
+              label: 'gp-handbook',
+              to: 'https://github.com/GraphicalPlayground/gp-handbook'
+            },
+            {
+              label: 'gp-sample-projects',
+              to: 'https://github.com/GraphicalPlayground/gp-sample-projects'
+            },
+            {
+              label: 'gp-certifications',
+              to: 'https://github.com/GraphicalPlayground/gp-certifications'
+            },
+            {
+              label: 'gp-experiments',
+              to: 'https://github.com/GraphicalPlayground/gp-experiments'
             }
           ]
         }
