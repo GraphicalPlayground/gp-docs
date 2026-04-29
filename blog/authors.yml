@@ -16,6 +16,7 @@ hugo-cathelain:
     permalink: '/all-hugo-cathelain-articles'
   socials:
     github: Hugo-Cathelain
+    linkedin: hugo-cathelain
 
 ossan-msoili:
   name: Ossan Msoili
@@ -25,6 +26,7 @@ ossan-msoili:
     permalink: '/all-ossan-msoili-articles'
   socials:
     github: Omegalpha28
+    linkedin: ossan-msoili
 
 nathan-fievet:
   name: Nathan Fievet
@@ -34,6 +36,7 @@ nathan-fievet:
     permalink: '/all-nathan-fievet-articles'
   socials:
     github: nathan-fievet
+    linkedin: nathan-fievet
 
 raphael-ostier:
   name: Raphael Ostier
@@ -43,3 +46,4 @@ raphael-ostier:
     permalink: '/all-raphael-ostier-articles'
   socials:
     github: bombabobo
+    linkedin: raphael-ostier
