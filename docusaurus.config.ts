@@ -108,8 +108,9 @@ const config: Config = {
       },
       items: [
         {
+          type: 'docSidebar',
           label: 'Guides',
-          to: 'guides',
+          sidebarId: 'guidesSidebar',
           position: 'left'
         },
         {
