@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkgp_docs=globalThis.webpackChunkgp_docs||[]).push([[7472],{55513(e){e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"Virtualized Geometry Systems: Architecture, Theory, and Implementation","permalink":"/blog/virtualized-geometry-systems","unlisted":false,"date":"2026-05-01T00:00:00.000Z"}]}')}}]);
