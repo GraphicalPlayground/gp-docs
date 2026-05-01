@@ -1,19 +1,14 @@
-facebook:
-  label: Facebook
-  permalink: /facebook
-  description: Facebook tag description
+research:
+  label: Research Paper
+  permalink: /research
+  description: Research papers and articles related to graphics, rendering, and GPU technologies.
 
-hello:
-  label: Hello
-  permalink: /hello
-  description: Hello tag description
+graphics:
+  label: Graphics
+  permalink: /graphics
+  description: Articles and discussions about computer graphics, rendering techniques, and visual effects.
 
-docusaurus:
-  label: Docusaurus
-  permalink: /docusaurus
-  description: Docusaurus tag description
-
-hola:
-  label: Hola
-  permalink: /hola
-  description: Hola tag description
+technical:
+  label: Technical
+  permalink: /technical
+  description: In-depth technical articles and analyses on various topics in computer graphics and rendering.
