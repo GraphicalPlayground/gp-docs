@@ -73,7 +73,9 @@ const config: Config = {
           // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn'
+          onUntruncatedBlogPosts: 'warn',
+          remarkPlugins: [remarkMath],
+          rehypePlugins: [rehypeKatex]
         },
         theme: {
           customCss: './src/css/custom.css'
@@ -285,7 +287,7 @@ const config: Config = {
           ]
         },
         {
-          title: "Repositories",
+          title: 'Repositories',
           items: [
             {
               label: 'Organization',
