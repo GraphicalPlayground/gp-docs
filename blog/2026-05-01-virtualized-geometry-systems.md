@@ -21,7 +21,7 @@ Modern game engines face an intractable triangle throughput ceiling: GPU rasteri
 
 **Keywords:** virtualized geometry, LOD, BVH, cluster hierarchy, software rasterization, meshlet, screen-space error, GPU-driven rendering, visibility buffer, nanite
 
-<!-- truncate -->
+{/* truncate */}
 
 ---
 
