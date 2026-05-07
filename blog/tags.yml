@@ -12,3 +12,94 @@ technical:
   label: Technical
   permalink: /technical
   description: In-depth technical articles and analyses on various topics in computer graphics and rendering.
+
+
+rendering:
+  label: Rendering
+  permalink: /rendering
+  description: Articles about real-time and offline rendering pipelines, techniques, and architectures.
+
+gpu:
+  label: GPU
+  permalink: /gpu
+  description: Content focused on GPU architecture, programming, and performance.
+
+vgs:
+  label: VGS
+  permalink: /vgs
+  description: Articles about virtualized geometry systems and related rendering architectures.
+
+nanite:
+  label: Nanite
+  permalink: /nanite
+  description: Content related to Nanite-inspired virtualized geometry and mesh rendering techniques.
+
+micropolygons:
+  label: Micropolygons
+  permalink: /micropolygons
+  description: Articles exploring micropolygon rendering and fine-grained geometric detail.
+
+"cluster hierarchy":
+  label: Cluster Hierarchy
+  permalink: /cluster-hierarchy
+  description: Topics covering hierarchical mesh clustering, traversal, and culling structures.
+
+LOD:
+  label: LOD
+  permalink: /lod
+  description: Articles about level-of-detail strategies, selection, and optimization.
+
+BVH:
+  label: BVH
+  permalink: /bvh
+  description: Content about bounding volume hierarchies for culling, ray tracing, and acceleration.
+
+"software rasterization":
+  label: Software Rasterization
+  permalink: /software-rasterization
+  description: Articles discussing CPU or compute-driven rasterization techniques.
+
+devops:
+  label: DevOps
+  permalink: /devops
+  description: Articles about DevOps practices, tooling, automation, and delivery pipelines.
+
+kubernetes:
+  label: Kubernetes
+  permalink: /kubernetes
+  description: Content related to Kubernetes orchestration, workloads, and platform operations.
+
+podman:
+  label: Podman
+  permalink: /podman
+  description: Articles about Podman and daemonless container workflows.
+
+docker:
+  label: Docker
+  permalink: /docker
+  description: Content covering Docker images, runtimes, workflows, and ecosystem tooling.
+
+containerd:
+  label: containerd
+  permalink: /containerd
+  description: Articles about containerd, container runtime internals, and orchestration integration.
+
+container:
+  label: Container
+  permalink: /container
+  description: Articles about container technologies and runtime environments.
+
+standards:
+  label: Standards
+  permalink: /standards
+  description: Articles focused on technical standards, interoperability, and open specifications.
+
+Open Container Initiative:
+  label: Open Container Initiative
+  permalink: /oci
+  description: Content about the Open Container Initiative, its specifications, and ecosystem.
+
+"containers registry":
+  label: Containers Registry
+  permalink: /containers-registry
+  description: Content about container registries, image distribution, and registry interoperability.
