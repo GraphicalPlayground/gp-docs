@@ -103,3 +103,43 @@ Open Container Initiative:
   label: Containers Registry
   permalink: /containers-registry
   description: Content about container registries, image distribution, and registry interoperability.
+
+architecture:
+  label: Architecture
+  permalink: /architecture
+  description: Articles on software architecture, system design, and structural decisions.
+
+"engine design":
+  label: Engine Design
+  permalink: /engine-design
+  description: Posts about the design and philosophy of game and graphics engines.
+
+"build system":
+  label: Build System
+  permalink: /build-system
+  description: Content covering build systems, configuration, and dependency orchestration.
+
+cmake:
+  label: CMake
+  permalink: /cmake
+  description: Articles about CMake usage, idioms, and engine integration.
+
+"c++":
+  label: C++
+  permalink: /cpp
+  description: Posts about C++ language features, idioms, and large-scale codebase practices.
+
+modularity:
+  label: Modularity
+  permalink: /modularity
+  description: Articles about modular software design, plugin systems, and dependency boundaries.
+
+"directory layout":
+  label: Directory Layout
+  permalink: /directory-layout
+  description: Posts on source tree organization, repository structure, and code layout conventions.
+
+"gp engine":
+  label: GP Engine
+  permalink: /gp-engine
+  description: Articles about the Graphical Playground engine, its subsystems, and design choices.
