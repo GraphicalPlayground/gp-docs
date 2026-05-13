@@ -143,3 +143,42 @@ modularity:
   label: GP Engine
   permalink: /gp-engine
   description: Articles about the Graphical Playground engine, its subsystems, and design choices.
+
+"infrastructure"
+  label: Infrastructure
+  permalink: /infrastructure
+  description: Articles about infrastructures and servers.
+
+"cloud"
+ label: Cloud
+  permalink: /cloud
+  description: Contents about cloud structure, serverless architecture and storage tips.
+
+"virtualization"
+ label: Virtualization
+  permalink: /virtualization
+  description: Articles about server, storage devices and networks.
+
+
+"sandboxes"
+ label: Cloud
+  permalink: /cloud
+  description: Contents about cloud structure, serverless architecture and storage tips.
+
+
+"hypervisor"
+ label: Hypervisor
+  permalink: /hypervisor
+  description: Contents about Hypervisor tools (Azure Local, VMware, Hyper-V, Nutanix...).
+
+
+"ai-agents"
+ label: Ai Agents
+  permalink: /ai-agents
+  description: Contents about ai agents.
+
+
+"python"
+ label: Python
+  permalink: /python
+  description: Contents about Python languages and his paradigm.
