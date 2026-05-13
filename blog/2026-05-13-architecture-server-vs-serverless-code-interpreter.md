@@ -2,7 +2,7 @@
 slug: server-vs-serverless-architecture
 title: "Server vs Serverless Architecture"
 authors: ossan-msoili
-tags: [research, devops, infrastructure, cloud, serverless, virtualization, sandboxing, hypervisor, ai-agents, python]
+tags: [research, devops, infrastructure, cloud, virtualization, sandboxing, hypervisor, ai-agents, python]
 ---
 
 # Server vs Serverless Architecture
