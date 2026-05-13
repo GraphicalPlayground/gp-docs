@@ -166,7 +166,6 @@
         <category label="DevOps" term="DevOps"/>
         <category label="infrastructure" term="infrastructure"/>
         <category label="cloud" term="cloud"/>
-        <category label="serverless" term="serverless"/>
         <category label="virtualization" term="virtualization"/>
         <category label="sandboxing" term="sandboxing"/>
         <category label="hypervisor" term="hypervisor"/>
