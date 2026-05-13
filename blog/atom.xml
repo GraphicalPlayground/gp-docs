@@ -167,7 +167,7 @@
         <category label="infrastructure" term="infrastructure"/>
         <category label="cloud" term="cloud"/>
         <category label="virtualization" term="virtualization"/>
-        <category label="sandboxing" term="sandboxing"/>
+        <category label="sandboxes" term="sandboxes"/>
         <category label="hypervisor" term="hypervisor"/>
         <category label="ai-agents" term="ai-agents"/>
         <category label="python" term="python"/>
