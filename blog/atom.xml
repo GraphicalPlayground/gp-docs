@@ -164,13 +164,13 @@
         </author>
         <category label="Research Paper" term="Research Paper"/>
         <category label="DevOps" term="DevOps"/>
-        <category label="infrastructure" term="infrastructure"/>
-        <category label="cloud" term="cloud"/>
-        <category label="virtualization" term="virtualization"/>
+        <category label="Infrastructure" term="Infrastructure"/>
+        <category label="Cloud" term="Cloud"/>
+        <category label="Virtualization" term="Virtualization"/>
         <category label="sandboxes" term="sandboxes"/>
-        <category label="hypervisor" term="hypervisor"/>
-        <category label="ai-agents" term="ai-agents"/>
-        <category label="python" term="python"/>
+        <category label="Hypervisor" term="Hypervisor"/>
+        <category label="Ai Agents" term="Ai Agents"/>
+        <category label="Python" term="Python"/>
     </entry>
     <entry>
         <title type="html"><![CDATA[Basic Mathematical Knowledge for Graphical Engineering]]></title>
