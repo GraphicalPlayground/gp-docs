@@ -24,6 +24,12 @@ export default function Home(): ReactNode {
         <p className='mt-6 md:mt-8 max-w-xl text-center text-base sm:text-lg md:text-xl text-black leading-relaxed'>
           Accelerates onboarding, clarifies complex APIs, and provides comprehensive examples for every feature.
         </p>
+
+        <div className='container mt-24'>
+          <div className='w-full rounded-xl overflow-hidden'>
+            <img src='/images/dither/the-witcher-4.png' className='w-full h-full object-cover' />
+          </div>
+        </div>
       </div>
     </Layout>
   );
