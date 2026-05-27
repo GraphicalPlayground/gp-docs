@@ -1,4 +1,4 @@
-import gplaydPrismTheme from './src/theme/prism-theme';
+import { prismThemeDark, prismThemeLight } from './src/theme/prism-theme';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import remarkMath from 'remark-math';
@@ -333,8 +333,8 @@ const config: Config = {
       copyright: `© ${new Date().getFullYear()}, Graphical Playground, Inc. All rights reserved.`
     },
     prism: {
-      theme: gplaydPrismTheme,
-      darkTheme: gplaydPrismTheme,
+      theme: prismThemeLight,
+      darkTheme: prismThemeDark,
       additionalLanguages: ['c', 'cmake', 'glsl', 'git', 'ini', 'regex', 'hlsl']
     },
     algolia: {
