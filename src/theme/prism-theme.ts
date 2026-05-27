@@ -1,7 +1,7 @@
 import type { PrismTheme } from 'prism-react-renderer';
 
 // Custom Prism theme based on HLJS One Dark theme
-const unrealTheme: PrismTheme = {
+const gplaydPrismTheme: PrismTheme = {
   plain: {
     color: '#abb2bf',
     backgroundColor: '#18181C'
@@ -52,7 +52,7 @@ const unrealTheme: PrismTheme = {
       }
     },
     {
-      // Macros, Built-ins, and Class titles (UCLASS, GENERATED_BODY)
+      // Macros, Built-ins, and Class titles
       // We explicitly include 'builtin' and 'class-name' here per your HLJS source
       types: ['builtin', 'class-name', 'constant', 'macro', 'property'],
       style: {
@@ -74,4 +74,4 @@ const unrealTheme: PrismTheme = {
   ]
 };
 
-export default unrealTheme;
+export default gplaydPrismTheme;
