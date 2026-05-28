@@ -1,0 +1,7 @@
+All the images as been dithered with https://ditherit.com with the following settings:
+
+Size: 1920x1080
+Palette: White / Black
+Dither Mode: Bayer (Ordered)
+Matrix Size: 16x16
+Pixel Size: 2x

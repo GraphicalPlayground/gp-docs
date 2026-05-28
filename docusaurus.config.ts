@@ -1,4 +1,4 @@
-import unrealTheme from './src/theme/prism-unreal-theme';
+import { prismThemeDark, prismThemeLight } from './src/theme/prism-theme';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 import remarkMath from 'remark-math';
@@ -9,7 +9,7 @@ import rehypeKatex from 'rehype-katex';
 const config: Config = {
   title: 'Graphical Playground Docs',
   tagline: 'Documentation for Graphical Playground',
-  favicon: 'img/favicon.ico',
+  favicon: 'images/favicon.svg',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -55,9 +55,6 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl: 'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
           remarkPlugins: [remarkMath],
           rehypePlugins: [rehypeKatex]
         },
@@ -67,10 +64,6 @@ const config: Config = {
             type: ['rss', 'atom'],
             xslt: true
           },
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl: 'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-          // Useful options to enforce blogging best practices
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
           onUntruncatedBlogPosts: 'warn',
@@ -99,14 +92,14 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     colorMode: {
-      defaultMode: 'dark',
+      defaultMode: 'light',
       disableSwitch: true
     },
     navbar: {
-      title: 'Graphical Playground',
       logo: {
         alt: 'GP Logo',
-        src: 'img/logo.svg'
+        src: 'images/logo-short-text-black.svg',
+        srcDark: 'images/logo-short-text-white.svg',
       },
       items: [
         {
@@ -173,7 +166,8 @@ const config: Config = {
       style: 'dark',
       logo: {
         alt: 'Graphical Playground Logo',
-        src: 'img/logo-full.svg',
+        src: 'images/logo-long-text-white.svg',
+        srcDark: 'images/logo-long-text-black.svg',
         width: 160,
         height: 50
       },
@@ -190,8 +184,8 @@ const config: Config = {
               to: 'https://graphical-playground.com/tools/platform'
             },
             {
-              label: 'GPBT',
-              to: 'https://graphical-playground.com/tools/gpbt'
+              label: 'GP Build Tool',
+              to: 'https://graphical-playground.com/tools/build-tool'
             }
           ]
         },
@@ -339,8 +333,8 @@ const config: Config = {
       copyright: `© ${new Date().getFullYear()}, Graphical Playground, Inc. All rights reserved.`
     },
     prism: {
-      theme: unrealTheme,
-      darkTheme: unrealTheme,
+      theme: prismThemeLight,
+      darkTheme: prismThemeDark,
       additionalLanguages: ['c', 'cmake', 'glsl', 'git', 'ini', 'regex', 'hlsl']
     },
     algolia: {
