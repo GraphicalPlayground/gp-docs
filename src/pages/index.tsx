@@ -33,7 +33,7 @@ export default function Home(): ReactNode {
             Discover Guides
           </Link>
           <Link
-            href='/docs/gp-engine/introduction'
+            href='/docs/gp-engine/Introduction'
             className='w-full sm:w-auto text-center bg-transparent border border-black rounded-xl px-8 py-3 text-black cursor-pointer font-medium transition-all duration-150 hover:bg-black hover:text-white active:bg-gray-800 no-underline'
           >
             Explore API Reference
