@@ -273,6 +273,10 @@ const config: Config = {
             {
               label: 'Learning Resources',
               to: 'https://graphical-playground.com/learning'
+            },
+            {
+              label: 'Recommanded Readings',
+              to: '/recommended-readings'
             }
           ]
         },
