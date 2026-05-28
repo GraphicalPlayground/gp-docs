@@ -6,6 +6,8 @@ export interface FileNode {
   name: string;
   type: 'file' | 'folder';
   icon?: string; // Optional custom icon name from material-icons
+  chevron?: boolean; // Whether to show a chevron for folders
+  description?: string; // Optional description for tooltips or accessibility
   children?: FileNode[];
   highlight?: boolean;
 }
@@ -20,7 +22,7 @@ interface FileTreeNodeProps {
   depth?: number;
 }
 
-function FileTreeNode({ node, depth = 0 }: FileTreeNodeProps): ReactNode {
+function FileTreeNode({ node, depth = 0, chevron = true }: FileTreeNodeProps): ReactNode {
   const [isOpen, setIsOpen] = useState(depth < 2); // Auto-expand first 2 levels
   const isFolder = node.type === 'folder';
   const hasChildren = node.children && node.children.length > 0;
@@ -40,8 +42,8 @@ function FileTreeNode({ node, depth = 0 }: FileTreeNodeProps): ReactNode {
         })}
         onClick={handleToggle}
       >
-        {isFolder && hasChildren && <span className={clsx(styles.chevron, { [styles.open]: isOpen })}>▶</span>}
-        {isFolder && !hasChildren && <span className={styles.chevronPlaceholder} />}
+        {isFolder && hasChildren && node.chevron && <span className={clsx(styles.chevron, { [styles.open]: isOpen })}>▶</span>}
+        {isFolder && !hasChildren && node.chevron && <span className={styles.chevronPlaceholder} />}
         <span className={clsx(styles.icon, isFolder ? styles.folderIcon : styles.fileIcon)}>
           <img
             src={node.icon ? `/material-icons/${node.icon}.svg` : `/material-icons/${node.type}.svg`}
@@ -50,6 +52,7 @@ function FileTreeNode({ node, depth = 0 }: FileTreeNodeProps): ReactNode {
           />
         </span>
         <span className={styles.nodeName}>{node.name}</span>
+        {node.description && <span className={styles.nodeDescription}>{node.description}</span>}
       </div>
       {isFolder && hasChildren && isOpen && (
         <div className={styles.children}>

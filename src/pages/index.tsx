@@ -7,10 +7,7 @@ import Layout from '@theme/Layout';
 export default function Home(): ReactNode {
   const { siteConfig } = useDocusaurusContext();
   return (
-    <Layout
-      title={`Welcome to ${siteConfig.title}`}
-      description='Comprehensive documentation for the Graphical Playground engine'
-    >
+    <Layout description='Comprehensive guides, detailed API references, and practical examples to help you master Graphical Playground and create stunning graphics with ease.'>
       <div className='top-0 z-0 flex min-h-100 md:min-h-150 w-full flex-col items-center bg-white bg-[radial-gradient(#00000020_1px,#ffffff_1px)] bg-size-[20px_20px] px-4 md:px-6 pt-24 md:pt-32 lg:pt-48 pb-16'>
         <h1 className='mx-auto max-w-5xl text-center text-4xl sm:text-5xl md:text-6xl lg:text-[72px] font-normal leading-tight lg:leading-none tracking-[-0.02em] text-black'>
           Guides, APIs, and examples
