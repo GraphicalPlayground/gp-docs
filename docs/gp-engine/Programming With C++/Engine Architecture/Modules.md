@@ -95,41 +95,47 @@ The following is an example of the recommended folder structure for a module:
         {
           name: 'private',
           type: 'folder',
+          icon: 'folder-private',
           children: [
-            { name: '[ModuleName]Module.cpp', type: 'file' }
+            { name: '[ModuleName]Module.cpp', icon: 'cpp', type: 'file' }
           ]
         },
         {
           name: 'internal',
           type: 'folder',
+          icon: 'folder-private',
           children: [
-            { name: '[ModuleName]Internal.hpp', type: 'file' }
+            { name: '[ModuleName]Internal.hpp', icon: 'hpp', type: 'file' }
           ]
         },
         {
           name: 'public',
           type: 'folder',
+          icon: 'folder-public',
           children: [
-            { name: '[ModuleName].hpp', type: 'file' },
-            { name: '[ModuleName]Build.hpp', type: 'file' }
+            { name: '[ModuleName].hpp', icon: 'hpp', type: 'file' },
+            { name: '[ModuleName]Build.hpp', icon: 'hpp', type: 'file' }
           ]
         },
         {
           name: 'docs',
           type: 'folder',
+          icon: 'folder-docs',
           children: []
         },
         {
           name: 'tests',
           type: 'folder',
+          icon: 'folder-test',
           children: []
         },
         {
           name: 'benchmarks',
           type: 'folder',
+          icon: 'folder-benchmark',
           children: []
         },
-        { name: 'CMakeLists.txt', type: 'file', highlight: true }
+        { name: 'CMakeLists.txt', icon: 'cmake', type: 'file', highlight: true }
       ]
     }
   ]}
