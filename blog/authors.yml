@@ -1,7 +1,7 @@
 mallory-scotton:
   name: Mallory Scotton
   title: Founder of Graphical Playground
-  image_url: https://github.com/mallory-scotton.png
+  image_url: /images/founders/mallory-scotton.png
   page:
     permalink: '/all-mallory-scotton-articles'
   socials:
@@ -21,7 +21,7 @@ hugo-cathelain:
 ossan-msoili:
   name: Ossan Msoili
   title: Co-Founder of Graphical Playground
-  image_url: https://github.com/Omegalpha28.png
+  image_url: /images/founders/ossan-msoili.png
   page:
     permalink: '/all-ossan-msoili-articles'
   socials:
