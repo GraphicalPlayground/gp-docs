@@ -3,8 +3,8 @@ sidebar_position: 0
 title: Programming with C++
 description: Information for programmers developing with Graphical Playground.
 tags:
-    - c++
-    - programming
+  - c++
+  - programming
 ---
 # Programming with C++
 
@@ -14,9 +14,7 @@ Graphical Playground provides a robust framework for C++ programmers to help bri
 life.
 
 :::note
-
 This section assumes that you have some experience with C++.
-
 :::
 
 This section covers several powerful features that you can use to accelerate your development

@@ -15,7 +15,7 @@ tags:
 `gp-engine` integrates a curated set of third-party libraries to support windowing, graphics API
 abstraction, shader compilation, and performance profiling. This document lists every external
 dependency, its version, and its role within the engine. We do not bundle dependencies beyond what
-is listed here; all third-party code is tracked as submodules or vendored under the `third-party/`
+is listed here; all third-party code is tracked as submodules or vendored under the `thirdparty/`
 directory.
 
 ## Windowing & Input
