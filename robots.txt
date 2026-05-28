@@ -1,4 +1,23 @@
-User-Agent: *
+User-agent: *
+Allow: /
 Disallow: /tags/
+
+User-agent: GPTBot
+Allow: /
+Disallow: /tags/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /tags/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /tags/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /tags/
+
 Sitemap: https://graphical-playground.com/sitemap.xml
 Sitemap: https://docs.graphical-playground.com/sitemap.xml
+Sitemap: https://docs.graphical-playground.com/sitemap-ai.xml
