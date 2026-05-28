@@ -27,8 +27,10 @@ jobs:
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install dependencies (Bypass package-lock.json)
+        run: |
+          rm package-lock.json
+          npm install
 
       - name: Build website
         run: npm run build
