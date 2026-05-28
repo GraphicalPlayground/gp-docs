@@ -1,0 +1,20 @@
+# Graphical Playground Documentation — Full Context
+
+> Comprehensive documentation for Graphical Playground, the visual programming environment.
+
+## About
+
+Graphical Playground Documentation is accessible at https://docs.graphical-playground.com.
+
+
+## Description
+
+Comprehensive documentation for Graphical Playground, the visual programming environment.
+
+## Key Pages
+
+- Home: https://docs.graphical-playground.com/
+- AI Sitemap: https://docs.graphical-playground.com/sitemap-ai.xml
+- Structured Data: https://docs.graphical-playground.com/schema.json
+- FAQ Blocks: https://docs.graphical-playground.com/faq-blocks.html
+- Citation Anchors: https://docs.graphical-playground.com/citation-anchors.html

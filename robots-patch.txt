@@ -1,0 +1,29 @@
+# AI Bot Access Rules — AEOrank
+# Append these rules to your robots.txt
+
+User-agent: GPTBot
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /schema.json
+Allow: /sitemap-ai.xml
+Allow: /faq-blocks.html
+Allow: /citation-anchors.html
+
+User-agent: ClaudeBot
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /CLAUDE.md
+Allow: /schema.json
+Allow: /sitemap-ai.xml
+
+User-agent: PerplexityBot
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /schema.json
+Allow: /sitemap-ai.xml
+
+User-agent: Google-Extended
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /schema.json
+Allow: /sitemap-ai.xml
