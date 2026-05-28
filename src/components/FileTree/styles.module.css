@@ -96,6 +96,10 @@
   line-height: 1.5;
 }
 
+.nodeDescription {
+  font-family: var(--ifm-font-family-base);
+}
+
 .children {
   position: relative;
   margin-left: 1.25rem;
