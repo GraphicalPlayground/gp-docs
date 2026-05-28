@@ -5,6 +5,7 @@ import styles from './styles.module.css';
 export interface FileNode {
   name: string;
   type: 'file' | 'folder';
+  icon?: string; // Optional custom icon name from material-icons
   children?: FileNode[];
   highlight?: boolean;
 }
@@ -42,7 +43,11 @@ function FileTreeNode({ node, depth = 0 }: FileTreeNodeProps): ReactNode {
         {isFolder && hasChildren && <span className={clsx(styles.chevron, { [styles.open]: isOpen })}>▶</span>}
         {isFolder && !hasChildren && <span className={styles.chevronPlaceholder} />}
         <span className={clsx(styles.icon, isFolder ? styles.folderIcon : styles.fileIcon)}>
-          {isFolder ? <i className='eds-icon icon-folder-filled'></i> : <i className='eds-icon icon-file'></i>}
+          <img
+            src={node.icon ? `/material-icons/${node.icon}.svg` : `/material-icons/${node.type}.svg`}
+            alt='icon'
+            className={styles.iconImage}
+          />
         </span>
         <span className={styles.nodeName}>{node.name}</span>
       </div>
