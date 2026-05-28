@@ -39,7 +39,17 @@ const config: Config = {
   trailingSlash: false,
 
   // Plugins
-  plugins: ['./src/plugins/tailwind-config.js'],
+  plugins: [
+    './src/plugins/tailwind-config.js',
+    [
+      '@aeorank/docusaurus',
+      {
+        siteName: 'Graphical Playground Documentation',
+        description: 'Comprehensive documentation for Graphical Playground, the visual programming environment.',
+        siteUrl: 'https://docs.graphical-playground.com'
+      }
+    ]
+  ],
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -99,7 +109,7 @@ const config: Config = {
       logo: {
         alt: 'GP Logo',
         src: 'images/logo-short-text-black.svg',
-        srcDark: 'images/logo-short-text-white.svg',
+        srcDark: 'images/logo-short-text-white.svg'
       },
       items: [
         {
