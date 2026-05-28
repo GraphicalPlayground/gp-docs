@@ -48,7 +48,8 @@ const config: Config = {
         description: 'Comprehensive documentation for Graphical Playground, the visual programming environment.',
         siteUrl: 'https://docs.graphical-playground.com'
       }
-    ]
+    ],
+    'docusaurus-plugin-copy-page-button'
   ],
 
   // Even if you don't use internationalization, you can use this field to set
