@@ -67,7 +67,9 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           remarkPlugins: [remarkMath],
-          rehypePlugins: [rehypeKatex]
+          rehypePlugins: [rehypeKatex],
+          showLastUpdateAuthor: false, // Set to false since we update it via github actions...
+          showLastUpdateTime: true
         },
         blog: {
           showReadingTime: true,
@@ -102,6 +104,116 @@ const config: Config = {
   themeConfig: {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
+    metadata: [
+      {
+        name: 'keywords',
+        content: [
+          'graphical playground',
+          'graphics programming',
+          'graphical engineering',
+          'visual programming',
+          'documentation',
+          'guides',
+          'api reference',
+          'directx12',
+          'directx11',
+          'metal',
+          'opengl',
+          'opengles',
+          'webgpu',
+          'vulkan',
+          'rendering hardware interfaces',
+          'rhi',
+          'hardware abstraction layers',
+          'hal',
+          'physics simulation',
+          'game engine',
+          'rendering engine',
+          'graphics engine',
+          'cross-platform',
+          'real-time rendering',
+          'shader programming',
+          'node-based programming',
+          'visual scripting',
+          'interactive development environment',
+          'gp engine',
+          'gp platform',
+          'gp build tool',
+          'gp docs',
+          'gp curriculum',
+          'gp actions',
+          'gp infrastructure',
+          'gp handbook',
+          'gp sample projects',
+          'gp certifications',
+          'gp experiments',
+          'c++',
+          'hlsl',
+          'glsl',
+          'cmake'
+        ].join(', ')
+      },
+      { name: 'author', content: 'Graphical Playground Team' },
+      { name: 'robots', content: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' },
+      { property: 'og:site_name', content: 'Graphical Playground Docs' },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:title', content: 'Graphical Playground Documentation' },
+      {
+        property: 'og:description',
+        content:
+          'Master visual programming and game engine development with the official Graphical Playground documentation.'
+      },
+      { property: 'og:url', content: 'https://docs.graphical-playground.com/' }
+    ],
+    headTags: [
+      {
+        tagName: 'script',
+        attributes: {
+          type: 'application/ld+json'
+        },
+        innerHTML: JSON.stringify({
+          '@context': 'https://schema.org/',
+          '@type': 'Organization',
+          'name': 'Graphical Playground',
+          'url': 'https://graphical-playground.com/',
+          'logo': 'https://docs.graphical-playground.com/images/logo-long-text-black.svg',
+          'description':
+            'Graphical Playground is a visual programming environment and game engine that empowers developers to create stunning real-time graphics applications with ease. Our mission is to democratize graphics programming and make it accessible to everyone, from beginners to experts. With Graphical Playground, you can unleash your creativity and bring your ideas to life in a fun and intuitive way.',
+          'sameAs': [
+            'https://github.com/GraphicalPlayground',
+            'https://www.linkedin.com/company/graphical-playground',
+            'https://discord.gg/zcuqRuHQ7E'
+          ]
+        })
+      },
+      {
+        tagName: 'script',
+        attributes: {
+          type: 'application/ld+json'
+        },
+        innerHTML: JSON.stringify({
+          '@context': 'https://schema.org/',
+          '@type': 'WebSite',
+          'name': 'Graphical Playground Documentation',
+          'url': 'https://docs.graphical-playground.com/',
+          'description': 'Comprehensive documentation for Graphical Playground, the visual programming environment.',
+          'publisher': {
+            '@type': 'Organization',
+            'name': 'Graphical Playground',
+            'url': 'https://graphical-playground.com/',
+            'logo': {
+              '@type': 'ImageObject',
+              'url': 'https://docs.graphical-playground.com/images/logo-long-text-black.svg'
+            }
+          },
+          'potentialAction': {
+            '@type': 'SearchAction',
+            'target': 'https://docs.graphical-playground.com/search?q={search_term_string}',
+            'query-input': 'required name=search_term_string'
+          }
+        })
+      }
+    ],
     colorMode: {
       defaultMode: 'light',
       disableSwitch: true
