@@ -78,9 +78,21 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Iosevka';
+  src: url('/fonts/Iosevka/Iosevka-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
 :root {
   --ifm-font-family-base: 'PP Mori', sans-serif;
   --ifm-font-family-heading: 'GT Haptik', sans-serif;
+  --ifm-font-family-monospace: 'Iosevka', monospace;
+  --ifm-color-success: #45c761;
+  --ifm-color-info: #26bbff;
+  --ifm-color-warning: #ffc229;
+  --ifm-color-danger: #ff3f56;
 }
 
 h1,
@@ -116,3 +128,56 @@ body {
   text-shadow: none;
 }
 
+.alert {
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  background-color: #ffffff0d;
+  border: 0.0625rem solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  gap: 0.5rem;
+  display: flex;
+  flex-basis: 100%;
+  align-items: center;
+  gap: 1rem;
+}
+
+.alert div:first-child {
+  font-size: 0;
+  margin-bottom: 0;
+}
+
+.alert div:first-child span {
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alert p {
+  font-size: 0.875rem;
+}
+
+.alert--secondary {
+  background-color: #0000000d;
+  border: 0.0625rem solid #00000044;
+}
+
+.alert--success {
+  border-color: #a9d34f80;
+  background-color: #a9d34f44;
+}
+
+.alert--danger {
+  border-color: #ff617380;
+  background-color: #ff617344;
+}
+
+.alert--info {
+  border-color: #26bbff80;
+  background-color: #26bbff44;
+}
+
+.alert--warning {
+  border-color: #ffd15c80;
+  background-color: #ffd15c44;
+}
