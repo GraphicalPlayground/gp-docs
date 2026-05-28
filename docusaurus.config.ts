@@ -7,8 +7,9 @@ import rehypeKatex from 'rehype-katex';
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
-  title: 'Graphical Playground Docs',
-  tagline: 'Documentation for Graphical Playground',
+  title: 'Graphical Playground Documentation',
+  tagline:
+    'Comprehensive guides, detailed API references, and practical examples to help you master Graphical Playground and create stunning graphics with ease.',
   favicon: 'images/favicon.svg',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -101,6 +102,56 @@ const config: Config = {
 
   themes: ['@docusaurus/theme-mermaid'],
 
+  headTags: [
+    {
+      tagName: 'script',
+      attributes: {
+        type: 'application/ld+json'
+      },
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org/',
+        '@type': 'Organization',
+        'name': 'Graphical Playground',
+        'url': 'https://graphical-playground.com/',
+        'logo': 'https://docs.graphical-playground.com/images/logo-long-text-black.svg',
+        'description':
+          'Graphical Playground is a visual programming environment and game engine that empowers developers to create stunning real-time graphics applications with ease. Our mission is to democratize graphics programming and make it accessible to everyone, from beginners to experts. With Graphical Playground, you can unleash your creativity and bring your ideas to life in a fun and intuitive way.',
+        'sameAs': [
+          'https://github.com/GraphicalPlayground',
+          'https://www.linkedin.com/company/graphical-playground',
+          'https://discord.gg/zcuqRuHQ7E'
+        ]
+      })
+    },
+    {
+      tagName: 'script',
+      attributes: {
+        type: 'application/ld+json'
+      },
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org/',
+        '@type': 'WebSite',
+        'name': 'Graphical Playground Documentation',
+        'url': 'https://docs.graphical-playground.com/',
+        'description': 'Comprehensive documentation for Graphical Playground, the visual programming environment.',
+        'publisher': {
+          '@type': 'Organization',
+          'name': 'Graphical Playground',
+          'url': 'https://graphical-playground.com/',
+          'logo': {
+            '@type': 'ImageObject',
+            'url': 'https://docs.graphical-playground.com/images/logo-long-text-black.svg'
+          }
+        },
+        'potentialAction': {
+          '@type': 'SearchAction',
+          'target': 'https://docs.graphical-playground.com/search?q={search_term_string}',
+          'query-input': 'required name=search_term_string'
+        }
+      })
+    }
+  ],
+
   themeConfig: {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
@@ -164,55 +215,6 @@ const config: Config = {
           'Master visual programming and game engine development with the official Graphical Playground documentation.'
       },
       { property: 'og:url', content: 'https://docs.graphical-playground.com/' }
-    ],
-    headTags: [
-      {
-        tagName: 'script',
-        attributes: {
-          type: 'application/ld+json'
-        },
-        innerHTML: JSON.stringify({
-          '@context': 'https://schema.org/',
-          '@type': 'Organization',
-          'name': 'Graphical Playground',
-          'url': 'https://graphical-playground.com/',
-          'logo': 'https://docs.graphical-playground.com/images/logo-long-text-black.svg',
-          'description':
-            'Graphical Playground is a visual programming environment and game engine that empowers developers to create stunning real-time graphics applications with ease. Our mission is to democratize graphics programming and make it accessible to everyone, from beginners to experts. With Graphical Playground, you can unleash your creativity and bring your ideas to life in a fun and intuitive way.',
-          'sameAs': [
-            'https://github.com/GraphicalPlayground',
-            'https://www.linkedin.com/company/graphical-playground',
-            'https://discord.gg/zcuqRuHQ7E'
-          ]
-        })
-      },
-      {
-        tagName: 'script',
-        attributes: {
-          type: 'application/ld+json'
-        },
-        innerHTML: JSON.stringify({
-          '@context': 'https://schema.org/',
-          '@type': 'WebSite',
-          'name': 'Graphical Playground Documentation',
-          'url': 'https://docs.graphical-playground.com/',
-          'description': 'Comprehensive documentation for Graphical Playground, the visual programming environment.',
-          'publisher': {
-            '@type': 'Organization',
-            'name': 'Graphical Playground',
-            'url': 'https://graphical-playground.com/',
-            'logo': {
-              '@type': 'ImageObject',
-              'url': 'https://docs.graphical-playground.com/images/logo-long-text-black.svg'
-            }
-          },
-          'potentialAction': {
-            '@type': 'SearchAction',
-            'target': 'https://docs.graphical-playground.com/search?q={search_term_string}',
-            'query-input': 'required name=search_term_string'
-          }
-        })
-      }
     ],
     colorMode: {
       defaultMode: 'light',
