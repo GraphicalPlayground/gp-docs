@@ -96,6 +96,9 @@
   --ifm-color-warning: #ffc229;
   --ifm-color-danger: #ff3f56;
 
+  /* Docusaurus Custom Properties */
+  --docusaurus-highlighted-code-line-bg: #0000000d;
+
   /** Graphical Playground Colors */
 
   --gp-color-primary-lightest: #f9ffe0;
