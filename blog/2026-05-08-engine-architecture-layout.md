@@ -4,6 +4,7 @@ title: "Engine Architecture and Directory Layout: A Principal Engineer's Guide"
 authors: mallory-scotton
 tags: [research, technical, architecture, engine design, build system, cmake, c++, modularity, directory layout, gp engine]
 ---
+import FileTree from '@site/src/components/FileTree';
 
 # Engine Architecture and Directory Layout: A Principal Engineer's Guide
 
@@ -17,7 +18,7 @@ tags: [research, technical, architecture, engine design, build system, cmake, c+
 
 ## Abstract
 
-Game engine architecture is most often discussed in terms of subsystems: *renderers*, *physics*, *audio*, *animation*. But long before any code is written, an engine's character is decided by a more fundamental question: **how is the source tree organized?** Where does a piece of code physically live, what is allowed to depend on it, and what does that dependency mean at compile-time, link-time, and runtime? This paper is a rigorous treatment of the directory-layout-as-architecture problem. We survey the publicly documented source trees of seven canonical engines, **Unreal Engine 5**, **Godot**, **id Tech 4 / Doom 3**, **O3DE**, **Bevy**, **Unity**, and **Cocos2d-x**, and the publicly documented architectural philosophies of five proprietary AAA engines, **Frostbite** (DICE/EA), **Decima** (Guerrilla Games), **Anvil** (Ubisoft Montreal), **Snowdrop** (Ubisoft Massive), and **RE Engine** (Capcom). We extract a taxonomy of five layout strategies, analyze the trade-offs of each, and present the **Graphical Playground (GP) Engine** layout: a hybrid that draws structural inspiration from Unreal Engine's `Public/Private/Internal` discipline while optimizing aggressively for **educational clarity**, **multi-backend pluggability**, and **build-system declarativity** through our custom CMake orchestration layer (GPBT). The paper closes with the complete GP Engine repository topology, module anatomy, and the rationale for every directory we ship.
+Game engine architecture usually gets discussed in terms of subsystems: *renderers*, *physics*, *audio*, *animation*. But before any code is written, a more concrete question shapes everything: **how is the source tree organized?** Where does a piece of code physically live, what is allowed to depend on it, and what does that dependency mean at compile-time, link-time, and runtime? This paper takes a close look at directory layout as an architectural tool. We survey the publicly documented source trees of seven canonical engines, **Unreal Engine 5**, **Godot**, **id Tech 4 / Doom 3**, **O3DE**, **Bevy**, **Unity**, and **Cocos2d-x**, and the publicly documented architectural philosophies of five proprietary AAA engines, **Frostbite** (DICE/EA), **Decima** (Guerrilla Games), **Anvil** (Ubisoft Montreal), **Snowdrop** (Ubisoft Massive), and **RE Engine** (Capcom). We pull out a taxonomy of five layout strategies, weigh the trade-offs of each, and present the **Graphical Playground (GP) Engine** layout: a hybrid that borrows Unreal Engine's `Public/Private/Internal` discipline and reshapes it for educational clarity, multi-backend pluggability, and declarative CMake builds via our custom orchestration layer (GPBT). It closes with the complete GP Engine repository topology, module anatomy, and the rationale for every directory we ship.
 
 **Keywords:** engine architecture, directory layout, module system, build system, CMake, GPBT, public/private boundary, RHI, plug-in architecture, monorepo, dependency visibility
 
@@ -50,7 +51,7 @@ Game engine architecture is most often discussed in terms of subsystems: *render
 
 Every nontrivial codebase has an *implicit* architecture, the de facto rules about who depends on whom, which symbols cross which boundaries, and what is allowed to change without notice. In a small project these rules live in the heads of a few maintainers. In an engine spanning two million lines of C++, several rendering backends, a dozen platforms, and a fifteen-year horizon, the rules **must** be made physical, otherwise they decay into chaos within a release cycle.
 
-The most powerful place to encode architectural rules is the **directory tree**. A folder named `private/` is a contract: nothing outside the module may include from here. A folder named `rhi/vulkan/` is an interface boundary: this is one of several swappable implementations of a stable abstraction. A `CMakeLists.txt` next to a `README.md` and a `CHANGELOG.md` is a unit-of-ownership marker: this folder is a thing that can be reasoned about, versioned, and replaced as a whole.
+The directory tree is where architectural rules become hard constraints. A folder named `private/` is a contract: nothing outside the module may include from here. A folder named `rhi/vulkan/` is an interface boundary: this is one of several swappable implementations of a stable abstraction. A `CMakeLists.txt` next to a `README.md` and a `CHANGELOG.md` is a unit-of-ownership marker: this folder is a thing that can be reasoned about, versioned, and replaced as a whole.
 
 A well-designed engine layout makes good architecture **easy** and bad architecture **hard**. A poorly designed one inverts the polarity, every dependency violation becomes the path of least resistance, and the codebase erodes one expedient `#include "../../private/foo.hpp"` at a time.
 
@@ -61,7 +62,7 @@ The four canonical references for studying engine architecture are *Game Engine 
 - *Game Engine Architecture* is a book; you cannot grep it.
 - The Unreal Engine source tree is enormous (over 200,000 files) and assumes Epic's twenty-year tribal knowledge.
 - Godot's tree is approachable but couples engine and editor tightly, and uses SCons (a system most students never meet again).
-- id Tech is a museum piece by modern standards, magnificent C, but predating modern C++, RHIs, and multi-platform mobile/console concerns.
+- id Tech is dated by modern standards, excellent C, but predating modern C++, RHIs, and multi-platform mobile/console concerns.
 
 The **Graphical Playground (GP) Engine** is built with an explicit second goal alongside production-grade performance: a student who clones the repository should be able to navigate it, find any subsystem in under a minute, and understand from the layout alone *why* the file they are reading is where it is. This educational mandate shapes every layout decision in this paper.
 
@@ -74,13 +75,13 @@ We argue that an engine's directory layout must encode four orthogonal axes of s
 3. **Backend pluralism**: a stable abstraction (`rhi/base`) coexisting with many concrete implementations (`rhi/vulkan`, `rhi/d3d12`, `rhi/metal`, `rhi/null`).
 4. **Discoverability**: each unit of ownership ships with documentation, change history, benchmarks, and tests **co-located** with the code, not scattered into satellite directories.
 
-The remainder of the paper formalizes each axis, surveys how existing engines address it, and presents the GP Engine's specific synthesis.
+Sections 2–6 survey how existing engines handle each axis. Section 7 onward presents the GP Engine layout in full.
 
 ---
 
 ## 2. Background: A Taxonomy of Engine Layouts
 
-After studying public source trees and architecture talks across two decades of shipping engines, we identify five distinct layout strategies. They are not exclusive, mature engines combine elements of several, but each is *predominantly* one strategy.
+Across public source trees and architecture talks, five distinct layout strategies emerge. They are not exclusive — mature engines combine elements of several — but each is *predominantly* one strategy.
 
 ### 2.1 Strategy A: Flat-with-Prefix-Conventions
 
@@ -146,7 +147,7 @@ This is augmented by `*.Build.cs` rules files (one per module) and `*.Target.cs`
 
 | Pro | Con |
 |---|---|
-| `Public/Private/Internal` is the gold standard for visibility discipline. | UBT is a large C# program with its own learning curve. |
+| `Public/Private/Internal` handles visibility discipline better than any other approach in this survey. | UBT is a large C# program with its own learning curve. |
 | Lifecycle buckets (`Runtime/Editor/Developer/Programs/`) cleanly separate shipping concerns. | The directory tree is enormous, students drown before they orient. |
 | Plug-ins re-use the same `Source/<Module>/Public/Private` shape and are first-class. | Naming conventions (PascalCase, `F`/`U`/`A`/`I`/`S`/`T` prefixes) compound with size. |
 | `*.Build.cs` is fully programmatic, an engineer can express any rule. | Programmatic flexibility cuts both ways, no two `Build.cs` look alike. |
@@ -280,45 +281,69 @@ This co-location principle is observable in O3DE's Gems and in Bevy's crates. We
 
 ## 4. Comparative Analysis of Existing Engines
 
-We now examine each engine in turn through the lens of the principles above.
+Here is what each engine actually does with those principles.
 
 ### 4.1 Unreal Engine 5
 
 **Source**: [`github.com/EpicGames/UnrealEngine`](https://github.com/EpicGames/UnrealEngine) (private repo, public docs at [`dev.epicgames.com/documentation/en-us/unreal-engine`](https://dev.epicgames.com/documentation/en-us/unreal-engine/unreal-engine-directory-structure)).
 
-```
-UnrealEngine/
-├── Engine/
-│   ├── Source/
-│   │   ├── Runtime/        Core, RenderCore, Renderer, RHI, Engine, ...
-│   │   ├── Editor/         UnrealEd, LevelEditor, Kismet, ...
-│   │   ├── Developer/      AssetTools, TargetPlatform, ...
-│   │   ├── Programs/       UnrealBuildTool, ShaderCompileWorker, ...
-│   │   └── ThirdParty/
-│   ├── Plugins/            engine-wide plugins (Niagara, Chaos, ...)
-│   ├── Content/
-│   ├── Shaders/
-│   └── Binaries/
-├── Templates/
-├── Samples/
-├── Setup.bat / Setup.sh
-└── GenerateProjectFiles.bat / .sh
-```
+<FileTree data={[
+  {
+    name: 'UnrealEngine',
+    type: 'folder',
+    children: [
+      {
+        name: 'Engine',
+        type: 'folder',
+        children: [
+          {
+            name: 'Source',
+            type: 'folder',
+            icon: 'folder-src',
+            children: [
+              { name: 'Runtime', type: 'folder', icon: 'folder-job', chevron: false, description: 'Core, RenderCore, Renderer, RHI, Engine, ...' },
+              { name: 'Editor', type: 'folder', icon: 'folder-ui', chevron: false, description: 'UnrealEd, LevelEditor, Kismet, ...' },
+              { name: 'Developer', type: 'folder', icon: 'folder-controller', chevron: false, description: 'AssetTools, TargetPlatform, ...' },
+              { name: 'Programs', type: 'folder', icon: 'folder-tools', chevron: false, description: 'UnrealBuildTool, ShaderCompileWorker, ...' },
+              { name: 'ThirdParty', type: 'folder', icon: 'folder-lib', chevron: false }
+            ]
+          },
+          { name: 'Plugins', type: 'folder', icon: 'folder-plugin', chevron: false, description: 'Engine-wide plugins (Niagara, Chaos, ...)' },
+          { name: 'Content', type: 'folder', icon: 'folder-resource', chevron: false },
+          { name: 'Shaders', type: 'folder', icon: 'folder-shader', chevron: false },
+          { name: 'Binaries', type: 'folder', icon: 'folder-dist', chevron: false }
+        ]
+      },
+      { name: 'Templates', type: 'folder', icon: 'folder-template', chevron: false },
+      { name: 'Samples', type: 'folder', icon: 'folder-examples', chevron: false },
+      { name: 'Setup.bat', type: 'file', icon: 'console' },
+      { name: 'Setup.sh', type: 'file', icon: 'console' },
+      { name: 'GenerateProjectFiles.bat', type: 'file', icon: 'console' },
+      { name: 'GenerateProjectFiles.sh', type: 'file', icon: 'console' }
+    ]
+  }
+]}/>
 
 A typical module:
 
-```
-Engine/Source/Runtime/Core/
-├── Core.Build.cs
-├── Public/                 exported headers
-├── Private/                .cpp + internal headers
-├── Classes/                legacy UObject headers (UE4-era)
-└── Internal/               (UE5-only) restricted-share headers
-```
+<FileTree data={[
+  {
+    name: 'Engine/Source/Runtime/Core',
+    type: 'folder',
+    icon: 'folder-core',
+    children: [
+      { name: 'Core.Build.cs', type: 'file', icon: 'csharp', description: 'Module rules (UnrealBuildTool)' },
+      { name: 'Public', type: 'folder', icon: 'folder-public', chevron: false, description: 'Exported headers' },
+      { name: 'Private', type: 'folder', icon: 'folder-private', chevron: false, description: '.cpp and internal headers' },
+      { name: 'Classes', type: 'folder', icon: 'folder-class', chevron: false, description: 'Legacy UObject headers (UE4-era)' },
+      { name: 'Internal', type: 'folder', icon: 'folder-private', chevron: false, description: 'UE5-only restricted-share headers' }
+    ]
+  }
+]}/>
 
 **Strengths.**
-- The `Runtime/Editor/Developer/Programs/` lifecycle split is unmatched.
-- `Public/Private/Internal` is the gold standard.
+- The `Runtime/Editor/Developer/Programs/` lifecycle split is the clearest in this survey.
+- `Public/Private/Internal` handles visibility better than any other engine here.
 - `*.Build.cs` rules give per-module declarative dependencies.
 - Plugins re-use the same module shape, no special case.
 
@@ -332,21 +357,26 @@ Engine/Source/Runtime/Core/
 
 **Source**: [`github.com/godotengine/godot`](https://github.com/godotengine/godot).
 
-```
-godot/
-├── core/
-├── scene/                  SceneTree, nodes, gameplay primitives
-├── servers/                RenderingServer, PhysicsServer2D/3D, ...
-├── drivers/                Vulkan, GLES3, ALSA, ...
-├── modules/                compile-time-pluggable features
-├── platform/               per-OS entry points
-├── editor/
-├── thirdparty/
-├── tests/
-├── main/
-├── doc/
-└── misc/
-```
+<FileTree data={[
+  {
+    name: 'godot',
+    type: 'folder',
+    children: [
+      { name: 'core', type: 'folder', icon: 'folder-core', chevron: false },
+      { name: 'scene', type: 'folder', icon: 'folder-simulations', chevron: false, description: 'SceneTree, nodes, gameplay primitives' },
+      { name: 'servers', type: 'folder', icon: 'folder-server', chevron: false, description: 'RenderingServer, PhysicsServer2D/3D, ...' },
+      { name: 'drivers', type: 'folder', icon: 'folder-directive', chevron: false, description: 'Vulkan, GLES3, ALSA, ...' },
+      { name: 'modules', type: 'folder', icon: 'folder-plugin', chevron: false, description: 'Compile-time-pluggable features' },
+      { name: 'platform', type: 'folder', icon: 'folder-base', chevron: false, description: 'Per-OS entry points' },
+      { name: 'editor', type: 'folder', icon: 'folder-ui', chevron: false },
+      { name: 'thirdparty', type: 'folder', icon: 'folder-lib', chevron: false },
+      { name: 'tests', type: 'folder', icon: 'folder-test', chevron: false },
+      { name: 'main', type: 'folder', icon: 'folder-app', chevron: false },
+      { name: 'doc', type: 'folder', icon: 'folder-docs', chevron: false },
+      { name: 'misc', type: 'folder', icon: 'folder-other', chevron: false }
+    ]
+  }
+]}/>
 
 **Strengths.**
 - The scene/servers/drivers three-layer indirection is a clean separation of concerns.
@@ -362,21 +392,32 @@ godot/
 
 **Source**: [`github.com/id-Software/DOOM-3`](https://github.com/id-Software/DOOM-3), reviewed by Fabien Sanglard at [`fabiensanglard.net/doom3/`](https://fabiensanglard.net/doom3/).
 
-```
-Doom3/
-├── neo/
-│   ├── idlib/              foundation: containers, math, strings
-│   ├── framework/          engine glue, file system, console, command system
-│   ├── renderer/
-│   ├── sound/
-│   ├── cm/                 collision model
-│   ├── ui/
-│   ├── tools/              radiant editor, etc.
-│   ├── sys/                platform abstraction
-│   ├── game/               game DLL (Doom 3 vanilla)
-│   └── d3xp/               game DLL (expansion)
-└── base/                   data: assets, defs, scripts
-```
+<FileTree data={[
+  {
+    name: 'Doom3',
+    type: 'folder',
+    children: [
+      {
+        name: 'neo',
+        type: 'folder',
+        icon: 'folder-src',
+        children: [
+          { name: 'idlib', type: 'folder', icon: 'folder-lib', chevron: false, description: 'Foundation: containers, math, strings' },
+          { name: 'framework', type: 'folder', icon: 'folder-core', chevron: false, description: 'Engine glue, file system, console, command system' },
+          { name: 'renderer', type: 'folder', icon: 'folder-review', chevron: false },
+          { name: 'sound', type: 'folder', icon: 'folder-audio', chevron: false },
+          { name: 'cm', type: 'folder', icon: 'folder-simulations', chevron: false, description: 'Collision model' },
+          { name: 'ui', type: 'folder', icon: 'folder-ui', chevron: false },
+          { name: 'tools', type: 'folder', icon: 'folder-tools', chevron: false, description: 'Radiant editor, etc.' },
+          { name: 'sys', type: 'folder', icon: 'folder-base', chevron: false, description: 'Platform abstraction' },
+          { name: 'game', type: 'folder', icon: 'folder-controller', chevron: false, description: 'Game DLL (Doom 3 vanilla)' },
+          { name: 'd3xp', type: 'folder', icon: 'folder-plugin', chevron: false, description: 'Game DLL (expansion)' }
+        ]
+      },
+      { name: 'base', type: 'folder', icon: 'folder-resource', chevron: false, description: 'Data: assets, defs, scripts' }
+    ]
+  }
+]}/>
 
 **Strengths.**
 - Crisp engine/game DLL split, gameplay can be hot-reloaded.
@@ -392,33 +433,46 @@ Doom3/
 
 **Source**: [`github.com/o3de/o3de`](https://github.com/o3de/o3de).
 
-```
-o3de/
-├── Code/
-│   └── Framework/          AzCore, AzFramework, AzToolsFramework, ...
-├── Gems/                   everything else (rendering, physics, audio, ...)
-├── Templates/
-├── Tools/
-├── Registry/
-├── cmake/
-├── python/
-└── scripts/
-```
+<FileTree data={[
+  {
+    name: 'o3de',
+    type: 'folder',
+    children: [
+      { name: 'Code', type: 'folder', icon: 'folder-src', children: [
+        { name: 'Framework', type: 'folder', icon: 'folder-core', chevron: false, description: 'AzCore, AzFramework, AzToolsFramework, ...' }
+      ]},
+      { name: 'Gems', type: 'folder', icon: 'folder-plugin', chevron: false, description: 'Everything else: rendering, physics, audio, ...' },
+      { name: 'Templates', type: 'folder', icon: 'folder-template', chevron: false },
+      { name: 'Tools', type: 'folder', icon: 'folder-tools', chevron: false },
+      { name: 'Registry', type: 'folder', icon: 'folder-config', chevron: false },
+      { name: 'cmake', type: 'folder', icon: 'folder-config', chevron: false },
+      { name: 'python', type: 'folder', icon: 'folder-python', chevron: false },
+      { name: 'scripts', type: 'folder', icon: 'folder-scripts', chevron: false }
+    ]
+  }
+]}/>
 
 A Gem looks like:
 
-```
-Gems/Atom/
-├── CMakeLists.txt
-├── Code/
-│   ├── Source/
-│   ├── Include/
-│   └── Tests/
-├── Assets/
-├── Tools/
-├── Registry/
-└── gem.json                manifest
-```
+<FileTree data={[
+  {
+    name: 'Gems/Atom',
+    type: 'folder',
+    icon: 'folder-plugin',
+    children: [
+      { name: 'CMakeLists.txt', type: 'file', icon: 'cmake' },
+      { name: 'Code', type: 'folder', icon: 'folder-src', children: [
+        { name: 'Source', type: 'folder', icon: 'folder-src', chevron: false },
+        { name: 'Include', type: 'folder', icon: 'folder-public', chevron: false },
+        { name: 'Tests', type: 'folder', icon: 'folder-test', chevron: false }
+      ]},
+      { name: 'Assets', type: 'folder', icon: 'folder-resource', chevron: false },
+      { name: 'Tools', type: 'folder', icon: 'folder-tools', chevron: false },
+      { name: 'Registry', type: 'folder', icon: 'folder-config', chevron: false },
+      { name: 'gem.json', type: 'file', icon: 'json', description: 'Manifest' }
+    ]
+  }
+]}/>
 
 **Strengths.**
 - Maximum modularity, anything is a Gem.
@@ -434,23 +488,29 @@ Gems/Atom/
 
 **Source**: [`github.com/bevyengine/bevy`](https://github.com/bevyengine/bevy).
 
-```
-bevy/
-├── crates/
-│   ├── bevy_app/
-│   ├── bevy_ecs/
-│   ├── bevy_render/
-│   ├── bevy_pbr/
-│   ├── bevy_audio/
-│   ├── bevy_ui/
-│   ├── bevy_winit/
-│   └── ... (~50 crates)
-├── examples/
-├── benches/
-├── tests/
-├── tools/
-└── Cargo.toml              workspace manifest
-```
+<FileTree data={[
+  {
+    name: 'bevy',
+    type: 'folder',
+    children: [
+      { name: 'crates', type: 'folder', icon: 'folder-rust', children: [
+        { name: 'bevy_app', type: 'folder', icon: 'folder-app', chevron: false },
+        { name: 'bevy_ecs', type: 'folder', icon: 'folder-element', chevron: false },
+        { name: 'bevy_render', type: 'folder', icon: 'folder-review', chevron: false },
+        { name: 'bevy_pbr', type: 'folder', icon: 'folder-simulations', chevron: false },
+        { name: 'bevy_audio', type: 'folder', icon: 'folder-audio', chevron: false },
+        { name: 'bevy_ui', type: 'folder', icon: 'folder-ui', chevron: false },
+        { name: 'bevy_winit', type: 'folder', icon: 'folder-desktop', chevron: false },
+        { name: '(~50 more crates)', type: 'folder', chevron: false }
+      ]},
+      { name: 'examples', type: 'folder', icon: 'folder-examples', chevron: false },
+      { name: 'benches', type: 'folder', icon: 'folder-benchmark', chevron: false },
+      { name: 'tests', type: 'folder', icon: 'folder-test', chevron: false },
+      { name: 'tools', type: 'folder', icon: 'folder-tools', chevron: false },
+      { name: 'Cargo.toml', type: 'file', icon: 'toml', description: 'Workspace manifest' }
+    ]
+  }
+]}/>
 
 **Strengths.**
 - The cleanest expression of "everything is a module" in any production engine.
@@ -468,15 +528,20 @@ Source closed; project layout documented at [`docs.unity3d.com/Manual/SpecialFol
 
 **Project-side layout** (the only public side):
 
-```
-MyUnityProject/
-├── Assets/                 user content
-├── Packages/               UPM packages (engine modules)
-├── ProjectSettings/
-├── Library/                generated cache (gitignored)
-├── Logs/
-└── Temp/
-```
+<FileTree data={[
+  {
+    name: 'MyUnityProject',
+    type: 'folder',
+    children: [
+      { name: 'Assets', type: 'folder', icon: 'folder-resource', chevron: false, description: 'User content' },
+      { name: 'Packages', type: 'folder', icon: 'folder-packages', chevron: false, description: 'UPM packages (engine modules)' },
+      { name: 'ProjectSettings', type: 'folder', icon: 'folder-config', chevron: false },
+      { name: 'Library', type: 'folder', icon: 'folder-lib', chevron: false, description: 'Generated cache (gitignored)' },
+      { name: 'Logs', type: 'folder', icon: 'folder-log', chevron: false },
+      { name: 'Temp', type: 'folder', icon: 'folder-temp', chevron: false }
+    ]
+  }
+]}/>
 
 UPM packages under `Packages/` deliver render pipelines (URP, HDRP), input, netcode, and increasingly even core systems as versioned modules. Conceptually this maps to O3DE's Gems and Bevy's crates. The engine itself remains a closed-source native runtime.
 
@@ -484,19 +549,36 @@ UPM packages under `Packages/` deliver render pipelines (URP, HDRP), input, netc
 
 **Source**: [`github.com/cocos2d/cocos2d-x`](https://github.com/cocos2d/cocos2d-x).
 
-```
-cocos2d-x/
-├── cocos/
-│   ├── 2d/  3d/  audio/  base/  math/  network/
-│   ├── physics/  physics3d/  navmesh/  platform/
-│   ├── renderer/  scripting/  ui/  editor-support/
-├── extensions/
-├── external/               third-party
-├── templates/
-├── tools/
-├── tests/
-└── cmake/
-```
+<FileTree data={[
+  {
+    name: 'cocos2d-x',
+    type: 'folder',
+    children: [
+      { name: 'cocos', type: 'folder', icon: 'folder-src', children: [
+        { name: '2d', type: 'folder', icon: 'folder-element', chevron: false },
+        { name: '3d', type: 'folder', icon: 'folder-element', chevron: false },
+        { name: 'audio', type: 'folder', icon: 'folder-audio', chevron: false },
+        { name: 'base', type: 'folder', icon: 'folder-core', chevron: false },
+        { name: 'math', type: 'folder', icon: 'folder-base', chevron: false },
+        { name: 'network', type: 'folder', icon: 'folder-connection', chevron: false },
+        { name: 'physics', type: 'folder', icon: 'folder-simulations', chevron: false },
+        { name: 'physics3d', type: 'folder', icon: 'folder-simulations', chevron: false },
+        { name: 'navmesh', type: 'folder', icon: 'folder-base', chevron: false },
+        { name: 'platform', type: 'folder', icon: 'folder-base', chevron: false },
+        { name: 'renderer', type: 'folder', icon: 'folder-review', chevron: false },
+        { name: 'scripting', type: 'folder', icon: 'folder-scripts', chevron: false },
+        { name: 'ui', type: 'folder', icon: 'folder-ui', chevron: false },
+        { name: 'editor-support', type: 'folder', icon: 'folder-tools', chevron: false }
+      ]},
+      { name: 'extensions', type: 'folder', icon: 'folder-plugin', chevron: false },
+      { name: 'external', type: 'folder', icon: 'folder-lib', chevron: false, description: 'Third-party dependencies' },
+      { name: 'templates', type: 'folder', icon: 'folder-template', chevron: false },
+      { name: 'tools', type: 'folder', icon: 'folder-tools', chevron: false },
+      { name: 'tests', type: 'folder', icon: 'folder-test', chevron: false },
+      { name: 'cmake', type: 'folder', icon: 'folder-config', chevron: false }
+    ]
+  }
+]}/>
 
 A hybrid of Strategy B and Strategy C: domain-sliced subsystems like Godot, but no servers indirection, the renderer is talked to directly. CMake-based, which simplifies onboarding.
 
@@ -549,7 +631,7 @@ Documented in *Source 2* ([Wikipedia](https://en.wikipedia.org/wiki/Source_2)) a
 
 ## 6. Trade-Off Synthesis
 
-Synthesizing the survey, we extract the following design rules.
+A few rules emerge from the survey.
 
 ### 6.1 What Every Engine Layout Must Provide
 
@@ -585,54 +667,94 @@ The GP Engine layout is closest to Unreal's. We diverge on three deliberate axes
 
 ## 7. The GP Engine Design
 
-We now present the complete GP Engine repository topology and rationale. The repository is monorepo-style: engine, examples, build tooling, and CI configuration all live in one tree.
+Here is the complete GP Engine repository topology and the rationale behind it. The repository is monorepo-style: engine, examples, build tooling, and CI configuration all live in one tree.
 
 ### 7.1 Top-Level Topology
 
-```
-gp-engine/
-├── source/          all engine source code
-├── thirdparty/      external dependencies (CMake-orchestrated)
-├── examples/        SDK example projects
-├── toolchain/       per-platform CMakePresets and toolchain scripts
-├── cmake/           GPBT itself (the build tool)
-├── .devcontainer/   reproducible dev container
-├── .github/         CI workflows, issue templates, funding, branding
-├── CMakeLists.txt   the engine's root CMake entry point
-├── CMakePresets.json
-├── README.md        comprehensive (not vestigial)
-├── CONTRIBUTING.md
-├── CODE_OF_CONDUCT.md
-├── SECURITY.md
-├── CONTRIBUTORS.md
-├── DONORS.md
-├── CHANGELOG.md
-├── LICENSE.md
-├── LICENSE_HEADER       canonical comment block stamped on every source file
-├── VERSION
-├── .editorconfig
-├── .clang-format
-├── .clang-format-ignore
-├── .clang-tidy
-├── .clangd
-├── .gitignore
-├── .gitattributes
-├── .git-blame-ignore-revs
-├── .mailmap
-└── .pre-commit-config.yaml
-```
+<FileTree
+  data={[
+    {
+      name: 'gp-engine',
+      type: 'folder',
+      children: [
+        { name: '.github', type: 'folder', chevron: false, icon: 'folder-github', description: 'CI workflows, issue templates, funding, branding' },
+        { name: '.devcontainer', type: 'folder', chevron: false, icon: 'folder-docker', description: 'Dev container configuration for reproducible onboarding' },
+        { name: 'cmake', type: 'folder', chevron: false, icon: 'folder-config', description: 'GPBT, our build tool' },
+        { name: 'source', type: 'folder', chevron: false, icon: 'folder-src', description: 'all engine source code' },
+        { name: 'examples', type: 'folder', chevron: false, icon: 'folder-examples', description: 'SDK example projects' },
+        { name: 'thirdparty', type: 'folder', chevron: false, icon: 'folder-lib', description: 'external dependencies (CMake-orchestrated)' },
+        { name: 'toolchain', type: 'folder', chevron: false, icon: 'folder-config', description: 'per-platform CMakePresets and toolchain scripts' },
+        { name: 'CMakeLists.txt', type: 'file', icon: 'cmake' },
+        { name: 'CMakePresets.json', type: 'file', icon: 'cmake' },
+        { name: 'README.md', type: 'file', icon: 'readme' },
+        { name: 'CONTRIBUTING.md', type: 'file', icon: 'contributing' },
+        { name: 'CODE_OF_CONDUCT.md', type: 'file', icon: 'conduct' },
+        { name: 'CITATION.cff', type: 'file', icon: 'citation' },
+        { name: 'SECURITY.md', type: 'file', icon: 'lock' },
+        { name: 'CONTRIBUTORS.md', type: 'file', icon: 'authors' },
+        { name: 'DONORS.md', type: 'file', icon: 'github-sponsors' },
+        { name: 'CHANGELOG.md', type: 'file', icon: 'changelog' },
+        { name: 'LICENSE.md', type: 'file', icon: 'license' },
+        { name: 'LICENSE_HEADER', type: 'file', icon: 'license', description: 'Canonical comment block stamped on every source file' },
+        { name: 'VERSION', type: 'file', icon: 'credits' },
+        { name: '.editorconfig', type: 'file', icon: 'editorconfig' },
+        { name: '.clang-format', type: 'file', icon: 'clangd' },
+        { name: '.clang-format-ignore', type: 'file', icon: 'clangd' },
+        { name: '.clang-tidy', type: 'file', icon: 'clangd' },
+        { name: '.clangd', type: 'file', icon: 'clangd' },
+        { name: '.gitignore', type: 'file', icon: 'git' },
+        { name: '.gitattributes', type: 'file', icon: 'git' },
+        { name: '.git-blame-ignore-revs', type: 'file', icon: 'git' },
+        { name: '.mailmap', type: 'file', icon: 'email' },
+        { name: '.pre-commit-config.yaml', type: 'file', icon: 'pre-commit'}
+      ]
+    }
+  ]}
+/>
 
 Each top-level directory and root file carries deliberate intent. We unpack them in the next section.
 
 ### 7.2 The Five Top-Level Directories
 
-```
-source/        ← all C++/C/HLSL/GLSL source
-thirdparty/    ← isolation barrier for external deps
-examples/      ← consumers of the public SDK
-toolchain/     ← cross-platform toolchain configuration
-cmake/         ← GPBT, our build tool (everything CMake calls into)
-```
+<FileTree
+  data={[
+    {
+      name: 'source',
+      type: 'folder',
+      icon: 'folder-src',
+      description: 'All C++/C/HLSL/GLSL source',
+      children: []
+    },
+    {
+      name: 'thirdparty',
+      type: 'folder',
+      icon: 'folder-lib',
+      description: 'Isolation barrier for external dependencies',
+      children: []
+    },
+    {
+      name: 'examples',
+      type: 'folder',
+      icon: 'folder-examples',
+      description: 'SDK example projects',
+      children: []
+    },
+    {
+      name: 'toolchain',
+      type: 'folder',
+      icon: 'folder-config',
+      description: 'Per-platform CMakePresets and toolchain scripts',
+      children: []
+    },
+    {
+      name: 'cmake',
+      type: 'folder',
+      icon: 'folder-config',
+      description: 'GPBT, our build tool (everything CMake calls into)',
+      children: []
+    }
+  ]}
+/>
 
 The reading order matters: `source/` is the engine; `thirdparty/` is what the engine depends on; `examples/` is what depends on the engine; `toolchain/` and `cmake/` are how all of it is built.
 
@@ -640,7 +762,7 @@ The reading order matters: `source/` is the engine; `thirdparty/` is what the en
 
 ## 8. Repository Root: Why Every File Earns Its Place
 
-A common smell in open-source engines is a repository root that contains either too little (a one-line README and a CMakeLists, leaving newcomers stranded) or too much (forty top-level dotfiles with no apparent organization). We argue that every root-level file should be one of three things: **a community contract**, **a build entry point**, or **a tooling contract**.
+A common smell in open-source engines is a repository root that contains either too little (a one-line README and a CMakeLists, leaving newcomers stranded) or too much (forty top-level dotfiles with no apparent organization). We argue that every root-level file should be one of three things: a community contract, a build entry point, or a tooling contract.
 
 ### 8.1 Community Contracts
 
@@ -683,34 +805,49 @@ Every one of these files is **standardized** and **documented** in `CONTRIBUTING
 
 ### 8.4 The `.github/` and `.devcontainer/` Directories
 
-```
-.github/
-├── CODEOWNERS
-├── FUNDING.yml
-├── ISSUE_TEMPLATE/
-│   ├── bug_report.yml
-│   └── config.yml
-├── actions/
-│   └── setup-deps/         reusable composite action
-├── assets/                 SVG branding for README badges
-├── labeler.yml
-├── pull_request_template.md
-└── workflows/
-    ├── build.yml
-    ├── formatting.yml
-    ├── labeler.yml
-    ├── release.yml
-    ├── shader-ci.yml
-    ├── sync-docs.yml
-    └── welcome.yml
-```
+<FileTree data={[
+  {
+    name: '.github',
+    type: 'folder',
+    icon: 'folder-github',
+    children: [
+      { name: 'CODEOWNERS', type: 'file', icon: 'codeowners', description: 'GitHub feature to auto-assign PR reviewers based on file paths' },
+      { name: 'FUNDING.yml', type: 'file', icon: 'github-sponsors', description: 'GitHub feature to link to donation platforms (GitHub Sponsors, Open Collective, etc.)' },
+      { name: 'ISSUE_TEMPLATE', type: 'folder', icon: 'folder-template', description: 'Predefined issue templates for bug reports, feature requests, etc.', children: [
+        { name: 'bug_report.yml', type: 'file', icon: 'yaml', description: 'Template for bug report issues' },
+        { name: 'config.yml', type: 'file', icon: 'yaml', description: 'Configuration for issue template behavior' }
+      ]},
+      { name: 'assets', type: 'folder', icon: 'folder-resource', description: 'Branding assets (SVGs for badges, etc.)' },
+      { name: 'labeler.yml', type: 'file', icon: 'label', description: 'Configuration for auto-labeling PRs based on changed files' },
+      { name: 'pull_request_template.md', type: 'file', icon: 'markdown', description: 'Template for pull request descriptions' },
+      { name: 'workflows', type: 'folder', icon: 'folder-gh-workflows', description: 'CI/CD workflow definitions', children: [
+        { name: 'build.yml', type: 'file', icon: 'yaml', description: 'Build and test the engine on every PR' },
+        { name: 'formatting.yml', type: 'file', icon: 'yaml', description: 'Check code formatting on every PR' },
+        { name: 'labeler.yml', type: 'file', icon: 'yaml', description: 'Run the labeler on every PR to auto-assign labels' },
+        { name: 'release.yml', type: 'file', icon: 'yaml', description: 'Automate releases (tagging, changelog generation, etc.)' },
+        { name: 'shader-ci.yml', type: 'file', icon: 'yaml', description: 'Specialized CI workflow for shader compilation tests' },
+        { name: 'sync-docs.yml', type: 'file', icon: 'yaml', description: 'Sync documentation changes to a separate docs repo or wiki' },
+        { name: 'sync-sot.yml', type: 'file', icon: 'yaml', description: 'Sync source of truth changes' },
+        { name: 'welcome.yml', type: 'file', icon: 'yaml', description: 'Welcome new contributors with an automated message' }
+      ]}
+    ]
+  }
+]}
+/>
 
-```
-.devcontainer/
-├── Dockerfile              reproducible build environment
-├── devcontainer-lock.json
-└── devcontainer.json
-```
+<FileTree data={[
+  {
+    name: '.devcontainer',
+    type: 'folder',
+    icon: 'folder-docker',
+    children: [
+      { name: 'Dockerfile', type: 'file', icon: 'docker', description: 'Defines the dev container image, including OS, SDKs, and tools' },
+      { name: 'devcontainer-lock.json', type: 'file', icon: 'json', description: 'Lock file for dev container dependencies' },
+      { name: 'devcontainer.json', type: 'file', icon: 'json', description: 'Configuration file for dev container' }
+    ]
+  }
+]}
+/>
 
 The `.devcontainer/` is the single most underrated file in any open-source C++ project. A new contributor goes from "git clone" to "engine builds" in one click in VS Code or GitHub Codespaces, no toolchain hunt, no dependency-version drift, no "works on my machine."
 
@@ -720,64 +857,89 @@ The `.devcontainer/` is the single most underrated file in any open-source C++ p
 
 Inside `source/`, we apply Strategy D (Unreal-style lifecycle buckets) with three top-level categories:
 
-```
-source/
-├── runtime/         code that ships in a packaged game
-├── launch/          executables (editor, standalone, client, server)
-├── developer/       developer-only code (asset cooking, profilers, ...)
-├── programs/        standalone tools (shader compiler worker, asset baker, ...)
-├── plugins/         official engine plug-ins
-├── shaders/         all shader source (cross-RHI)
-└── CMakeLists.txt   recurses into all subdirs
-```
+<FileTree data={[
+  {
+    name: 'source',
+    type: 'folder',
+    icon: 'folder-src',
+    children: [
+      { name: 'runtime', type: 'folder', icon: 'folder-job', description: 'Code that ships in a packaged game' },
+      { name: 'launch', type: 'folder', icon: 'folder-simulations', description: 'Executables (editor, standalone, client, server)' },
+      { name: 'developer', type: 'folder', icon: 'folder-controller', description: 'Developer-only code (asset cooking, profilers, ...)' },
+      { name: 'programs', type: 'folder', icon: 'folder-tools', description: 'Standalone tools (shader compiler worker, asset baker, ...)' },
+      { name: 'plugins', type: 'folder', icon: 'folder-plugin', description: 'Official engine plug-ins' },
+      { name: 'shaders', type: 'folder-shader', description: 'All shader source (cross-RHI)' }
+    ]
+  }
+]}/>
 
 ### 9.1 `runtime/` — The Heart of the Engine
 
-```
-source/runtime/
-├── core/            foundation: memory, containers, math, platform abstraction
-├── application/     window, input, event loop
-├── engine/          the engine class, scene management, world
-├── renderer/        high-level renderer (uses RHI)
-├── rhi/             render hardware interface
-│   ├── base/
-│   ├── d3d11/
-│   ├── d3d12/
-│   ├── vulkan/
-│   ├── opengl/
-│   ├── metal/
-│   └── null/
-├── audio/
-│   ├── base/
-│   ├── openal/
-│   ├── xaudio2/
-│   ├── coreaudio/
-│   └── fmod/
-├── physics/
-│   ├── base/
-│   ├── jolt/
-│   └── physx/
-└── parser/
-    ├── obj/
-    ├── fbx/
-    ├── gltf/
-    ├── json/
-    ├── ini/
-    ├── xml/
-    └── yaml/
-```
+<FileTree data={[
+  {
+    name: 'source/runtime',
+    type: 'folder',
+    icon: 'folder-job',
+    children: [
+      { name: 'core', type: 'folder', icon: 'folder-core', description: 'Foundation utilities (memory, containers, math, platform abstraction)' },
+      { name: 'application', type: 'folder', icon: 'folder-app', description: 'Window management, input handling, event loop' },
+      { name: 'engine', type: 'folder', icon: 'folder-bicep', description: 'The engine class, scene management, world' },
+      { name: 'renderer', type: 'folder', icon: 'folder-review', description: 'High-level renderer (uses RHI)' },
+      { name: 'hal', type: 'folder', icon: 'folder-element', description: 'Hardware abstraction layer (Window, Input, etc.)', children: [
+        { name: 'base', type: 'folder', icon: 'folder-base', description: 'Base hardware abstraction interfaces' },
+        { name: 'sdl3', type: 'folder', icon: 'folder-directive', description: 'SDL3 backend' },
+      ]},
+      { name: 'rhi', type: 'folder', icon: 'folder-pipe', description: 'Render hardware interface with multiple backends', children: [
+        { name: 'base', type: 'folder', icon: 'folder-base', description: 'RHI-agnostic interfaces and utilities' },
+        { name: 'd3d11', type: 'folder', icon: 'folder-directive', description: 'Direct3D 11 backend' },
+        { name: 'd3d12', type: 'folder', icon: 'folder-directive', description: 'Direct3D 12 backend' },
+        { name: 'vulkan', type: 'folder', icon: 'folder-directive', description: 'Vulkan backend' },
+        { name: 'opengl', type: 'folder', icon: 'folder-directive', description: 'OpenGL backend (for compatibility)' },
+        { name: 'metal', type: 'folder', icon: 'folder-directive', description: 'Metal backend (for Apple platforms)' },
+        { name: 'null', type: 'folder', icon: 'folder-private', description: 'Null backend for testing and headless modes' }
+      ]},
+      { name: 'audio', type: 'folder', icon: 'folder-audio', description: 'Audio subsystem with multiple backends', children: [
+        { name: 'base', type: 'folder', icon: 'folder-base', description: 'Audio-agnostic interfaces and utilities' },
+        { name: 'openal', type: 'folder', icon: 'folder-directive', description: 'OpenAL backend' },
+        { name: 'xaudio2', type: 'folder', icon: 'folder-directive', description: 'XAudio2 backend (for Windows)' },
+        { name: 'coreaudio', type: 'folder', icon: 'folder-directive', description: 'CoreAudio backend (for Apple platforms)' },
+        { name: 'fmod', type: 'folder', icon: 'folder-directive', description: 'FMOD backend' }
+      ]},
+      { name: 'physics', type: 'folder', icon: 'folder-simulations', description: 'Physics subsystem with multiple backends', children: [
+        { name: 'base', type: 'folder', icon: 'folder-base', description: 'Physics-agnostic interfaces and utilities' },
+        { name: 'jolt', type: 'folder', icon: 'folder-directive', description: 'Jolt Physics backend' },
+        { name: 'physx', type: 'folder', icon: 'folder-directive', description: 'NVIDIA PhysX backend' }
+      ]},
+      { name: 'parser', type: 'folder', icon: 'folder-json', description: 'File format parsers (OBJ, FBX, glTF, JSON, INI, XML, YAML)', children: [
+        { name: 'obj', type: 'folder', icon: 'folder-container', description: 'Wavefront OBJ parser' },
+        { name: 'fbx', type: 'folder', icon: 'folder-container', description: 'Autodesk FBX parser' },
+        { name: 'gltf', type: 'folder', icon: 'folder-container', description: 'glTF 2.0 parser' },
+        { name: 'json', type: 'folder', icon: 'folder-json', description: 'Generic JSON parser' },
+        { name: 'ini', type: 'folder', icon: 'folder-json', description: 'INI file parser' },
+        { name: 'xml', type: 'folder', icon: 'folder-json', description: 'XML file parser' },
+        { name: 'yaml', type: 'folder', icon: 'folder-json', description: 'YAML file parser' }
+      ]}
+    ]
+  }
+]}/>
 
 The pattern is uniform. Pluralistic subsystems (`rhi`, `audio`, `physics`, `parser`) decompose into a `base/` abstraction module and N concrete backend modules. Singular subsystems (`core`, `application`, `engine`, `renderer`) live as flat sibling directories.
 
 ### 9.2 `launch/` — Executables
 
-```
-source/launch/
-├── editor/          the GP Editor (full GUI)
-├── standalone/      a packaged-game launcher
-├── client/          (future) network client launcher
-└── server/          (future) headless server launcher
-```
+<FileTree data={[
+  {
+    name: 'source/launch',
+    type: 'folder',
+    icon: 'folder-simulations',
+    children: [
+      { name: 'editor', type: 'folder', icon: 'folder-ui', description: 'The GP Editor (full GUI)' },
+      { name: 'standalone', type: 'folder', icon: 'folder-console', description: 'A packaged-game launcher' },
+      { name: 'client', type: 'folder', icon: 'folder-mobile', description: '(Future) Network client launcher' },
+      { name: 'server', type: 'folder', icon: 'folder-server', description: '(Future) Headless server launcher' }
+    ]
+  }
+]}/>
 
 Lifecycle is encoded by directory: an editor is *not* a runtime concept; it is a launcher that links runtime modules and adds editor-specific dependencies. By placing it in `launch/`, we make the lifecycle distinction visible.
 
@@ -794,62 +956,85 @@ Lifecycle is encoded by directory: an editor is *not* a runtime concept; it is a
 
 Every module, regardless of whether it lives in `runtime/`, `developer/`, or `plugins/`, follows the same internal layout:
 
-```
-my_module/
-├── CMakeLists.txt   (or my_module.build.cmake)
-├── README.md        what this module is, why it exists, what it depends on
-├── CHANGELOG.md     ABI-affecting changes per release
-├── .gitignore       module-local ignores (output dirs, IDE cruft)
-├── public/          exported headers (PUBLIC include path)
-├── internal/        restricted-share headers (PRIVATE-but-friend)
-├── private/         .cpp + private headers (PRIVATE)
-├── docs/            longer-form documentation, design notes, ADRs
-├── benchmarks/      benchmark sources, opt-in via gpTargetSetBenchmarksEnabled
-└── tests/           test sources, opt-in via gpTargetSetTestsEnabled
-```
+<FileTree data={[
+  {
+    name: 'my_module',
+    type: 'folder',
+    children: [
+      { name: 'private', type: 'folder', icon: 'folder-private', description: 'Private implementation (not exposed to any consumer)' },
+      { name: 'internal', type: 'folder', icon: 'folder-private', description: 'Restricted-share headers (PRIVATE-but-friend)' },
+      { name: 'public', type: 'folder', icon: 'folder-public', description: 'Exported headers (PUBLIC include path)' },
+      { name: 'tests', type: 'folder', icon: 'folder-test', description: 'Test sources, opt-in via gpTargetSetTestsEnabled' },
+      { name: 'benchmarks', type: 'folder', icon: 'folder-benchmark', description: 'Benchmark sources, opt-in via gpTargetSetBenchmarksEnabled' },
+      { name: 'docs', type: 'folder', icon: 'folder-docs', description: 'Longer-form documentation, design notes, ADRs' },
+      { name: '.gitignore', type: 'file', icon: 'git' },
+      { name: 'CHANGELOG.md', type: 'file', icon: 'changelog' },
+      { name: 'CMakeLists.txt', type: 'file', icon: 'cmake' },
+      { name: 'README.md', type: 'file', icon: 'readme' },
+    ]
+  }
+]}/>
 
 ### 10.1 The Three Visibility Tiers in Practice
 
 Take the `core` module. Its `public/` header `CoreMinimal.hpp` is included by every consumer; consumers never include from `private/`. The `internal/` directory holds, for example, the binary contract between `core` and `engine` for memory budget reporting, an interface that is part of the engine's internal architecture but not part of the public SDK.
 
-```
-source/runtime/core/
-├── CMakeLists.txt
-├── README.md
-├── CHANGELOG.md
-├── .gitignore
-├── public/
-│   ├── CoreMinimal.hpp
-│   ├── compilers/
-│   │   ├── clang/ClangCompiler.hpp
-│   │   ├── gcc/GCCCompiler.hpp
-│   │   ├── intel/IntelCompiler.hpp
-│   │   └── msvc/MSVCCompiler.hpp
-│   ├── concepts/             (C++20 concepts: Container, Functional, Math, ...)
-│   ├── maths/MathForward.hpp
-│   ├── memory/
-│   │   ├── MemoryBase.hpp
-│   │   ├── MemoryForward.hpp
-│   │   └── backends/
-│   │       ├── Malloc.hpp
-│   │       └── MallocAnsi.hpp
-│   ├── miscellaneous/
-│   │   ├── BuildDefines.hpp
-│   │   └── PreProcessorUtilities.hpp
-│   └── platforms/
-│       ├── apple/
-│       ├── base/
-│       ├── generic/
-│       ├── linux/
-│       ├── macos/
-│       ├── unix/
-│       └── windows/
-└── private/
-    ├── Core.cpp
-    └── memory/backends/
-        ├── Malloc.cpp
-        └── MallocAnsi.cpp
-```
+<FileTree data={[
+  {
+    name: 'source/runtime/core',
+    type: 'folder',
+    icon: 'folder-core',
+    children: [
+      { name: 'CMakeLists.txt', type: 'file', icon: 'cmake' },
+      { name: 'README.md', type: 'file', icon: 'readme' },
+      { name: 'CHANGELOG.md', type: 'file', icon: 'changelog' },
+      { name: '.gitignore', type: 'file', icon: 'git' },
+      { name: 'public', type: 'folder', icon: 'folder-public', children: [
+        { name: 'CoreMinimal.hpp', type: 'file', icon: 'hpp' },
+        { name: 'compilers', type: 'folder', icon: 'folder-directive', children: [
+          { name: 'clang', type: 'folder', icon: 'folder-directive', chevron: false, description: 'ClangCompiler.hpp' },
+          { name: 'gcc', type: 'folder', icon: 'folder-directive', chevron: false, description: 'GCCCompiler.hpp' },
+          { name: 'intel', type: 'folder', icon: 'folder-directive', chevron: false, description: 'IntelCompiler.hpp' },
+          { name: 'msvc', type: 'folder', icon: 'folder-directive', chevron: false, description: 'MSVCCompiler.hpp' }
+        ]},
+        { name: 'concepts', type: 'folder', icon: 'folder-interface', chevron: false, description: 'C++20 concepts: Container, Functional, Math, ...' },
+        { name: 'maths', type: 'folder', icon: 'folder-base', children: [
+          { name: 'MathForward.hpp', type: 'file', icon: 'hpp' }
+        ]},
+        { name: 'memory', type: 'folder', icon: 'folder-base', children: [
+          { name: 'MemoryBase.hpp', type: 'file', icon: 'hpp' },
+          { name: 'MemoryForward.hpp', type: 'file', icon: 'hpp' },
+          { name: 'backends', type: 'folder', icon: 'folder-directive', children: [
+            { name: 'Malloc.hpp', type: 'file', icon: 'hpp' },
+            { name: 'MallocAnsi.hpp', type: 'file', icon: 'hpp' }
+          ]}
+        ]},
+        { name: 'miscellaneous', type: 'folder', icon: 'folder-other', children: [
+          { name: 'BuildDefines.hpp', type: 'file', icon: 'hpp' },
+          { name: 'PreProcessorUtilities.hpp', type: 'file', icon: 'hpp' }
+        ]},
+        { name: 'platforms', type: 'folder', icon: 'folder-base', children: [
+          { name: 'apple', type: 'folder', icon: 'folder-macos', chevron: false },
+          { name: 'base', type: 'folder', icon: 'folder-base', chevron: false },
+          { name: 'generic', type: 'folder', icon: 'folder-other', chevron: false },
+          { name: 'linux', type: 'folder', icon: 'folder-linux', chevron: false },
+          { name: 'macos', type: 'folder', icon: 'folder-macos', chevron: false },
+          { name: 'unix', type: 'folder', icon: 'folder-linux', chevron: false },
+          { name: 'windows', type: 'folder', icon: 'folder-windows', chevron: false }
+        ]}
+      ]},
+      { name: 'private', type: 'folder', icon: 'folder-private', children: [
+        { name: 'Core.cpp', type: 'file', icon: 'cpp' },
+        { name: 'memory', type: 'folder', icon: 'folder-base', children: [
+          { name: 'backends', type: 'folder', icon: 'folder-directive', children: [
+            { name: 'Malloc.cpp', type: 'file', icon: 'cpp' },
+            { name: 'MallocAnsi.cpp', type: 'file', icon: 'cpp' }
+          ]}
+        ]}
+      ]}
+    ]
+  }
+]}/>
 
 Notice how platform abstractions live as **subdirectories of `public/platforms/`** rather than as separate modules. The platform layer is small enough (per-platform forward declarations and inline OS calls) that bumping it to module-level would be over-engineering.
 
@@ -870,8 +1055,8 @@ A module's `tests/` and `benchmarks/` directories contain test and benchmark sou
 
 ```cmake
 gpStartModule(audio)
-  gpAddPublicDependency(core)
-  gpAddPrivateDependency(SDL3::SDL3-static)
+  gpAddDependency(PUBLIC core)
+  gpAddDependency(PRIVATE gp::thirdparty::sdl3)
   gpTargetSetTestsEnabled(TRUE)
   gpTargetSetBenchmarksEnabled(TRUE)
 gpEndModule()
@@ -905,47 +1090,66 @@ The entire pattern is expressible in our build tool in fifteen lines:
 include(gp-build-tool)
 
 gpStartModule(rhi)
-  gpAddPublicDependency(core)
+  gpAddDependency(PUBLIC core)
 
   # The null RHI is always present as a safe fallback
-  gpAddDynamicDependency(rhi/null)
+  gpAddDependency(DYNAMIC rhi/null)
 
   # Platform-conditional dynamic dependencies, no if/endif clutter
-  gpAddDynamicDependencyOnPlatform(rhi/d3d11 WINDOWS)
-  gpAddDynamicDependencyOnPlatform(rhi/d3d12 WINDOWS)
-  gpAddDynamicDependencyOnPlatform(rhi/vulkan UNIX)
-  gpAddDynamicDependencyOnPlatform(rhi/opengl UNIX)
-  gpAddDynamicDependencyOnPlatform(rhi/metal MAC)
+  if(WIN32)
+    gpAddDependency(DYNAMIC rhi/d3d11)
+    gpAddDependency(DYNAMIC rhi/d3d12)
+  endif()
+  if(UNIX)
+    gpAddDependency(DYNAMIC rhi/vulkan UNIX)
+    gpAddDependency(DYNAMIC rhi/opengl UNIX)
+  endif()
+  if(APPLE)
+    gpAddDependency(DYNAMIC rhi/metal MAC)
+  endif()
 gpEndModule()
 ```
 
-`gpAddDynamicDependency` creates a build-order edge (the backend is built before the engine) but does **not** create a link-time dependency. The backend ships as a shared library next to the engine binary, and the engine's RHI factory loads it at startup.
+`gpAddDependency(DYNAMIC ...)` creates a build-order edge (the backend is built before the engine) but does **not** create a link-time dependency. The backend ships as a shared library next to the engine binary, and the engine's RHI factory loads it at startup.
 
 ### 11.4 Adding a New Backend
 
 The directory tree makes the addition story self-evident. To add a hypothetical WebGPU backend:
 
-```
-source/runtime/rhi/
-├── base/
-├── d3d11/
-├── d3d12/
-├── vulkan/
-├── opengl/
-├── metal/
-├── null/
-└── webgpu/         ← new sibling
-    ├── CMakeLists.txt
-    ├── README.md
-    ├── CHANGELOG.md
-    ├── public/
-    └── private/
-```
+<FileTree data={[
+  {
+    name: 'source/runtime/rhi',
+    type: 'folder',
+    icon: 'folder-pipe',
+    children: [
+      { name: 'base', type: 'folder', icon: 'folder-base' },
+      { name: 'd3d11', type: 'folder', icon: 'folder-directive' },
+      { name: 'd3d12', type: 'folder', icon: 'folder-directive' },
+      { name: 'vulkan', type: 'folder', icon: 'folder-directive' },
+      { name: 'opengl', type: 'folder', icon: 'folder-directive' },
+      { name: 'metal', type: 'folder', icon: 'folder-directive' },
+      { name: 'null', type: 'folder', icon: 'folder-private' },
+      {
+        name: 'webgpu',
+        type: 'folder',
+        icon: 'folder-directive',
+        description: 'New sibling to existing backends',
+        children: [
+          { name: 'public', type: 'folder', icon: 'folder-public' },
+          { name: 'private', type: 'folder', icon: 'folder-private' },
+          { name: 'CMakeLists.txt', type: 'file', icon: 'cmake' },
+          { name: 'README.md', type: 'file', icon: 'readme' },
+          { name: 'CHANGELOG.md', type: 'file', icon: 'changelog' }
+        ]
+      }
+    ]
+  }
+]}/>
 
-In `rhi/CMakeLists.txt`, add one line:
+In `rhi/base/CMakeLists.txt`, add one line:
 
 ```cmake
-gpAddDynamicDependencyOnPlatform(rhi/webgpu ALL)
+gpAddDependency(DYNAMIC rhi/webgpu)
 ```
 
 Done. No engine code changes. No editor changes. The new backend ships alongside the existing ones and is discoverable at runtime.
@@ -958,17 +1162,21 @@ This is what we mean when we say the **layout encodes the architecture**: the di
 
 The directory layout is only half the story. The other half is the build system that gives directories their meaning. We built **GPBT** (Graphical Playground Build Tool), a CMake orchestration layer, to do this declaratively. The full reference lives in [GP Build Tool](/docs/gp-engine/Programming%20With%20C++/GP%20Build%20Tool/), but the highlights matter for layout.
 
+:::warning
+The GPBT has been moved to it's own repository at [GraphicalPlayground/gp-build-tool](https://github.com/GraphicalPlayground/gp-build-tool) and is no longer part of the GP Engine monorepo. The design and rationale remain the same, but the implementation is now independently versioned and released. The GP Engine's `cmake/` directory contains a pinned version of GPBT as a Git submodule, ensuring reproducible builds while allowing GPBT to evolve on its own schedule.
+:::
+
 ### 12.1 The Three Phases
 
 Standard CMake processes `CMakeLists.txt` files in discovery order. This means that if module B depends on module A but is discovered first, the build fails.
 
 GPBT solves this with a **two-pass system**:
 
-1. **Phase 1 — REGISTRATION.** GPBT recursively scans the source tree, executing each `CMakeLists.txt` in a lightweight registration mode. Each target records its name, type, and dependency list. No real CMake targets are created.
+1. **Phase 1: REGISTRATION.** GPBT recursively scans the source tree, executing each `CMakeLists.txt` in a lightweight registration mode. Each target records its name, type, and dependency list. No real CMake targets are created.
 
-2. **Phase 2 — CONFIGURATION.** GPBT performs a topological sort over the registered targets and re-processes each `CMakeLists.txt` in dependency order, this time creating the real CMake targets.
+2. **Phase 2: CONFIGURATION.** GPBT performs a topological sort over the registered targets and re-processes each `CMakeLists.txt` in dependency order, this time creating the real CMake targets.
 
-3. **Phase 3 — GENERATION.** Standard CMake generation (Ninja, Makefile, MSBuild).
+3. **Phase 3: GENERATION.** Standard CMake generation (Ninja, Makefile, MSBuild).
 
 This is the same problem UnrealBuildTool solves with its Rules assembly compilation. We solve it in pure CMake, no out-of-band C# program needed.
 
@@ -982,11 +1190,10 @@ GPBT macros map one-to-one to the directory layout primitives:
 | auto-glob `private/*.cpp` | The `private/` folder |
 | auto-add `public/` to PUBLIC include path | The `public/` folder |
 | auto-add `internal/` to PRIVATE include path | The `internal/` folder |
-| `gpAddPublicDependency(B)` | "this module's `public/` exposes B's headers" |
-| `gpAddPrivateDependency(B)` | "this module's `private/` uses B; consumers don't see it" |
-| `gpAddInternalDependency(B)` | semantically internal, link-private |
-| `gpAddDynamicDependency(B)` | runtime plug-in coupling, no link-time edge |
-| `gpAddDynamicDependencyOnPlatform(B, P)` | conditional on platform |
+| `gpAddDependency(PUBLIC B)` | "this module's `public/` exposes B's headers" |
+| `gpAddDependency(PRIVATE B)` | "this module's `private/` uses B; consumers don't see it" |
+| `gpAddDependency(INTERNAL B)` | semantically internal, link-private |
+| `gpAddDependency(DYNAMIC B)` | runtime plug-in coupling, no link-time edge |
 | `gpStartPlugin(name) ... gpEndPlugin()` | A plug-in module under `plugins/` |
 | `gpStartExecutable(name) ... gpEndExecutable()` | A launcher under `launch/` or a tool under `programs/` |
 
@@ -994,25 +1201,34 @@ A new contributor reading any module's `CMakeLists.txt` learns the entire depend
 
 ### 12.3 The `cmake/` Directory
 
-```
-cmake/
-├── gp-build-tool.cmake        ← single-include entry point
-└── gp-build-tool/
-    ├── gp-tests.cmake
-    ├── gp-thirdparty.cmake
-    ├── internals/             ← registration, scope, scan, stringify, target, utils
-    │   ├── gp-api.internal.cmake
-    │   ├── gp-logger.internal.cmake
-    │   ├── gp-scan.internal.cmake
-    │   ├── gp-scope.internal.cmake
-    │   ├── gp-stringify.internal.cmake
-    │   ├── gp-targets.internal.cmake
-    │   └── gp-utils.internal.cmake
-    └── tests/                 ← yes, GPBT itself is unit-tested
-        ├── gp-all.tests.cmake
-        ├── gp-scope.internal.tests.cmake
-        └── gp-stringify.tests.cmake
-```
+<FileTree data={[
+  {
+    name: 'cmake',
+    type: 'folder',
+    icon: 'folder-config',
+    children: [
+      { name: 'gp-build-tool.cmake', type: 'file', icon: 'cmake', description: 'The single-include entry point for GPBT' },
+      { name: 'gp-build-tool', type: 'folder', icon: 'folder-config', description: 'The implementation of GPBT', children: [
+        { name: 'gp-tests.cmake', type: 'file', icon: 'cmake', description: 'GPBT unit tests' },
+        { name: 'gp-thirdparty.cmake', type: 'file', icon: 'cmake', description: 'GPBT integration with third-party dependencies' },
+        { name: 'internals', type: 'folder', icon: 'folder-private', description: 'Internal implementation files for GPBT', children: [
+          { name: 'gp-api.internal.cmake', type: 'file', icon: 'cmake' },
+          { name: 'gp-logger.internal.cmake', type: 'file', icon: 'cmake' },
+          { name: 'gp-scan.internal.cmake', type: 'file', icon: 'cmake' },
+          { name: 'gp-scope.internal.cmake', type: 'file', icon: 'cmake' },
+          { name: 'gp-stringify.internal.cmake', type: 'file', icon: 'cmake' },
+          { name: 'gp-targets.internal.cmake', type: 'file', icon: 'cmake' },
+          { name: 'gp-utils.internal.cmake', type: 'file', icon: 'cmake' }
+        ]},
+        { name: 'tests', type: 'folder', icon: 'folder-test', description: "Unit tests for GPBT's own implementation", children:[
+          { name:'gp-all.tests.cmake', type:'file', icon:'cmake' },
+          { name:'gp-scope.internal.tests.cmake', type:'file', icon:'cmake' },
+          { name:'gp-stringify.tests.cmake', type:'file', icon:'cmake' }
+        ]}
+      ]}
+    ]
+  }
+]}/>
 
 The same `public/internal/` discipline we apply to engine modules, we apply to GPBT itself. The single-include surface is `gp-build-tool.cmake`. Internal helpers live under `internals/`. Tests for the build tool live alongside it. The principle is recursive.
 
@@ -1033,7 +1249,7 @@ The layout we have presented optimizes for the slowest path of the developer exp
 2. In **2 minutes**, know that adding a new RHI backend means creating a sibling under `source/runtime/rhi/` and registering a dynamic dependency.
 3. In **5 minutes**, know that any module's API is in `public/`, its implementation is in `private/`, its tests are in `tests/`, and its history is in `CHANGELOG.md`.
 
-These targets are not aspirational. They are the design specification of the layout. Every directory we ship was justified against them.
+These are not goals. They are the design specification, and every directory in this layout was checked against them.
 
 ### 13.1 What Comes Next
 

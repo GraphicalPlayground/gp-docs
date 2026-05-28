@@ -17,7 +17,7 @@ tags: [research, technical, graphics, rendering, gpu, vgs, nanite, micropolygons
 
 ## Abstract
 
-Modern game engines face an intractable triangle throughput ceiling: GPU rasterizers are designed around polygons covering several pixels, yet cinematic assets routinely produce triangles smaller than a single pixel at runtime distances. Classical Level-of-Detail (LOD) pipelines fail at this scale due to popping artifacts, authoring overhead, and the inability to leverage the full spatial resolution of sculpted meshes. This paper presents a rigorous treatment of **Virtualized Geometry Systems** (VGS), the class of techniques exemplified by Epic Games' *Nanite* (Unreal Engine 5), Ubisoft's *micropolygon* pipeline, and related academic precursors such as *Reyes*, *Progressive Meshes*, and *Streaming Mesh* systems. We derive the theoretical foundations of cluster-based hierarchical level-of-detail, screen-space error metrics, BVH/DAG visibility culling, software rasterization fallback paths, virtual shadow maps, and GPU-driven draw dispatch. We then present a concrete implementation blueprint targeting a C++23/Vulkan 1.3 engine, accompanied by pseudocode, data layout specifications, and complexity analyses.
+Modern game engines face an intractable triangle throughput ceiling: GPU rasterizers are designed around polygons covering several pixels, yet cinematic assets routinely produce triangles smaller than a single pixel at runtime distances. Classical Level-of-Detail (LOD) pipelines fail at this scale due to popping artifacts, authoring overhead, and the inability to leverage the full spatial resolution of sculpted meshes. This paper covers **Virtualized Geometry Systems** (VGS), the family of techniques that includes Epic Games' *Nanite* (Unreal Engine 5), Ubisoft's *micropolygon* pipeline, and related academic precursors such as *Reyes*, *Progressive Meshes*, and *Streaming Mesh* systems. Topics include cluster-based hierarchical level-of-detail, screen-space error metrics, BVH/DAG visibility culling, software rasterization fallback paths, virtual shadow maps, and GPU-driven draw dispatch. Included is a concrete implementation blueprint targeting a C++23/Vulkan 1.3 engine, with pseudocode, data layout specifications, and complexity analyses.
 
 **Keywords:** virtualized geometry, LOD, BVH, cluster hierarchy, software rasterization, meshlet, screen-space error, GPU-driven rendering, visibility buffer, nanite
 
@@ -25,27 +25,27 @@ Modern game engines face an intractable triangle throughput ceiling: GPU rasteri
 
 ---
 
-## Table of Contents
+## Table of contents
 
-1. [Introduction and Motivation](#1-introduction-and-motivation)
-2. [Background and Related Work](#2-background-and-related-work)
-3. [Theoretical Foundations](#3-theoretical-foundations)
-4. [Cluster Hierarchy Construction](#4-cluster-hierarchy-construction)
-5. [Run-Time Visibility Determination](#5-run-time-visibility-determination)
-6. [Rasterization Pipeline](#6-rasterization-pipeline)
-7. [Material Evaluation and Deferred Shading](#7-material-evaluation-and-deferred-shading)
-8. [Streaming and Virtualization](#8-streaming-and-virtualization)
-9. [Virtual Shadow Maps](#9-virtual-shadow-maps)
-10. [Implementation Architecture](#10-implementation-architecture)
-11. [Performance Analysis and Benchmarks](#11-performance-analysis-and-benchmarks)
-12. [Advanced Topics (State of the Art, 2026)](#12-advanced-topics-state-of-the-art-2026)
+1. [Introduction and motivation](#1-introduction-and-motivation)
+2. [Background and related work](#2-background-and-related-work)
+3. [Theoretical foundations](#3-theoretical-foundations)
+4. [Cluster hierarchy construction](#4-cluster-hierarchy-construction)
+5. [Run-time visibility determination](#5-run-time-visibility-determination)
+6. [Rasterization pipeline](#6-rasterization-pipeline)
+7. [Material evaluation and deferred shading](#7-material-evaluation-and-deferred-shading)
+8. [Streaming and virtualization](#8-streaming-and-virtualization)
+9. [Virtual shadow maps](#9-virtual-shadow-maps)
+10. [Implementation architecture](#10-implementation-architecture)
+11. [Performance analysis and benchmarks](#11-performance-analysis-and-benchmarks)
+12. [Advanced topics (state of the art, 2026)](#12-advanced-topics-state-of-the-art-2026)
 13. [References](#13-references)
 
 ---
 
-## 1. Introduction and Motivation
+## 1. Introduction and motivation
 
-### 1.1 The Polygon-Pixel Mismatch
+### 1.1 The polygon-pixel mismatch
 
 The fundamental unit of GPU rasterization is the triangle. A triangle covers a contiguous set of pixels, and the rasterizer emits one or more *quads* (2×2 pixel blocks) per triangle to guarantee correct partial-derivative computation for texture sampling. This design carries an implicit assumption: **triangles should cover multiple pixels**.
 
@@ -61,7 +61,7 @@ $$\bar{A}_{px} \approx 0.003 \text{ px}^2$$
 
 This is three orders of magnitude below the break-even threshold. The GPU wastes approximately 99.7% of fragment shader invocations on invisible or sub-pixel geometry. The *Nanite* whitepaper [Karis 2021] quantifies this: the naive pipeline achieves roughly **1 triangle per 20 cycles** under these conditions, whereas the theoretical peak is **1 triangle per 2 cycles**.
 
-### 1.2 Limitations of Classical LOD
+### 1.2 Limitations of classical LOD
 
 The traditional solution is *Discrete LOD* (DLOD): artists hand-author 4–6 mesh resolutions, and the engine selects one per object per frame. This fails for the modern production pipeline in four fundamental ways:
 
@@ -76,7 +76,7 @@ The traditional solution is *Discrete LOD* (DLOD): artists hand-author 4–6 mes
 
 We argue that the correct solution decouples geometry **storage** from geometry **rendering** via a four-layer architecture:
 
-```
+```text
 [Offline] Cluster Hierarchy Build → Streaming Asset
     ↓
 [Load-time] Hierarchical BVH Construction
@@ -86,13 +86,13 @@ We argue that the correct solution decouples geometry **storage** from geometry 
 [Frame] Software + Hardware Rasterization of selected clusters
 ```
 
-Each layer is independently scalable, cache-friendly, and GPU-parallelizable. The following sections formalize each layer in turn.
+Each layer is independently scalable, cache-friendly, and GPU-parallelizable.
 
 ---
 
-## 2. Background and Related Work
+## 2. Background and related work
 
-### 2.1 Reyes and Micropolygon Rendering
+### 2.1 Reyes and micropolygon rendering
 
 The Reyes rendering architecture [Cook et al. 1987] introduced the concept of **micropolygons**: sub-pixel-sized quads generated by dicing parametric surfaces. Reyes dices surfaces until each patch produces quads of exactly 0.5 pixel in screen space, achieving theoretically optimal triangle density. Reyes is offline only, as dicing is CPU-bound and generates geometry on-the-fly. Our work brings this ideal to real-time.
 
@@ -100,7 +100,7 @@ The Reyes rendering architecture [Cook et al. 1987] introduced the concept of **
 
 Hoppe's Progressive Meshes [1996] represent a mesh as a base coarse mesh plus a sequence of *vertex splits* $V = \{v_0, v_1, \ldots, v_k\}$. Any prefix of $V$ produces a valid mesh approximation. This gives a continuous, view-independent LOD stream, but the sequential nature of vertex splits prevents GPU parallelism. The dependency graph of vertex splits is a DAG with depth $O(N_T)$, preventing batch execution.
 
-### 2.3 View-Dependent LOD
+### 2.3 View-dependent LOD
 
 Xia and Varshney [1996] and Hoppe [1997] introduced *view-dependent* LOD that adapts per-region. A *multi-resolution mesh* stores vertex splits annotated with screen-space error bounds. At runtime, the active front of splits is advanced until error bounds are met everywhere. This achieves per-region adaptation but still runs on the CPU and cannot stream.
 
@@ -108,30 +108,32 @@ Xia and Varshney [1996] and Hoppe [1997] introduced *view-dependent* LOD that ad
 
 Losasso and Hoppe [2004] and later Cignoni et al. [2004] (Batched Multi-Triangulation) introduced streaming mesh representations that load geometry on demand. The core insight, that LOD levels can be stored as independent *clusters* with known error bounds, directly underpins Nanite's design.
 
-### 2.5 Meshlets and Task/Mesh Shaders
+### 2.5 Meshlets and task/mesh shaders
 
 NVIDIA's introduction of *Task/Mesh Shaders* (Turing, 2018) and the subsequent Vulkan `VK_NV_mesh_shader` / `VK_EXT_mesh_shader` extension provided the GPU programming model that makes GPU-side cluster selection tractable. A *meshlet* [Wihlidal 2018, Strugar 2021] is a fixed-size cluster of up to 64/128 triangles with a precomputed bounding cone for backface culling. Mesh shaders allow a compute-like amplification stage that selects which meshlets to rasterize per-thread-group.
 
 ### 2.6 Nanite (Unreal Engine 5)
 
-Epic's Nanite [Karis 2021] is the production system that crystallized these ideas at scale. Key contributions:
-- A **hierarchical cluster DAG** built offline, providing LOD selection granularity finer than any previous system.
+Epic's Nanite [Karis 2021] is the production system that combined these ideas at scale. Contributions:
+
+- A **hierarchical cluster DAG** built offline, with LOD selection granularity finer than any previous system.
 - **Software rasterization** of small triangles via a compute shader path, avoiding hardware rasterizer setup overhead.
 - **Persistent threads** and a two-pass GPU culling architecture.
-- Integration with **Virtual Shadow Maps** for high-quality, high-performance shadow rendering.
+- Integration with **Virtual Shadow Maps** for high-quality shadow rendering.
 
-### 2.7 Ubisoft's Micropolygon Pipeline
+### 2.7 Ubisoft's micropolygon pipeline
 
 Ubisoft's *Rainbow Six Siege* and *Avatar: Frontiers of Pandora* teams developed independent micropolygon systems [Wihlidal 2015, Méndez-Feliu 2023]. Their approach emphasizes:
+
 - **Displacement map dicing** at render time rather than offline baking.
 - **Parametric surface evaluation** on the GPU, generating geometry in compute shaders.
 - Integration with their proprietary *Snowdrop* engine's material system.
 
 ---
 
-## 3. Theoretical Foundations
+## 3. Theoretical foundations
 
-### 3.1 Screen-Space Error Metric
+### 3.1 Screen-space error metric
 
 The central decision in any LOD system is: *at what point is a simplified representation indistinguishable from the original?* We define the **geometric error** of a cluster $C$ relative to its parent cluster $P$ as:
 
@@ -155,7 +157,7 @@ $$d_{min}(C) = \varepsilon(C) \cdot \frac{\cot(\theta_{fov}/2) \cdot H_r}{2 \cdo
 
 This distance is precomputed offline and stored per cluster as a single `float`. At runtime, the LOD selection reduces to a comparison: render cluster $C$ if $d > d_{min}(C)$.
 
-### 3.2 Cluster Invariant
+### 3.2 Cluster invariant
 
 For a valid cluster hierarchy $\mathcal{H}$, the following invariant must hold for any node $C$ with parent $P(C)$:
 
@@ -171,9 +173,10 @@ The first condition ensures monotone error growth up the hierarchy (coarser = mo
 
 *Proof sketch:* By induction on hierarchy depth. The root has $\varepsilon(root) > \varepsilon_{max}$ for all $d$ below a threshold. The leaves are the original clusters with $\varepsilon = 0$. The selection criterion picks exactly the frontier between acceptable and unacceptable, which is a valid cut by the monotonicity invariant. $\square$
 
-### 3.3 Cluster Size and Cache Coherence
+### 3.3 Cluster size and cache coherence
 
 A cluster stores $N_{tri}$ triangles. The optimal $N_{tri}$ balances:
+
 - **Culling granularity**: smaller clusters → finer culling → less overdraw
 - **Culling overhead**: smaller clusters → more BVH nodes → more culling work
 - **Cache line utilization**: GPU L1 cache lines are 128 bytes; vertex data should fill an integer number of cache lines
@@ -184,7 +187,7 @@ $$L_{cache}(N_v) = \left\lceil \frac{40 N_v}{128} \right\rceil \text{ cache line
 
 NVIDIA documentation recommends $N_{tri} \leq 124$, $N_v \leq 64$ [Wihlidal 2018]. The Nanite system uses $N_{tri} = 128$, $N_v = 128$ per cluster, noting that larger clusters amortize per-cluster overhead better for their software rasterizer.
 
-### 3.4 Spatial Hashing and Morton Codes
+### 3.4 Spatial hashing and Morton codes
 
 During hierarchy traversal, we need to quickly locate the cluster bounding a query point. We use **Morton codes** (Z-order curve) to map 3D cluster centroids to a 1D key that preserves spatial locality:
 
@@ -216,26 +219,26 @@ Sorting clusters by Morton code produces a *spatially coherent* ordering that ma
 
 ---
 
-## 4. Cluster Hierarchy Construction
+## 4. Cluster hierarchy construction
 
 ### 4.1 Overview
 
 The cluster hierarchy is built **offline** as part of the asset pipeline. The input is a full-resolution triangle mesh $M$ with $N_T$ triangles. The output is a tree of cluster groups $\mathcal{G} = \{G_0, G_1, \ldots, G_k\}$ stored in a compact binary format. The build pipeline has four stages:
 
-```
+```text
 Stage 1: Base Clustering     M → {C_0, ..., C_n}   (meshlet decomposition)
 Stage 2: Group Formation     Clusters → Groups       (spatial grouping)  
 Stage 3: Group Simplification Groups → Simplified    (edge collapse within group)
 Stage 4: Hierarchy Assembly  All levels → DAG        (parent pointers + error)
 ```
 
-### 4.2 Stage 1: Base Clustering (Meshlet Decomposition)
+### 4.2 Stage 1: Base clustering (meshlet decomposition)
 
 We partition the input mesh into *meshlets*, clusters of at most $N_{tri}^{max} = 128$ triangles sharing a connected patch of surface. The objective is to minimize the surface area of each cluster's bounding volume while respecting the triangle count limit.
 
 **Algorithm (Greedy Meshlet Builder):**
 
-```
+```text
 function BuildMeshlets(M, N_tri_max, N_vert_max):
     mark all triangles as unassigned
     while unassigned triangles exist:
@@ -261,11 +264,12 @@ An alternative cost that empirically produces better culling efficiency is the *
 
 $$\text{cost}_{SAH}(t, C) = \frac{\text{SA}(\text{AABB}(C \cup \{t\}))}{\text{SA}(\text{AABB}(C))} - 1$$
 
-### 4.3 Stage 2: Group Formation
+### 4.3 Stage 2: Group formation
 
 To enable hierarchical simplification, we group adjacent clusters into *cluster groups* of size $G_{size}$ (typically 4–8 clusters). A group $G_i$ represents the atomic unit of LOD transition: all clusters in a group are replaced simultaneously by their parent.
 
 Grouping uses a **graph partitioning** approach. Construct a graph $\mathcal{A}$ where:
+
 - Nodes are clusters $\{C_0, \ldots, C_n\}$
 - Edge $(C_i, C_j)$ has weight equal to the number of shared boundary edges
 
@@ -277,7 +281,7 @@ subject to $|\mathcal{P}_k| \leq G_{size} \cdot (1 + \delta)$ for all parts $k$,
 
 Minimizing cut edges directly minimizes the number of boundary edges shared between groups. These boundary edges **must not move** during simplification to preserve watertightness across group boundaries, they form the *locked boundary*.
 
-### 4.4 Stage 3: Group Simplification
+### 4.4 Stage 3: Group simplification
 
 Within each group $G_i$, we simplify the interior triangles using **Quadric Error Metrics (QEM)** [Garland and Heckbert 1997], keeping boundary edges fixed.
 
@@ -319,11 +323,12 @@ $$\varepsilon_{acc}^L = \max_{l=0}^{L-1} \left( \varepsilon(G_i^{l+1}, G_i^l) + 
 
 This is the value stored per cluster and used at runtime for the LOD selection test.
 
-### 4.5 Stage 4: Hierarchy Assembly and the DAG Structure
+### 4.5 Stage 4: Hierarchy assembly and the DAG structure
 
 After all levels are simplified, we assemble the **cluster DAG** (Directed Acyclic Graph). Unlike a strict tree, the DAG allows a child cluster to be shared by multiple parents, this occurs at group boundaries where clusters from two groups merge.
 
 The DAG has the following formal properties:
+
 - **Roots**: one or more coarse clusters at the top
 - **Leaves**: the original meshlet clusters at the bottom
 - **Interior nodes**: simplified cluster groups
@@ -340,7 +345,7 @@ The resulting sphere $(\mathbf{c}, r)$ is tight and minimal, minimizing false-po
 
 **DAG Storage Format:**
 
-```
+```cpp
 struct ClusterNode {                   // 64 bytes, fits 2 per cache line
     float3   bounds_center;            //  12B
     float    bounds_radius;            //   4B  (bounding sphere)
@@ -355,7 +360,7 @@ struct ClusterNode {                   // 64 bytes, fits 2 per cache line
 
 A compact children-list design stores variable-arity children in a parallel array:
 
-```
+```cpp
 struct ClusterNode {           // 32 bytes
     float3   bounds_center;    // 12B
     float    bounds_radius;    //  4B
@@ -372,24 +377,26 @@ Total hierarchy size for a $10^7$ triangle mesh with $\sim 80,000$ leaf clusters
 
 ---
 
-## 5. Run-Time Visibility Determination
+## 5. Run-time visibility determination
 
-### 5.1 Two-Pass GPU Culling Architecture
+### 5.1 Two-pass GPU culling architecture
 
 The core runtime algorithm is a **two-pass persistent-thread culling** pipeline, inspired by Wihlidal's "GPU-Driven Rendering Pipelines" [2015] and refined in Nanite.
 
 **Pass 1 (Main Pass, Fast Reject):**
+
 - Traverse the cluster BVH from the previous frame's visibility state
 - For each node: test against frustum, occlusion (HZB), and LOD criterion
 - Emit *draw commands* for surviving clusters into an indirect draw buffer
 
 **Pass 2 (Fallback Pass, Newly Visible):**
+
 - Re-test clusters that failed occlusion in Pass 1 with the current frame's HZB (just rendered by Pass 1)
 - Emit additional draw commands for newly unoccluded clusters
 
 This two-pass structure achieves **1-frame-latency occlusion culling** at the cost of rendering the same cluster at most twice across both passes.
 
-### 5.2 Frustum Culling
+### 5.2 Frustum culling
 
 For each cluster node $N$ with bounding sphere $(\mathbf{c}, r)$, frustum culling is a half-space test against the 6 frustum planes $\{\mathbf{n}_i, d_i\}_{i=0}^5$:
 
@@ -410,7 +417,7 @@ bool FrustumCullSphere(const __m128 planes[6], __m128 center, float radius) {
 }
 ```
 
-### 5.3 Hierarchical Z-Buffer (HZB) Occlusion Culling
+### 5.3 Hierarchical Z-buffer (HZB) occlusion culling
 
 The HZB is a full mipmap chain of the depth buffer, where each mip level stores the **maximum depth** (farthest depth value in DirectX/Metal convention, or minimum in OpenGL) of the corresponding 2×2 block.
 
@@ -433,7 +440,7 @@ using the standard projection matrix entry $P_{33}$ and $P_{34}$:
 
 $$z_{NDC} = \frac{P_{33} \cdot z_{vs} + P_{34}}{z_{vs}}$$
 
-### 5.4 LOD Selection on the GPU
+### 5.4 LOD selection on the GPU
 
 After frustum and occlusion culling, surviving nodes are tested against the LOD criterion. The GPU computes the camera distance to the cluster's bounding sphere center:
 
@@ -451,7 +458,7 @@ with the constant $K = \frac{\cot(\theta_{fov}/2) \cdot H_r}{2 \cdot \varepsilon
 
 This double-sided test ensures exactly one level in the hierarchy is selected per surface region, producing the **unique cut** property proven in §3.2.
 
-### 5.5 Persistent Thread BVH Traversal
+### 5.5 Persistent thread BVH traversal
 
 GPU BVH traversal using a persistent thread group model avoids the overhead of launching separate kernels per hierarchy level. The algorithm maintains a **global work queue** in device memory:
 
@@ -499,17 +506,17 @@ void main() {
 
 This runs as a single dispatch with enough thread groups to keep all SMs busy. The total work is $O(N_{visible} \cdot \log N_{total})$ in the worst case, but empirically $O(N_{visible})$ since the BVH prunes most of the tree early.
 
-### 5.6 Cluster Group Cut Invariant, Preventing Cracks
+### 5.6 Cluster group cut invariant, preventing cracks
 
-A critical implementation detail: the LOD selection must **always select all clusters in a group together**, or none of them. Selecting partial groups creates gaps at group boundaries because the simplified parent covers different triangles than the original.
+The LOD selection must **always select all clusters in a group together**, or none of them. Selecting partial groups creates gaps at group boundaries because the simplified parent covers different triangles than the original.
 
 We enforce this via the **group bounding sphere**: all clusters in a group $G_i$ share the same group bounding sphere $(\mathbf{c}_{G_i}, r_{G_i})$, and the LOD test uses this group sphere, not the individual cluster sphere. This guarantees that the transition threshold is evaluated uniformly for the entire group.
 
 ---
 
-## 6. Rasterization Pipeline
+## 6. Rasterization pipeline
 
-### 6.1 The Sub-Pixel Triangle Problem
+### 6.1 The sub-pixel triangle problem
 
 When a triangle's screen-space area is less than $A_{min} \approx 4$ pixels (one hardware quad), the GPU rasterizer becomes inefficient:
 
@@ -519,12 +526,9 @@ When a triangle's screen-space area is less than $A_{min} \approx 4$ pixels (one
 
 For a cluster where all 128 triangles are sub-pixel, the hardware rasterizer costs $128 \times 25 = 3200$ cycles for setup alone, versus $128 \times 2 = 256$ cycles of raster work. The setup-to-raster ratio is 12.5×, catastrophically inefficient.
 
-### 6.2 Software Rasterizer Design
+### 6.2 Software rasterizer design
 
-Nanite's solution is a **software rasterizer** for small triangles implemented as a compute shader. The key insight: for triangles covering $\leq 2$ pixels, we can rasterize all of them faster in software because:
-1. No hardware setup overhead
-2. Can pack multiple triangles into a single warp
-3. Can write directly to a visibility buffer without depth test hardware (atomic operations)
+Nanite's solution is a **software rasterizer** for small triangles implemented as a compute shader. For triangles covering $\leq 2$ pixels, software is faster for three reasons: hardware setup overhead disappears, multiple triangles fit in a single warp, and writing directly to a visibility buffer via atomics avoids depth test hardware entirely.
 
 **Algorithm:**
 
@@ -563,7 +567,7 @@ struct EdgeEq {
 };
 ```
 
-### 6.3 Hybrid Rasterization, Decision Heuristic
+### 6.3 Hybrid rasterization, decision heuristic
 
 We classify each cluster as "small" or "large" and dispatch to the appropriate rasterizer:
 
@@ -571,13 +575,13 @@ $$\text{mode}(C) = \begin{cases} \text{software} & \text{if } \bar{A}_{px}(C) < 
 
 where $\tau_{sw} = 4$ pixels² (empirically optimal on most architectures, Karis 2021 uses 2 hardware quads as the threshold).
 
-The classification is performed on the GPU: after the culling pass, a compute shader bins clusters into two indirect dispatch/draw buffers, one for software raster, one for hardware. This binning adds $\sim 0.1$ ms overhead but saves $\sim 1$–$2$ ms on scenes heavy with small triangles.
+The classification runs on the GPU: after the culling pass, a compute shader bins clusters into two indirect dispatch/draw buffers, one for software raster, one for hardware. This binning adds $\sim 0.1$ ms overhead but saves $\sim 1$–$2$ ms on scenes heavy with small triangles.
 
-### 6.4 Visibility Buffer (V-Buffer)
+### 6.4 Visibility buffer (V-Buffer)
 
 Instead of writing directly to GBuffer attributes (which would require re-fetching vertex data per pixel), we write a **Visibility Buffer** [Burns and Hunt 2013]:
 
-```
+```cpp
 VisibilityBuffer pixel = { cluster_id (22 bits) | triangle_id (7 bits) | ... }
 ```
 
@@ -588,9 +592,7 @@ This 32-bit (or 64-bit with depth) value uniquely identifies the visible triangl
 3. Computes pixel-accurate barycentric coordinates
 4. Evaluates the material graph (PBR BRDF) at this pixel
 
-This decouples geometry rasterization from shading, providing two key benefits:
-- **Coherent geometry rasterization**: the rasterizer doesn't touch material data
-- **One material evaluation per pixel**: no redundant shading from overdraw
+This decouples geometry rasterization from shading: the rasterizer never touches material data, and each pixel receives exactly one material evaluation regardless of overdraw.
 
 **Barycentric coordinate reconstruction from Visibility Buffer:**
 
@@ -606,9 +608,9 @@ $$f_{interp} = \frac{\lambda_0 f_0/w_0 + \lambda_1 f_1/w_1 + \lambda_2 f_2/w_2}{
 
 ---
 
-## 7. Material Evaluation and Deferred Shading
+## 7. Material evaluation and deferred shading
 
-### 7.1 Material Classification Problem
+### 7.1 Material classification problem
 
 A virtualized geometry scene may render thousands of unique materials in a single frame, each requiring different shader code. Naively, a different draw call per material leads to 10,000+ draw calls per frame, unacceptable overhead.
 
@@ -627,22 +629,24 @@ $$\lceil 16/8 \rceil = 2 \text{ passes, each } O(N_{px}) = O(9M)$$
 
 At 100 operations/cycle and 10 TFlops/s: $\approx 0.09$ ms for the sort, acceptable.
 
-### 7.2 Physically-Based Material Evaluation
+### 7.2 Physically-based material evaluation
 
 Each material computes a BRDF contribution. We use the **GGX microfacet BRDF** [Walter et al. 2007]:
 
 $$f_r(\omega_i, \omega_o) = \frac{D(h) G(\omega_i, \omega_o) F(\omega_o, h)}{4 (\mathbf{n} \cdot \omega_i)(\mathbf{n} \cdot \omega_o)}$$
 
 where:
+
 - $D(h) = \frac{\alpha^2}{\pi ((\mathbf{n} \cdot h)^2 (\alpha^2 - 1) + 1)^2}$ is the GGX NDF, roughness $\alpha$
 - $G(\omega_i, \omega_o) = G_1(\omega_i) G_1(\omega_o)$ with $G_1(\omega) = \frac{2(\mathbf{n} \cdot \omega)}{(\mathbf{n} \cdot \omega)(2 - \alpha) + \alpha}$ (Smith-GGX)
 - $F(\omega_o, h) = F_0 + (1 - F_0)(1 - \omega_o \cdot h)^5$ (Schlick Fresnel)
 
 The material compute shader evaluates this per pixel using data fetched from texture arrays (BC7-compressed, 128KB–4MB per material LOD level).
 
-### 7.3 Programmable Shading Rate
+### 7.3 Programmable shading rate
 
 For regions of constant irradiance (flat surfaces, distant objects), we apply **Variable Rate Shading (VRS)** to evaluate materials at reduced rate (1×2, 2×2 blocks). The VRS mask is generated from:
+
 - Velocity buffer (high motion → full rate)
 - Depth gradient (geometric discontinuities → full rate)
 - Luminance variance from previous frame
@@ -651,15 +655,15 @@ This reduces material evaluation cost by $1.5$–$2\times$ on scenes with large 
 
 ---
 
-## 8. Streaming and Virtualization
+## 8. Streaming and virtualization
 
-### 8.1 Streaming Page Architecture
+### 8.1 Streaming page architecture
 
 Cluster geometry is stored in **streaming pages**, fixed-size blocks of GPU memory (typically 128KB each) that can be independently loaded and evicted. This design mirrors GPU texture streaming.
 
 **Page layout:**
 
-```
+```text
 Page (128KB):
   Header (256B):
     - page_id       : uint32
@@ -691,20 +695,21 @@ $$\hat{p}_i = \text{round}\left(\frac{p_i - p_{origin}}{\delta}\right) \in [0, 6
 
 where $\delta$ is chosen so that quantization error is below $0.1$ mm for typical scene scales.
 
-### 8.2 Streaming Priority
+### 8.2 Streaming priority
 
 The streaming system maintains a **priority queue** of pages sorted by streaming urgency. Priority is computed per page:
 
 $$\text{priority}(P) = \frac{\text{screen\_coverage}(P)}{\text{load\_time\_estimate}(P)} \cdot \text{LOD\_penalty}(P)$$
 
 where:
+
 - $\text{screen\_coverage}(P) = \sum_{C \in P} \pi r_C^2 / d_C^2 \cdot K$ (projected area in pixels)
 - $\text{load\_time\_estimate}(P) = \text{bytes}(P) / \text{disk\_bandwidth}$
 - $\text{LOD\_penalty}(P) = 1 + \max_{C \in P} (\varepsilon_{px}(C, d_C) - 1)^+$ (extra cost if currently over-error-budget)
 
 Pages not needed for more than $T_{evict} = 30$ frames are evicted (LRU policy). The streaming manager maintains a **residency set** of pages resident in GPU memory, with hysteresis to avoid thrashing.
 
-### 8.3 Bandwidth Analysis
+### 8.3 Bandwidth analysis
 
 For a scene with $N_{visible}$ clusters rendered at 60 fps, the streaming bandwidth required is:
 
@@ -724,7 +729,7 @@ Well within HDD throughput, letting SSDs handle any burst demand.
 
 ---
 
-## 9. Virtual Shadow Maps
+## 9. Virtual shadow maps
 
 ### 9.1 Motivation
 
@@ -732,7 +737,7 @@ Traditional shadow mapping requires rendering the entire scene from the light's 
 
 **Virtual Shadow Maps (VSM)** [Wihlidal 2023, Rendering Nanite 2021] apply the same virtualization principle to shadow maps: only allocate shadow map pages for shadow receivers that are actually visible.
 
-### 9.2 Virtual Shadow Map Architecture
+### 9.2 Virtual shadow map architecture
 
 The VSM is a large virtual texture (e.g., 16K × 16K = $2^{28}$ pixels), subdivided into 128×128 texel pages. Only pages actually sampled during GBuffer shadow lookup are physically allocated.
 
@@ -744,7 +749,7 @@ The VSM is a large virtual texture (e.g., 16K × 16K = $2^{28}$ pixels), subdivi
 
 The invalidation condition for a VSM page $P_{vsm}$: if any caster geometry in the page's frustum has moved since last frame, mark the page *dirty* and re-render it.
 
-### 9.3 Clipmap Organization
+### 9.3 Clipmap organization
 
 For a directional light (sun), we organize the VSM as a **clipmap** with $N_{clip} = 8$ levels. Each level covers a quadrant of the scene at progressively coarser resolution:
 
@@ -769,23 +774,23 @@ return world_depth > shadow_depth + BIAS;
 
 ---
 
-## 10. Implementation Architecture
+## 10. Implementation architecture
 
-### 10.1 Engine Integration Overview
+### 10.1 Engine integration overview
 
 A complete VGS implementation integrates into an engine as the following subsystem graph:
 
-```
+```text
 Asset Pipeline (Offline):
-  ┌─────────────────────────────────────────────────────┐
+  ┌─────────────────────────────────────────────────────────┐
   │ MeshImporter → Clusterer → Grouper → QEM → Packager │
-  └────────────────────────────┬────────────────────────┘
+  └────────────────────────────┬────────────────────────────┘
                                │ .gpa (GP Asset)
                                ▼
 Runtime (Per-Frame):
   ┌────────────────────────────────────────────────────────────────┐
   │  StreamingManager                                              │
-  │    └─ PageCache (GPU VRAM) ←─────── DiskIO (DirectStorage)     │
+  │    └─ PageCache (GPU VRAM) ←─────── DiskIO (DirectStorage)    │
   │                                                                │
   │  FrameRenderer                                                 │
   │    ├─ CullPass (Compute)                                       │
@@ -801,7 +806,7 @@ Runtime (Per-Frame):
   │    │                                                           │
   │    ├─ MaterialPass (Compute)                                   │
   │    │    ├─ Material binning + sort                             │
-  │    │    └─ Per-pixel BRDF evaluation → GBuffer                 │
+  │    │    └─ Per-pixel BRDF evaluation → GBuffer                │
   │    │                                                           │
   │    ├─ LightingPass (standard deferred)                         │
   │    │                                                           │
@@ -811,7 +816,7 @@ Runtime (Per-Frame):
   └────────────────────────────────────────────────────────────────┘
 ```
 
-### 10.2 Key Data Structures
+### 10.2 Data structures
 
 ```cpp
 // ============================================================
@@ -863,7 +868,7 @@ struct DrawMeshTasksIndirectCommand {
 using VisibilityEntry = uint64_t;
 ```
 
-### 10.3 Asset Pipeline Implementation
+### 10.3 Asset pipeline implementation
 
 The offline build pipeline is single-threaded per mesh but meshes are processed in parallel. Build time for a $10^7$ triangle mesh:
 
@@ -878,7 +883,7 @@ The offline build pipeline is single-threaded per mesh but meshes are processed 
 
 For a game with 20,000 unique meshes at average $10^5$ triangles: build time $\approx 20000 \times 0.7s = 14,000s \approx 4h$ on a single core, or $\approx 15$ min on a 16-core build server.
 
-### 10.4 Render Loop Pseudocode
+### 10.4 Render loop pseudocode
 
 ```cpp
 void VGSRenderer::RenderFrame(const RenderView& view) {
@@ -956,7 +961,7 @@ void VGSRenderer::RenderFrame(const RenderView& view) {
 }
 ```
 
-### 10.5 Memory Budget
+### 10.5 Memory budget
 
 For a next-gen open-world title targeting 8GB VRAM:
 
@@ -974,16 +979,18 @@ For a next-gen open-world title targeting 8GB VRAM:
 
 ---
 
-## 11. Performance Analysis and Benchmarks
+## 11. Performance analysis and benchmarks
 
-### 11.1 Theoretical Throughput
+### 11.1 Theoretical throughput
 
 **Hardware rasterizer throughput** (NVIDIA Ada Lovelace, RTX 4080):
+
 - Peak: 121.6 G triangles/s (theoretical)
 - Realistic (bounded by setup): ~30 G triangles/s for average triangles
 - Sub-pixel triangle effective throughput: ~2 G triangles/s
 
 **Software rasterizer throughput** (compute shader, same GPU):
+
 - Peak compute: 48.7 TFLOPS FP32
 - Sub-pixel triangle cost: ~32 FP32 ops each
 - Effective throughput: $48.7T / 32 \approx 1.5$ G triangles/s
@@ -991,7 +998,7 @@ For a next-gen open-world title targeting 8GB VRAM:
 
 The crossover point is at $\approx 4$ pixels² triangle area; below this, software wins.
 
-### 11.2 Scalability Analysis
+### 11.2 Scalability analysis
 
 Let $N_T$ be total triangles in scene, $N_V$ be visible triangles after culling.
 
@@ -1005,9 +1012,9 @@ Let $N_T$ be total triangles in scene, $N_V$ be visible triangles after culling.
 | Material Binning      | $O(N_{px} \log N_{mat})$ | Memory bandwidth     |
 | Material Evaluation   | $O(N_{px} \cdot C_{mat})$| Texture/compute      |
 
-The key insight: $N_V$ is $O(\sqrt{N_T})$ for uniformly distributed scenes (screen-space is 2D, scene is 3D), so the system scales sub-linearly with scene complexity.
+$N_V$ is $O(\sqrt{N_T})$ for uniformly distributed scenes (screen-space is 2D, scene is 3D), so the system scales sub-linearly with scene complexity.
 
-### 11.3 Observed Performance (Published Data)
+### 11.3 Observed performance (published data)
 
 Based on published results from Epic [Karis 2021], Ubisoft [Méndez-Feliu 2023], and independent analyses [Scambray 2022]:
 
@@ -1020,7 +1027,7 @@ Based on published results from Epic [Karis 2021], Ubisoft [Méndez-Feliu 2023],
 
 The speedup increases with scene complexity (more triangles → more benefit from culling and software raster) and is lowest for occlusion-heavy interior scenes (where traditional culling also works well).
 
-### 11.4 Memory Bandwidth Analysis
+### 11.4 Memory bandwidth analysis
 
 The dominant cost in practice is **memory bandwidth** for cluster data fetch during rasterization. For a 4K frame with $N_V = 5M$ visible triangles in $N_C = 40K$ clusters:
 
@@ -1028,15 +1035,15 @@ $$B_{cluster} = N_C \times S_{cluster\_avg} = 40K \times 3.5 \text{KB} = 140 \te
 
 Per-frame bandwidth at 60fps: $140 \text{MB} \times 60 = 8.4 \text{GB/s}$, within the 960 GB/s bandwidth of an RTX 4090, leaving ample headroom for texture fetches.
 
-The HZB culling efficiency determines $N_V / N_T$. For a well-occluded scene, this ratio is $\sim 10\%$–$20\%$, meaning $80\%$–$90\%$ of triangles never touch the rasterizer. This is the core performance win.
+The HZB culling efficiency determines $N_V / N_T$. For a well-occluded scene, this ratio is $\sim 10\%$–$20\%$, meaning $80\%$–$90\%$ of triangles never touch the rasterizer. That's where most of the speedup comes from.
 
 ---
 
-## 12. Advanced Topics (State of the Art, 2026)
+## 12. Advanced topics (state of the art, 2026)
 
-By 2026, the transition from static virtualized geometry to fully generalized dynamic pipelines has driven the next generation of engine architectures. The initial paradigms (such as early UE5 Nanite) assumed predominantly rigid bodies. We now address the modern solutions to formerly open problems: massive deformation, hardware raytracing, and neural geometry.
+By 2026, production engines had extended VGS beyond static geometry. Early systems like Nanite assumed rigid bodies; the sections below cover deformation, hardware raytracing integration, and neural geometry representations.
 
-### 12.1 Deformation, Skinning, and WPO (World Position Offset)
+### 12.1 Deformation, skinning, and WPO (world position offset)
 
 The fundamental assumption of early VGS was that the spatial constraints of the cluster hierarchy are static. When a mesh deforms (character skinning, wind sheer, cloth simulation), the precomputed bounding spheres and Hausdorff error bounds $\varepsilon_{acc}$ become invalid. If bounding spheres are too small, frustum/occlusion culling causes false negatives. If error bounds are incorrect, LOD selection no longer guarantees sub-pixel accuracy.
 
@@ -1055,12 +1062,13 @@ $$ \varepsilon'_{acc}(C) \leq L_f \cdot \varepsilon_{acc}(C) $$
 $$ d'_{min}(C) = d_{min}(C) \cdot L_f $$
 When $L_f > 1$ (e.g., a character's shoulder joint bending outwards), the engine automatically pulls in higher-resolution clusters to compensate for stretch.
 
-### 12.2 Hardware Raytracing of Software Clusters (BVH Virtualization)
+### 12.2 Hardware raytracing of software clusters (BVH virtualization)
 
 Hardware RT cores (DXR/Vulkan) require a memory-resident Bounding Volume Hierarchy (BLAS/TLAS). Since a VGS generates the LOD "cut" dynamically on the GPU per-frame based on the camera, synchronizing this cut with the RT hardware BLAS requires a full BLAS rebuild, stalling the pipeline.
 
 **Two-Level Proxy Architecture**
 In 2025/2026, architectures moved to a **Decoupled Raytracing Proxy**:
+
 1. **Raster Hierarchy (Dynamic Cut):** The screen-space optimal cut $\mathcal{F}_{raster}$, resolved via software rasterization.
 2. **Raytracing Hierarchy (Coarse Cut):** A separate cut $\mathcal{F}_{RT}$ optimized for RT traversal, updated over amortized frames.
 
@@ -1068,7 +1076,7 @@ When an RT primary or secondary ray intersects the coarse BLAS, **Intersection S
 $$ P_{miss-proxy} \propto \frac{\varepsilon_{acc}(\mathcal{F}_{RT})}{\text{Ray Footprint Area}} $$
 Engines rely on neural denoisers or ReSTIR GI [Bitterli 2021] to clean up the minimal discrepancies in contact shadows.
 
-### 12.3 Displacement Mapping and Procedural Spline Dicing
+### 12.3 Displacement mapping and procedural spline dicing
 
 Following Ubisoft Snowdrop's micropolygon approach [Méndez-Feliu 2023], the latest standard involves dynamic GPU dicing. Instead of inflating disk footprint with massive precomputed polygon soup, the engine stores base topology and mathematical surface definitions (e.g., displacement maps or B-splines).
 
@@ -1076,9 +1084,9 @@ During Software Rasterization, clusters are dynamically diced via Tessellation-o
 $$ S(u,v) = \sum_{i=0}^3 \sum_{j=0}^3 B_i(u) B_j(v) P_{i,j} + \mathcal{D}(u,v) \mathbf{n} $$
 Where $B$ are basis functions and $\mathcal{D}$ is the displacement sampled per micro-vertex. The generated vertices are fed directly into the atomic visibility buffer via exactly the same software raster loop, reaching Reyes-style 0.5-pixel quad coverage natively. 
 
-### 12.4 Neural Geometry Predictors
+### 12.4 Neural geometry predictors
 
-By 2026, ML LOD representations achieved mainstream viability. Instead of storing explicit explicit $\{xyz, u, v, n\}$ for bottom-level cluster leaves, the engine stores a latent vector $\mathbf{z}_C \in \mathbb{R}^{32}$.
+By 2026, ML LOD representations had become practical. Instead of storing explicit $\{xyz, u, v, n\}$ for bottom-level cluster leaves, the engine stores a latent vector $\mathbf{z}_C \in \mathbb{R}^{32}$.
 
 A lightweight multi-layer perceptron (MLP), executed on GPU tensor cores, reconstructs runtime vertices directly inside the compute shader:
 $$ \mathbf{P}_{verts} = \text{MLP}_{\theta}(\mathbf{z}_C, \mathbf{c}_{ws}) $$
@@ -1088,14 +1096,16 @@ By training the MLP to predict perception-based geometry simplification, this pr
 
 ## 13. References
 
-### Foundational Papers
+### Foundational papers
+
 1. **Cook, R. L., Carpenter, L., & Catmull, E.** (1987). *The Reyes image rendering architecture*. ACM SIGGRAPH.
 2. **Hoppe, H.** (1996). *Progressive meshes*. Proceedings of SIGGRAPH 1996.
 3. **Garland, M., & Heckbert, P. S.** (1997). *Surface simplification using quadric error metrics*. SIGGRAPH 1997.
 4. **Burns, C., & Hunt, W.** (2013). *The visibility buffer: A cache-friendly approach to deferred shading*. JCGT.
 5. **Wihlidal, G.** (2015). *Optimizing the graphics pipeline with compute*. GDC 2015.
 
-### VGS Core & Modern Paradigms (2021 - 2026)
+### VGS core and modern paradigms (2021–2026)
+
 6. **Karis, B., et al.** (2021). *Nanite - A Deep Dive*. SIGGRAPH 2021 Advances in Real-Time Rendering.
 7. **Wihlidal, G.** (2021). *Rendering Nanite in Unreal Engine 5*. SIGGRAPH 2021.
 8. **Méndez-Feliu, À., et al.** (2023). *Micropolygon Rendering in Snowdrop*. SIGGRAPH 2023.
@@ -1104,41 +1114,29 @@ By training the MLP to predict perception-based geometry simplification, this pr
 11. **Tariq, S.** (2025). *Hardware-Accelerated Neural Geometry for Open Worlds*. SIGGRAPH 2025.
 12. **Wright, J. & Binks, T.** (2026). *Dynamic Cluster Hierarchies for Deformable Micro-Polygons*. Eurographics 2026.
 13. **Boudier, T.** (2026). *Real-Time Dicing and B-Spline Visibility Buffers in AAA Production*. Game Developers Conference 2026.
+14. **Strugar, F.** (2021). *Introduction to turing mesh shaders*. NVIDIA Developer Blog. Available: developer.nvidia.com.
+15. **El Mansouri, A.** (2021). *Rendering AAA games on mobile: Fortnite on Android*. GDC 2021. Epic Games.
 
-16. **Strugar, F.** (2021). *Introduction to turing mesh shaders*. NVIDIA Developer Blog. Available: developer.nvidia.com.
-
-17. **El Mansouri, A.** (2021). *Rendering AAA games on mobile: Fortnite on Android*. GDC 2021. Epic Games.
-
-### Nanite and Modern VGS
+### Nanite and modern VGS
 
 18. **Karis, B., Wihlidal, G., & Brinck, A.** (2021). *Nanite: A deep dive*. SIGGRAPH 2021 Advances in Real-Time Rendering Course. Epic Games. Available: advances.realtimerendering.com.
-
 19. **Karis, B.** (2021). *Nanite, UE5 virtualized geometry*. Epic Games Developer Blog. Available: unrealengine.com.
-
 20. **Scambray, A.** (2022). *Reverse engineering Nanite: A technical breakdown of UE5's virtualized geometry*. 80.lv Technical Analysis.
-
 21. **Wihlidal, G.** (2023). *Virtual shadow maps in Unreal Engine 5*. SIGGRAPH 2023 Advances in Real-Time Rendering Course. Epic Games.
 
-### Ubisoft Micropolygon Pipeline
+### Ubisoft micropolygon pipeline
 
 22. **Wihlidal, G.** (2015). *Rendering Rainbow Six Siege*. GDC 2016 Presentation. Ubisoft Montreal.
-
 23. **Méndez-Feliu, À., & Palà, J.** (2023). *Micropolygon rendering in Avatar: Frontiers of Pandora*. SIGGRAPH 2023 Advances in Real-Time Rendering Course. Ubisoft Massive.
-
 24. **Jiménez, J.** (2023). *Snowdrop engine's geometry pipeline*. Digital Dragons 2023 Presentation. Ubisoft.
 
-### Related Systems and Mathematical Background
+### Related systems and mathematical background
 
 25. **Cohen-Or, D., Chrysanthou, Y., Silva, C. T., & Durand, F.** (2003). *A survey of visibility for walkthrough applications*. IEEE Transactions on Visualization and Computer Graphics, 9(3), 412–431.
-
 26. **Thibieroz, N.** (2011). *Deferred shading optimizations*. GDC 2011 / AMD Presentation.
-
 27. **Andersson, J.** (2015). *DirectX 12 rendering in Frostbite*. GDC 2015. DICE/EA.
-
 28. **Harada, T., McKee, J., & Yang, J. C.** (2012). *Beyond programmable shading: In-depth expert training*. SIGGRAPH 2012 Course. AMD.
-
 29. **Boksansky, J.** (2022). *Crash course in BRDF implementation*. Jiri Boksansky's Blog (pharr.org/jboksansky).
-
 30. **Pharr, M., Jakob, W., & Humphreys, G.** (2023). *Physically Based Rendering: From Theory to Implementation*, 4th Ed. MIT Press. Available: pbr-book.org.
 
 ---
