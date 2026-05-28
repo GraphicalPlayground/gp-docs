@@ -3,8 +3,8 @@ sidebar_position: 1
 title: Modules
 description: Modules are the building blocks of GP Engine's software architecture. You can organize your code into modules to create more efficient and maintainable projects.
 tags:
-    - c++
-    - architecture
+  - c++
+  - architecture
 ---
 import FileTree from '@site/src/components/FileTree';
 
@@ -58,7 +58,8 @@ your project includes by default.
 1. Create a directory for your module at the top level of your project's Source folder.
    This directory should have the same name as your module.
 
-:::tip You can place modules in any subdirectory within your Source folder, at any number of levels
+:::tip
+You can place modules in any subdirectory within your Source folder, at any number of levels
 deep. This makes it possible to use subdirectories to group modules.
 :::
 
@@ -97,7 +98,7 @@ The following is an example of the recommended folder structure for a module:
           type: 'folder',
           icon: 'folder-private',
           children: [
-            { name: '[ModuleName]Module.cpp', icon: 'cpp', type: 'file' }
+            { name: '[ModuleName]Module.cpp', type: 'file', icon: 'cpp' }
           ]
         },
         {
@@ -105,7 +106,7 @@ The following is an example of the recommended folder structure for a module:
           type: 'folder',
           icon: 'folder-private',
           children: [
-            { name: '[ModuleName]Internal.hpp', icon: 'hpp', type: 'file' }
+            { name: '[ModuleName]Internal.hpp', type: 'file', icon: 'hpp' }
           ]
         },
         {
@@ -113,8 +114,8 @@ The following is an example of the recommended folder structure for a module:
           type: 'folder',
           icon: 'folder-public',
           children: [
-            { name: '[ModuleName].hpp', icon: 'hpp', type: 'file' },
-            { name: '[ModuleName]Build.hpp', icon: 'hpp', type: 'file' }
+            { name: '[ModuleName].hpp', type: 'file', icon: 'hpp' },
+            { name: '[ModuleName]Build.hpp', type: 'file', icon: 'hpp' }
           ]
         },
         {
@@ -135,7 +136,7 @@ The following is an example of the recommended folder structure for a module:
           icon: 'folder-benchmark',
           children: []
         },
-        { name: 'CMakeLists.txt', icon: 'cmake', type: 'file', highlight: true }
+        { name: 'CMakeLists.txt', type: 'file', highlight: true, icon: 'cmake'}
       ]
     }
   ]}

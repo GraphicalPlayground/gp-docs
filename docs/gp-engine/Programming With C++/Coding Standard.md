@@ -3,8 +3,8 @@ sidebar_position: 1
 title: Coding Standard
 description: Write maintainable code by adhering to established standards and best practices.
 tags:
-    - coding standard
-    - c++
+  - coding standard
+  - c++
 ---
 # Coding Standard
 
