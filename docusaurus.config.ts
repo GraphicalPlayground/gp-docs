@@ -12,11 +12,6 @@ const config: Config = {
     'Comprehensive guides, detailed API references, and practical examples to help you master Graphical Playground and create stunning graphics with ease.',
   favicon: 'images/favicon.svg',
 
-  // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
-  future: {
-    v4: true // Improve compatibility with the upcoming Docusaurus v4
-  },
-
   // Enable Mermaid diagrams in Markdown files
   markdown: {
     mermaid: true
