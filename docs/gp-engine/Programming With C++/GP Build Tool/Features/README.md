@@ -8,7 +8,7 @@ tags:
   - build system
 ---
 
-GP Build Tool provides a set of features designed to address the specific challenges of AAA game engine development. This section explains each feature, why it was designed the way it was, and how to use it.
+GP Build Tool addresses several specific challenges that come up in AAA game engine development. This section covers each feature, why it works the way it does, and how to use it.
 
 ## Feature overview
 

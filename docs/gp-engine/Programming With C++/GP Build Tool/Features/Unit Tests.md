@@ -1,35 +1,81 @@
 ---
 sidebar_position: 9
 title: Unit Tests
-description: Per-target unit test infrastructure in GPBT (reserved for a future release).
+description: Per-target unit test infrastructure in GPBT — automatic test executable generation, CTest integration, and support for GoogleTest, Catch2, and custom frameworks.
 tags:
   - testing
   - unit tests
-  - planned
+  - ctest
 ---
 
-GPBT reserves per-target unit test infrastructure for a future release. The `gpEnableTests()` macro is available today and records intent without generating test targets.
+Call `gpEnableTests()` inside a target block. GPBT finds your test sources, compiles them into a test executable, links against your module and the chosen framework, and registers the result with CTest.
 
-## Current behaviour
+For the full reference (framework selection, test naming, writing tests, CI setup, and advanced overrides), see [Testing](../Testing.md).
+
+## Quick start
 
 ```cmake
-gpStartModule("math")
+gpStartModule("runtime/core")
   gpEnableTests()
 gpEndModule()
 ```
 
-Calling `gpEnableTests()` records that the `math` module has a test suite. This has no visible effect on the generated build system at this time.
+Put test sources in a `tests/` subdirectory next to the target's `CMakeLists.txt`:
 
-## Planned behaviour
+```text
+source/
+  runtime/
+    core/
+      CMakeLists.txt
+      public/
+        MathUtils.hpp
+      private/
+        MathUtils.cpp
+      tests/
+        MathUtils.test.cpp
+```
 
-When fully implemented, `gpEnableTests()` will configure a companion test target that compiles sources from a `tests/` subdirectory alongside the module under test. The test target will be linked against the module and against a registered test framework.
+GPBT picks up every `.cpp`, `.cxx`, `.cc`, and `.c` file under `tests/`, compiles them into `gp-runtime-core-tests`, and registers it with CTest.
 
-The `GPBT_TESTS_FILTER_SECTION` variable will apply to per-target tests in the same way it applies to the build tool's own internal tests: only sections whose name contains the filter string will execute.
+## Framework selection
+
+`GPBT_TEST_FRAMEWORK` selects the framework (`GOOGLETEST`, `CATCH2`, `CUSTOM`, or `NONE`; the default is `NONE`). Projects that call `gpApplyGraphicalPlaygroundDefaultPolicy()` get GoogleTest automatically.
+
+To override the framework for a single target without touching the project-wide setting, pass `FRAMEWORK`:
+
+```cmake
+gpStartModule("runtime/core")
+  gpEnableTests(FRAMEWORK GOOGLETEST)
+gpEndModule()
+
+gpStartModule("runtime/physics")
+  gpEnableTests(FRAMEWORK CATCH2)
+gpEndModule()
+```
+
+If different targets request different frameworks, GPBT registers and builds all of them.
+
+## What GPBT generates
+
+For `gpStartModule("runtime/core")` with `gpEnableTests()`:
+
+| Property | Value |
+| --- | --- |
+| CMake export name | `gp_runtime_core_tests` |
+| Output binary | `gp-runtime-core-tests` |
+| IDE folder | `tests/modules` |
+| CTest test name | `gp_runtime_core_tests` |
+
+The test binary links against the module's public interface, inherits the active build-type compile definitions, and runs from its own output directory under CTest.
+
+## Running tests
+
+```bash
+cmake -S . -B build -DGPBT_TEST_FRAMEWORK=GOOGLETEST
+cmake --build build
+ctest --test-dir build --output-on-failure
+```
 
 ## Relationship to the build tool's own tests
 
-The build tool ships with its own internal test suite activated by `GPBT_TESTS_ENABLED`. This is a separate facility from per-target unit tests and is primarily useful when contributing to the build tool itself. See [Testing](../Testing.md) for details.
-
-:::note
-Code that calls `gpEnableTests()` today will automatically gain test target generation when the feature ships, without any modification.
-:::
+GPBT ships its own CMake-level test suite that validates the property scoping system, topological sort, and string utilities. That suite is controlled by `GPBT_TESTS_ENABLED` and is entirely separate from per-target unit tests. See [Testing](../Testing.md#build-tool-internal-tests).

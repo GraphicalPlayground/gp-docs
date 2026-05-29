@@ -8,7 +8,7 @@ tags:
   - options
 ---
 
-Every behaviour of the build tool that you may want to adjust is exposed as a CMake cache variable. These variables are set either on the command line with `-D`, in a `CMakePresets.json` file, or through your IDE's CMake settings panel.
+Every adjustable build tool behaviour is exposed as a CMake cache variable. Set them on the command line with `-D`, in a `CMakePresets.json` file, or through your IDE's CMake settings panel.
 
 ## Setting a variable
 
@@ -16,7 +16,7 @@ Every behaviour of the build tool that you may want to adjust is exposed as a CM
 cmake -S . -B build -DGPBT_LOG_VERBOSE_ENABLED=ON -DGPBT_THIRDPARTY_MODE=SOURCE
 ```
 
-All variables prefixed with `GPBT_` belong to the build tool. Do not define variables with this prefix in your own project code, as future versions of GPBT may introduce a conflict.
+All variables prefixed with `GPBT_` belong to the build tool. Do not use this prefix in your own project code — a future GPBT version may introduce a conflict.
 
 ## General options
 

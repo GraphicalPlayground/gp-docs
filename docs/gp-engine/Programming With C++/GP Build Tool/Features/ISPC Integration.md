@@ -15,13 +15,13 @@ ISPC integration is planned for a future release. The design is in progress. Thi
 
 ## What is ISPC?
 
-The Intel SPMD Program Compiler (ISPC) is a compiler for a C-like language designed for writing SIMD-parallel code that runs on the CPU. It is widely used in AAA game engines for tasks such as skinning, physics broadphase, animation blending, and ray tracing BVH traversal.
+The Intel SPMD Program Compiler (ISPC) is a compiler for a C-like language designed for SIMD-parallel CPU code. It is commonly used in AAA game engines for skinning, physics broadphase, animation blending, and ray tracing BVH traversal.
 
-ISPC source files (`.ispc`) are compiled to object files containing vectorised machine code for one or more target SIMD ISA widths (SSE4, AVX2, AVX-512, NEON, and so on).
+ISPC source files (`.ispc`) compile to object files containing vectorised machine code targeting one or more SIMD ISA widths (SSE4, AVX2, AVX-512, NEON, and so on).
 
 ## Planned integration
 
-When implemented, GPBT will allow `.ispc` source files to be registered alongside regular `.cpp` files in any module:
+When implemented, GPBT will allow `.ispc` source files to be registered alongside regular `.cpp` files in any module definition:
 
 ```cmake
 gpStartModule("animation/skinning")
@@ -30,7 +30,7 @@ gpStartModule("animation/skinning")
 gpEndModule()
 ```
 
-GPBT will automatically invoke the ISPC compiler with the correct target architecture flags derived from the active platform and configuration, and link the resulting object files into the module.
+GPBT will invoke the ISPC compiler with the correct target architecture flags for the active platform and configuration, and link the resulting object files into the module.
 
 ## Planned target support
 

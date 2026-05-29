@@ -19,7 +19,7 @@ A GPBT target is a named compilation unit: a library, an executable, or a plugin
 | Executable | Executable binary | `gpStartExecutable()` |
 | Plugin | Runtime-loaded module | `gpStartPlugin()` |
 
-All three types share the same inner API for declaring sources, dependencies, compile flags, and other properties.
+All three types use the same inner API for declaring sources, dependencies, compile flags, and other properties.
 
 ## Declaring a module
 
@@ -31,7 +31,7 @@ gpStartModule("renderer/core")
 gpEndModule()
 ```
 
-`gpStartModule()` is equivalent to `gpStartTarget("module" ...)`. The `gpEndModule()` macro closes the definition.
+`gpStartModule()` is equivalent to `gpStartTarget("module" ...)`. `gpEndModule()` closes the definition.
 
 ## Declaring an executable
 
@@ -45,7 +45,7 @@ gpEndExecutable()
 
 ## Declaring a plugin
 
-Plugins are modules that are loaded at runtime via `dlopen()` or `LoadLibrary()`. They are declared with `gpStartPlugin()`:
+Plugins are loaded at runtime via `dlopen()` or `LoadLibrary()`. Declare them with `gpStartPlugin()`:
 
 ```cmake
 include(gp-build-tool)
@@ -56,7 +56,7 @@ gpEndPlugin()
 ```
 
 :::note
-Plugin support is reserved for a future release. Calling `gpStartPlugin()` currently registers the target but does not yet apply any special runtime-loading behaviour beyond what a regular shared library provides.
+Plugin support is reserved for a future release. `gpStartPlugin()` currently registers the target but does not yet apply any special runtime-loading behaviour beyond what a regular shared library provides.
 :::
 
 ## Target naming
@@ -80,11 +80,11 @@ The output binary name follows a kebab-case convention: `gp-rhi-d3d12`.
 
 ## Target location
 
-Each target's `CMakeLists.txt` must be in the same directory as the target's source files. GPBT uses the location of the `CMakeLists.txt` to determine which source files belong to the target using the `public/`, `internal/`, and `private/` subdirectory convention described in [Sources](./Sources.md).
+Each target's `CMakeLists.txt` must sit in the same directory as the target's source files. GPBT uses that location to find source files via the `public/`, `internal/`, and `private/` subdirectory convention described in [Sources](./Sources.md).
 
 ## The generic form
 
-The `gpStartModule`, `gpStartExecutable`, and `gpStartPlugin` macros are all sugar over `gpStartTarget`:
+`gpStartModule`, `gpStartExecutable`, and `gpStartPlugin` are all sugar over `gpStartTarget`:
 
 ```cmake
 gpStartTarget("module" "my/module")

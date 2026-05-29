@@ -9,15 +9,15 @@ tags:
   - fetchcontent
 ---
 
-Managing thirdparty dependencies in a game engine is complex: different platforms require different libraries, prebuilt binaries must match the active compiler's ABI, and rebuilding every dependency from source on every developer machine is slow. GPBT provides a structured package system that handles all of this through a single, consistent API.
+Managing thirdparty dependencies in a game engine is genuinely awkward: different platforms need different libraries, prebuilt binaries have to match the active compiler's ABI, and building every dependency from source on every developer machine is slow. GPBT handles this through a structured package system with a single consistent API.
 
 ## Core concepts
 
-Each thirdparty dependency is described in a **package descriptor**, a `CMakeLists.txt` file placed under your project's `thirdparty/` directory. The descriptor declares where to find the package and under what conditions each source is valid. GPBT resolves the descriptor during the configuration phase and creates a `gp::thirdparty::<name>` CMake alias that any module can reference through `gpAddDependency()`.
+Each thirdparty dependency is described in a package descriptor — a `CMakeLists.txt` placed under your project's `thirdparty/` directory. The descriptor declares where to find the package and under what conditions each source is valid. GPBT resolves it during the configuration phase and creates a `gp::thirdparty::<name>` CMake alias that any module can reference through `gpAddDependency()`.
 
 ## Resolution priority
 
-When a package has multiple resolution strategies declared, GPBT evaluates them in the following order:
+When a package has multiple resolution strategies declared, GPBT tries them in this order:
 
 ```text
 SYSTEM  ->  BINARY  ->  SOURCE
@@ -27,7 +27,7 @@ SYSTEM  ->  BINARY  ->  SOURCE
 2. **BINARY**: Download a prebuilt archive from a URL and create an INTERFACE target from its contents.
 3. **SOURCE / GIT**: Download a source archive or clone a Git repository and build the package using `FetchContent_MakeAvailable()`. `gpThirdpartySource()` and `gpThirdpartyGit()` both occupy this slot; only one can be declared per package.
 
-The active mode is controlled by `GPBT_THIRDPARTY_MODE` (default: `AUTO`). In `AUTO` mode, the first strategy that succeeds is used.
+`GPBT_THIRDPARTY_MODE` controls which strategies are attempted (default: `AUTO`). In `AUTO` mode, GPBT uses the first strategy that succeeds.
 
 ## Defining a package
 
@@ -39,11 +39,11 @@ gpStartThirdparty("nlohmann-json" VERSION "3.11.3")
 gpEndThirdparty()
 ```
 
-The `VERSION` argument is used for logging and cache-key disambiguation. It does not affect resolution behaviour.
+The `VERSION` argument is used for logging and cache-key disambiguation only. It does not affect resolution behaviour.
 
 ### System packages
 
-Use `gpThirdpartySystem()` to declare that a package can be found on the host system. Three modes are supported.
+Use `gpThirdpartySystem()` to declare that a package can be found on the host system. There are three modes.
 
 #### find_package
 
@@ -61,7 +61,7 @@ gpStartThirdparty("vulkan" VERSION "any")
 gpEndThirdparty()
 ```
 
-GPBT calls `find_package(Vulkan QUIET)`. If the package is found, `Vulkan::Vulkan` is wrapped inside `gp::thirdparty::vulkan` and no download occurs. If it is not found, GPBT falls through to the SOURCE strategy.
+GPBT calls `find_package(Vulkan QUIET)`. If the package is found, `Vulkan::Vulkan` is wrapped inside `gp::thirdparty::vulkan` and no download happens. If not found, GPBT falls through to the SOURCE strategy.
 
 #### Apple frameworks
 
@@ -74,7 +74,7 @@ gpStartThirdparty("metal" VERSION "any")
 gpEndThirdparty()
 ```
 
-GPBT creates an INTERFACE target that links `-framework Metal -framework MetalKit -framework Foundation`. Apple frameworks are always present on the corresponding platform, so this resolution never fails.
+GPBT creates an INTERFACE target that links `-framework Metal -framework MetalKit -framework Foundation`. Apple frameworks are always present on the matching platform, so this resolution never fails.
 
 #### Windows SDK
 
@@ -88,11 +88,11 @@ gpStartThirdparty("d3d12" VERSION "sdk")
 gpEndThirdparty()
 ```
 
-GPBT creates an INTERFACE target linking `d3d12.lib`, `dxgi.lib`, and so on. The MSVC linker always knows where to find these because the Windows SDK library directory is part of the default linker search path.
+GPBT creates an INTERFACE target that links `d3d12.lib`, `dxgi.lib`, and the rest. The MSVC linker always knows where to find them because the Windows SDK library directory is part of the default linker search path.
 
 ### Prebuilt binary packages
 
-Use `gpThirdpartyBinary()` to declare a prebuilt archive for a specific platform and compiler combination. You can declare multiple binary slots; GPBT uses the first one that matches the current configuration.
+Use `gpThirdpartyBinary()` to declare a prebuilt archive for a specific platform and compiler combination. Multiple binary slots can be declared; GPBT uses the first one that matches the current configuration.
 
 ```cmake
 gpStartThirdparty("sdl2" VERSION "2.30.3")
@@ -133,7 +133,7 @@ Archives downloaded by `gpThirdpartyBinary()` must follow this directory structu
   bin/              <- runtime DLLs or shared objects (for install rules only)
 ```
 
-GPBT automatically detects the presence of `lib/debug/` and `lib/release/` subdirectories and uses CMake generator expressions to link the correct set per build configuration:
+GPBT detects `lib/debug/` and `lib/release/` subdirectories automatically and uses CMake generator expressions to link the correct set per build configuration:
 
 $$
 \text{linked libs} =
@@ -143,7 +143,7 @@ $$
 \end{cases}
 $$
 
-If neither subdirectory exists, all libraries found directly in `lib/` are linked unconditionally.
+If neither subdirectory is present, all libraries found directly in `lib/` are linked unconditionally.
 
 ### Source packages
 
@@ -167,7 +167,7 @@ gpStartThirdparty("nlohmann-json" VERSION "3.11.3")
 gpEndThirdparty()
 ```
 
-The `TARGET` argument tells GPBT which CMake target the subproject exports. If omitted, GPBT defaults to `<cleanName>::<cleanName>`. Use `gpThirdpartySetCMakeArgs()` to pass CMake cache variables to the subproject's configure step.
+The `TARGET` argument tells GPBT which CMake target the subproject exports. If omitted, GPBT defaults to `<cleanName>::<cleanName>`. Use `gpThirdpartySetCMakeArgs()` to pass CMake cache variables to the subproject configure step.
 
 :::tip
 Always specify a `HASH` for production projects. The hash prevents supply-chain attacks by verifying the downloaded archive before extracting it. Run `cmake -E sha256sum <file>` to compute it.
@@ -179,11 +179,11 @@ Omitting `HASH` is allowed and will produce a warning, but the archive integrity
 
 ### Git packages
 
-Use `gpThirdpartyGit()` to fetch a package directly from a Git repository. GPBT clones the repository with `FetchContent_Declare(GIT_REPOSITORY ...)` and then calls `FetchContent_MakeAvailable()` to configure it as a CMake subdirectory.
+Use `gpThirdpartyGit()` to fetch a package from a Git repository. GPBT clones with `FetchContent_Declare(GIT_REPOSITORY ...)` and then calls `FetchContent_MakeAvailable()` to configure it as a CMake subdirectory.
 
 #### Pinning to a commit hash
 
-A full commit hash gives the strongest reproducibility guarantee: the same 40-character SHA always produces the same source tree, regardless of force-pushes or tag mutations upstream.
+A full commit hash gives the strongest reproducibility guarantee. The same 40-character SHA always produces the same source tree, regardless of force-pushes or tag mutations upstream.
 
 ```cmake
 gpStartThirdparty("fmt" VERSION "10.2.1")
@@ -206,7 +206,7 @@ gpEndThirdparty()
 
 #### Using a tag with shallow clone
 
-Specifying a tag name with `SHALLOW` downloads only the single commit at the tag tip, skipping all repository history. This is significantly faster for large repositories.
+Specifying a tag name with `SHALLOW` downloads only the single commit at the tag tip, skipping all history. This is noticeably faster for large repositories.
 
 ```cmake
 gpStartThirdparty("fmt" VERSION "10.2.1")
@@ -225,7 +225,7 @@ Do not combine `SHALLOW` with a raw commit hash. Git shallow clones require a na
 
 #### Tracking a branch
 
-Branches are mutable and therefore not recommended for production builds. Prefer a commit hash or a release tag to guarantee reproducibility. If you do track a branch (for example during active upstream development), omit `SHALLOW` so CMake can resolve the branch to a specific commit:
+Branches are mutable, so they are not recommended for production builds. Prefer a commit hash or a release tag. If you do track a branch (for example during active upstream development), omit `SHALLOW` so CMake can resolve the branch to a specific commit:
 
 ```cmake
 gpStartThirdparty("my-lib" VERSION "dev")
@@ -239,7 +239,7 @@ gpEndThirdparty()
 
 ### Applying a patch
 
-Both `gpThirdpartyGit()` and `gpThirdpartySource()` accept an optional `PATCH_COMMAND` argument. The command is run once in the source directory immediately after the initial checkout or extraction. Subsequent reconfigures reuse the cached source tree and do not reapply the patch.
+Both `gpThirdpartyGit()` and `gpThirdpartySource()` accept an optional `PATCH_COMMAND` argument. The command runs once in the source directory, immediately after the initial checkout or extraction. Subsequent reconfigures reuse the cached source tree and do not reapply the patch.
 
 ```cmake
 gpStartThirdparty("zlib" VERSION "1.3.1")
@@ -265,7 +265,7 @@ gpStartThirdparty("somelib" VERSION "1.0.0")
 gpEndThirdparty()
 ```
 
-`PATCH_COMMAND` accepts any sequence of command tokens, not just `git apply`. Any executable available in the build environment can be used:
+`PATCH_COMMAND` accepts any sequence of command tokens, not just `git apply`. Any executable available in the build environment works:
 
 ```cmake
 PATCH_COMMAND python ${CMAKE_CURRENT_LIST_DIR}/fix_cmakelists.py
@@ -277,7 +277,7 @@ To force reapplication of a patch after modifying it, delete the FetchContent st
 
 ## Platform and compiler gating
 
-Use `gpThirdpartyRequiresPlatforms()` and `gpThirdpartyRequiresCompilers()` to restrict a package to specific environments. Packages that do not match the current platform or compiler are silently skipped.
+Use `gpThirdpartyRequiresPlatforms()` and `gpThirdpartyRequiresCompilers()` to restrict a package to specific environments. Packages that do not match are silently skipped.
 
 ```cmake
 gpStartThirdparty("d3d12" VERSION "sdk")
@@ -287,7 +287,7 @@ gpStartThirdparty("d3d12" VERSION "sdk")
 gpEndThirdparty()
 ```
 
-This is what makes it safe to reference `gp::thirdparty::d3d12` unconditionally in a module's dependency list on Windows and know that it will simply not exist on other platforms.
+This means it is safe to reference `gp::thirdparty::d3d12` unconditionally in a module's Windows dependency list, knowing the target simply will not exist on other platforms.
 
 :::note
 If a target named `gp::thirdparty::d3d12` does not exist on a given platform because the package was skipped, any `gpAddDependency()` reference to it in a module that does get configured on that platform will cause a CMake error. Use `if(WIN32)` guards in your module's `CMakeLists.txt` when a dependency is strictly platform-specific.
@@ -295,7 +295,7 @@ If a target named `gp::thirdparty::d3d12` does not exist on a given platform bec
 
 ## Consuming a thirdparty package
 
-Once resolved, a package is available as `gp::thirdparty::<name>`, where `<name>` is the snake_case form of the package name (for example, `nlohmann-json` becomes `nlohmann_json`):
+Once resolved, a package is available as `gp::thirdparty::<name>`, where `<name>` is the snake_case form of the package name (`nlohmann-json` becomes `nlohmann_json`, for example):
 
 ```cmake
 gpStartModule("editor/config")
@@ -305,9 +305,9 @@ gpEndModule()
 
 ## Fast reconfiguration
 
-By default, `GPBT_THIRDPARTY_UPDATES_DISCONNECTED` is `ON`. This sets `FETCHCONTENT_UPDATES_DISCONNECTED`, which tells CMake to skip network checks for packages that have already been downloaded. Subsequent configure runs complete in seconds rather than performing HTTP requests for every registered package.
+`GPBT_THIRDPARTY_UPDATES_DISCONNECTED` defaults to `ON`. This sets `FETCHCONTENT_UPDATES_DISCONNECTED`, which tells CMake to skip network checks for packages already downloaded. Subsequent configure runs finish in seconds instead of making HTTP requests for every registered package.
 
-Disable this only when you want to explicitly check for updates:
+Disable it only when you want to explicitly check for updates:
 
 ```bash
 cmake -S . -B build -DGPBT_THIRDPARTY_UPDATES_DISCONNECTED=OFF
@@ -315,7 +315,7 @@ cmake -S . -B build -DGPBT_THIRDPARTY_UPDATES_DISCONNECTED=OFF
 
 ## Overriding the resolution mode
 
-The global mode can be overridden on the command line or per package:
+The global mode can be overridden on the command line or on a per-package basis:
 
 ```bash
 # Force all packages to build from source

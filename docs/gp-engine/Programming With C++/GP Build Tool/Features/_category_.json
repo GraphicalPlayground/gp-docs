@@ -1,12 +1,4 @@
 {
   "label": "Features",
-  "position": 1,
-  "collapsible": true,
-  "collapsed": false,
-  "link": {
-    "type": "generated-index",
-    "title": "Features",
-    "description": "An overview of all capabilities built into the GP Build Tool, from the two-phase build lifecycle to thirdparty package management.",
-    "slug": "/features"
-  }
+  "position": 1
 }

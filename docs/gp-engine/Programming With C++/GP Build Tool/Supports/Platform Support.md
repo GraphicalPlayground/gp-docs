@@ -11,7 +11,7 @@ tags:
   - android
 ---
 
-GPBT detects the target platform at configure time and sets the `GPBT_CURRENT_PLATFORM` variable to a consistent token string. This token is used internally for thirdparty package matching and can be used in your own `CMakeLists.txt` files for platform-conditional logic.
+GPBT detects the target platform at configure time and sets `GPBT_CURRENT_PLATFORM` to a consistent token string. That token is used internally for thirdparty package matching and is available for platform-conditional logic in your own `CMakeLists.txt` files.
 
 ## Supported platforms
 
@@ -24,7 +24,7 @@ GPBT detects the target platform at configure time and sets the `GPBT_CURRENT_PL
 | FreeBSD | `FreeBSD` | `CMAKE_SYSTEM_NAME == "FreeBSD"` |
 | Linux | `Linux` | `UNIX` is set (and not Apple, Android, or FreeBSD) |
 
-Detection follows a priority order. Android is checked before the more general UNIX check; iOS is checked before APPLE; this ensures cross-compiled Android and iOS targets are correctly identified even when the host is macOS.
+Detection follows a priority order. Android is checked before the more general UNIX check; iOS is checked before APPLE. This matters for cross-compiled targets — an Android build on a macOS host is identified as Android, not macOS.
 
 ## Platform-specific CMakeLists.txt behaviour
 
@@ -48,7 +48,7 @@ gpEndModule()
 
 Each platform has a corresponding policy file under `source/gp-build-tool/platforms/`. These files are included automatically at configure time and can add platform-specific compiler definitions, linker flags, or feature detection logic.
 
-Currently, the platform policy files are stubs. Planned additions include automatic `WINVER` and `_WIN32_WINNT` definitions on Windows, and framework search path configuration on macOS and iOS.
+The platform policy files are currently stubs. Planned additions include automatic `WINVER` and `_WIN32_WINNT` definitions on Windows, and framework search path configuration on macOS and iOS.
 
 ## Thirdparty platform gating
 
@@ -59,4 +59,4 @@ gpThirdpartyRequiresPlatforms(Windows)   # package only resolved on Windows
 gpThirdpartyRequiresPlatforms(macOS iOS) # package only resolved on Apple platforms
 ```
 
-Packages that do not match the current platform are silently skipped during the configuration phase.
+Packages that do not match the current platform are skipped silently during configuration.

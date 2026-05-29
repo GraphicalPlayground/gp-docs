@@ -8,7 +8,7 @@ tags:
   - cmake
 ---
 
-Preprocessor definitions (`-DFOO`, `-DFOO=1`, and so on) are added with `gpAddCompileDefinition()`. The visibility system follows the same semantics as `gpAddDependency()`: `PUBLIC` definitions propagate to dependents, `PRIVATE` ones do not.
+Preprocessor definitions (`-DFOO`, `-DFOO=1`, and so on) are added with `gpAddCompileDefinition()`. Visibility works the same way as `gpAddDependency()`: `PUBLIC` definitions propagate to dependents, `PRIVATE` ones stay local.
 
 ## Syntax
 
@@ -28,11 +28,11 @@ gpStartModule("platform/win32")
 gpEndModule()
 ```
 
-`GP_PLATFORM_WINDOWS` will be visible to any module that depends on `platform/win32`. `WIN32_LEAN_AND_MEAN` and `NOMINMAX` remain private implementation details.
+`GP_PLATFORM_WINDOWS` is visible to any module that depends on `platform/win32`. `WIN32_LEAN_AND_MEAN` and `NOMINMAX` stay private to this module.
 
 ## Configuration-specific definitions
 
-Use CMake generator expressions to apply definitions conditionally per build configuration:
+Use CMake generator expressions to apply definitions only for certain build configurations:
 
 ```cmake
 gpStartModule("core")
@@ -44,7 +44,7 @@ gpEndModule()
 
 ## Platform-conditional definitions
 
-Use standard CMake conditions within a target definition. Because definitions are recorded during the registration phase (a normal CMake include), conditions such as `if(WIN32)` are evaluated at configure time and are always correct.
+Standard CMake conditions work inside a target definition. Because definitions are recorded during the registration phase (a normal CMake include), conditions like `if(WIN32)` are evaluated at configure time and are always correct.
 
 ```cmake
 gpStartModule("renderer/core")

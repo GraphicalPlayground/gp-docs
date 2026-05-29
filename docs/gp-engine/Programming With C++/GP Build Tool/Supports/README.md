@@ -9,7 +9,7 @@ tags:
   - linkers
 ---
 
-GPBT supports a range of platforms, compilers, and linkers out of the box. The correct flags and settings are applied automatically based on what CMake detects at configure time.
+GPBT supports a fixed set of platforms, compilers, and linkers. The correct flags are picked up automatically from what CMake detects at configure time — nothing to configure manually.
 
 ## Quick reference
 
@@ -21,13 +21,13 @@ GPBT supports a range of platforms, compilers, and linkers out of the box. The c
 
 ## How detection works
 
-GPBT performs detection during the first CMake configure and applies the appropriate policy file for the active combination. Each policy file overrides the base set of flags defined in the `default` file, so only the differences need to be written per toolchain.
+GPBT runs detection on the first CMake configure and loads the policy file that matches the active compiler and platform. Each policy file only needs to cover the differences from the `default` baseline, so adding a new toolchain means writing a fairly small file.
 
-The active tokens are accessible from project code as CMake variables:
+The active tokens are available as CMake variables:
 
 | Variable | Example values |
 | --- | --- |
 | `GPBT_CURRENT_PLATFORM` | `Windows`, `Linux`, `macOS`, `iOS`, `Android`, `FreeBSD` |
 | `GPBT_CURRENT_COMPILER` | `MSVC`, `Clang`, `GCC` |
 
-These variables are set during the configure step and can be read by any `CMakeLists.txt` file that includes `gp-build-tool`.
+Both variables are set during the configure step and are readable from any `CMakeLists.txt` that includes `gp-build-tool`.

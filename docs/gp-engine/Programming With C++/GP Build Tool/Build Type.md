@@ -9,7 +9,7 @@ tags:
   - shipping
 ---
 
-GPBT uses four named build configurations instead of CMake's default `Debug` / `Release` / `RelWithDebInfo` / `MinSizeRel` set. These configurations are designed around the reality of daily AAA engine development, where the needs of an engineer iterating on gameplay code differ significantly from those of a profiling session or a submission build.
+GPBT uses four named build configurations instead of CMake's default `Debug` / `Release` / `RelWithDebInfo` / `MinSizeRel` set. They are designed around daily AAA engine development, where an engineer iterating on gameplay code has different needs than a profiling session or a submission build.
 
 ## The four configurations
 
@@ -22,11 +22,11 @@ GPBT uses four named build configurations instead of CMake's default `Debug` / `
 
 ### Debug
 
-Full debug information, no optimisations, all assertions active. Use this configuration when you need to attach a debugger and step through code reliably. Compilation is slower and the resulting binary runs significantly slower than other configurations, so it is not recommended for general iteration.
+Full debug information, no optimisations, all assertions active. Use it when you need to attach a debugger and step through code reliably. Compilation is slower and the binary runs much slower than in other configurations, so it is not suited for general iteration.
 
 ### Development
 
-Optimisations are enabled but full debug symbols are retained. Assertions remain active. This is the recommended configuration for day-to-day work: the binary runs at near-native speed, and the debug symbols allow meaningful crash reports and profiler callstacks. Most engineers run in `Development` by default.
+Optimisations are on, full debug symbols are kept, assertions remain active. The binary runs at near-native speed and the debug symbols give you useful crash reports and profiler callstacks. Most engineers stay on `Development` day-to-day.
 
 :::tip
 Set your IDE's default build to `Development`, not `Debug`. You get debuggable symbols at much better runtime performance.
@@ -34,11 +34,11 @@ Set your IDE's default build to `Development`, not `Debug`. You get debuggable s
 
 ### Profile
 
-Fully optimised, debug symbols stripped, assertions disabled. This configuration is intended exclusively for performance analysis. The binary behaves identically to `Shipping` in terms of code generation, so profiling results reflect real-world performance. Debug symbols are removed to avoid misleading profiler output introduced by inlining.
+Fully optimised, debug symbols stripped, assertions disabled. Use it for performance analysis only. The binary uses the same code generation as `Shipping`, so profiler results reflect real-world performance. Debug symbols are stripped because inlining can produce misleading callstacks in profiler output.
 
 ### Shipping
 
-The final product configuration. Fully optimised, no debug information, no assertions, logging stripped. Only use this when preparing a build for distribution. It is not suitable for development or profiling work.
+The final product configuration: fully optimised, no debug information, no assertions, logging stripped. Only use it when preparing a build for distribution — it is not suitable for development or profiling.
 
 :::warning
 Never develop or iterate against the `Shipping` configuration. Missing assertions and stripped logging will hide bugs that would otherwise surface immediately in `Development`.
@@ -52,7 +52,7 @@ Pass the configuration on the CMake command line:
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Development
 ```
 
-For multi-configuration generators (Visual Studio, Xcode), the build type is selected at build time rather than at configure time. All four configurations are always generated.
+For multi-configuration generators (Visual Studio, Xcode), the build type is selected at build time, not configure time. All four configurations are always generated.
 
 ### Using CMake Presets
 
@@ -89,4 +89,4 @@ GPBT validates that only the four recognised configurations are used. The list i
 set(GPBT_ALLOWED_CONFIGS "Debug;Development;Profile;Shipping")
 ```
 
-Using any configuration name not in this list, such as `Release`, will produce a fatal error at configure time. This prevents accidentally bypassing GPBT's flag policy.
+Any configuration name not in this list, such as `Release`, produces a fatal error at configure time. This stops you from accidentally bypassing GPBT's flag policy.

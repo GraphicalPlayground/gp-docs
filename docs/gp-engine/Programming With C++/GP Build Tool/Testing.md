@@ -10,14 +10,7 @@ tags:
 
 ## Overview
 
-GPBT provides first-class test support via `gpEnableTests()`. When called inside a target definition, GPBT automatically:
-
-1. Discovers C++ source files under `tests/` in the target's directory.
-2. Compiles them into a dedicated test executable (`gp-<name>-tests`).
-3. Links the executable against the module under test and the selected test framework.
-4. Registers it with CTest so `ctest` can run it out of the box.
-
-Test executables are built alongside the rest of the project, no separate CMake invocation is needed.
+Call `gpEnableTests()` inside a target definition and GPBT handles the rest: it discovers C++ source files under `tests/` in the target's directory, compiles them into a dedicated test executable (`gp-<name>-tests`), links it against the module under test and the selected framework, and registers it with CTest. Test executables build alongside the rest of the project with no separate CMake invocation.
 
 ---
 
@@ -34,11 +27,11 @@ The active framework is controlled by the `GPBT_TEST_FRAMEWORK` cache variable.
 | `CATCH2` | Catch2 3.15.0 is fetched and built from source. Test executables link `Catch2::Catch2WithMain`. |
 | `CUSTOM` | Link against a target you provide. Set `GPBT_TEST_FRAMEWORK_CUSTOM_TARGET` to its name. |
 
-Both built-in frameworks use the `*WithMain` / `*_main` variant, so test files do not need to define `main()`.
+Both built-in frameworks use the `*WithMain` / `*_main` variant, so your test files do not need to define `main()`.
 
 ### Using gpApplyGraphicalPlaygroundDefaultPolicy
 
-Calling `gpApplyGraphicalPlaygroundDefaultPolicy()` automatically promotes the framework to `GOOGLETEST` when the project has not provided an explicit override:
+Calling `gpApplyGraphicalPlaygroundDefaultPolicy()` promotes the framework to `GOOGLETEST` when the project has not set an explicit override:
 
 ```cmake
 gpApplyGraphicalPlaygroundDefaultPolicy()  # sets GPBT_TEST_FRAMEWORK=GOOGLETEST if not already set
@@ -48,7 +41,7 @@ gpStartBuildTool()
 gpEndBuildTool()
 ```
 
-An explicit `-DGPBT_TEST_FRAMEWORK=CATCH2` on the CMake command line always wins over the policy default.
+A `-DGPBT_TEST_FRAMEWORK=CATCH2` on the command line always wins over the policy default.
 
 ### Setting it manually
 
@@ -72,7 +65,7 @@ cmake -S . -B build -DGPBT_TEST_FRAMEWORK=CATCH2
 
 ### Using the global default
 
-Call `gpEnableTests()` inside any `gpStartModule` / `gpStartExecutable` / `gpStartPlugin` block to opt in using whichever framework `GPBT_TEST_FRAMEWORK` is set to:
+Call `gpEnableTests()` inside any `gpStartModule` / `gpStartExecutable` / `gpStartPlugin` block to opt in with whichever framework `GPBT_TEST_FRAMEWORK` is set to:
 
 ```cmake
 gpStartModule("runtime/core")
@@ -82,7 +75,7 @@ gpEndModule()
 
 ### Per-target framework override
 
-Pass `FRAMEWORK <name>` to override the global setting for a specific target. This is useful when different modules in the same project use different testing styles:
+Pass `FRAMEWORK <name>` to override the global setting for a specific target, which comes in handy when different modules in the same project use different testing styles:
 
 ```cmake
 gpStartModule("runtime/core")
@@ -94,7 +87,7 @@ gpStartModule("runtime/physics")
 gpEndModule()
 ```
 
-When targets use different frameworks, GPBT registers and builds both. The resolution is:
+When targets use different frameworks, GPBT registers and builds both. Resolution order is:
 
 ```text
 per-target FRAMEWORK argument  →  global GPBT_TEST_FRAMEWORK
@@ -102,7 +95,7 @@ per-target FRAMEWORK argument  →  global GPBT_TEST_FRAMEWORK
 
 ### Test source directory layout
 
-Place test source files in a `tests/` subdirectory next to the target's `CMakeLists.txt`:
+Put test source files in a `tests/` subdirectory next to the target's `CMakeLists.txt`:
 
 ```text
 source/
@@ -190,7 +183,7 @@ ctest --test-dir build -R "runtime_core" --output-on-failure
 
 ## Using a custom test framework
 
-Set `GPBT_TEST_FRAMEWORK=CUSTOM` globally, or pass `FRAMEWORK CUSTOM` per-target, and provide the target name:
+Set `GPBT_TEST_FRAMEWORK=CUSTOM` globally or pass `FRAMEWORK CUSTOM` per-target, then provide the target name:
 
 ```cmake
 # Bring your own framework target (e.g., via find_package or gpStartThirdparty)
@@ -204,13 +197,13 @@ gpStartBuildTool()
 gpEndBuildTool()
 ```
 
-The custom target must be a valid CMake target before CONFIGURATION phase starts (i.e., resolved before `gpEndBuildTool()` runs).
+The custom target must be a valid CMake target before the CONFIGURATION phase starts — that is, resolved before `gpEndBuildTool()` runs.
 
 ---
 
 ## Overriding the built-in framework version
 
-If you need a different version of GoogleTest or Catch2, declare the package yourself before `gpEndBuildTool()`. GPBT detects the name and skips its built-in registration, using your version instead.
+If you need a different version of GoogleTest or Catch2, declare the package before `gpEndBuildTool()`. GPBT detects the name and skips its built-in registration, using your version instead.
 
 ```cmake
 # engine/thirdparty/googletest/CMakeLists.txt
@@ -237,13 +230,13 @@ gpStartBuildTool()
 gpEndBuildTool()
 ```
 
-The same pattern works for Catch2, declare `gpStartThirdparty("catch2" ...)` and GPBT will use your version.
+The same pattern works for Catch2: declare `gpStartThirdparty("catch2" ...)` and GPBT uses your version.
 
 ---
 
 ## Build tool internal tests
 
-GPBT ships its own CMake-level test suite that validates the property scoping system, topological sorting, and string utilities. These are separate from your project's tests and are primarily useful when contributing to the build tool itself.
+GPBT ships its own CMake-level test suite that validates the property scoping system, topological sorting, and string utilities. These are separate from your project's tests and are most useful when contributing to the build tool itself.
 
 ```bash
 cmake -S . -B build -DGPBT_TESTS_ENABLED=ON
@@ -271,4 +264,4 @@ cmake --build build
 ctest --test-dir build --output-on-failure --parallel 4
 ```
 
-`GPBT_CONFIGURE_DEPENDS=OFF` disables filesystem polling for source file changes, which reduces overhead on CI agents where the source tree does not change between configure and build.
+`GPBT_CONFIGURE_DEPENDS=OFF` disables filesystem polling for source file changes, cutting overhead on CI agents where the source tree does not change between configure and build.

@@ -9,7 +9,7 @@ tags:
   - cmake
 ---
 
-The following macros apply only to targets declared with `gpStartExecutable()`. Calling them inside a module or plugin definition has no effect.
+These macros apply only to targets declared with `gpStartExecutable()`. Calling them inside a module or plugin definition has no effect.
 
 ## GUI executables on Windows
 
@@ -17,7 +17,7 @@ The following macros apply only to targets declared with `gpStartExecutable()`. 
 gpSetGuiExecutable()
 ```
 
-On Windows, marks the executable as a GUI application. This sets the `/SUBSYSTEM:WINDOWS` linker flag and causes the linker to expect `WinMain` as the entry point rather than `main`. The console window is suppressed when the executable is launched.
+On Windows, marks the executable as a GUI application. This sets `WIN32_EXECUTABLE=ON`, which causes the linker to expect `WinMain` as the entry point rather than `main` and suppresses the console window on launch.
 
 ```cmake
 gpStartExecutable("editor")
@@ -38,7 +38,7 @@ If you use a compatibility shim that provides a standard `main()` entry point, y
 gpSetEntryPoint(file)
 ```
 
-Designates a specific source file as the entry point for the executable. This is useful when the entry point is not auto-discovered by the standard directory layout, or when you want to make the entry point explicit and separate from the rest of the module's sources.
+Designates a specific source file as the entry point for the executable. This is useful when the entry point is not auto-discovered by the standard directory layout, or when you want to keep it explicit and separate from the rest of the module's sources.
 
 ```cmake
 gpStartExecutable("launcher")
@@ -54,7 +54,7 @@ The path is relative to the target directory unless it is absolute.
 gpAddResourceFile(file)
 ```
 
-Adds a platform resource file to the executable. On Windows, this is typically a `.rc` file that embeds the application icon, version information, and manifest.
+Adds a platform resource file to the executable. On Windows this is typically a `.rc` file that embeds the application icon, version information, and manifest.
 
 ```cmake
 gpStartExecutable("editor")
@@ -62,7 +62,7 @@ gpStartExecutable("editor")
 gpEndExecutable()
 ```
 
-On platforms that do not use resource files, this call has no effect.
+On platforms that don't use resource files, this call has no effect.
 
 ```cmake
 gpStartExecutable("editor")

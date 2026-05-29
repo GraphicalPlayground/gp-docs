@@ -8,7 +8,7 @@ tags:
   - testing
 ---
 
-GPBT reserves per-target benchmark infrastructure for a future release. The `gpEnableBenchmarks()` macro is available today and can be called inside a target definition to signal intent, but it does not yet generate benchmark targets.
+GPBT reserves per-target benchmark infrastructure for a future release. The `gpEnableBenchmarks()` macro is available today and can be called inside a target definition to signal intent, but it does not yet generate any benchmark targets.
 
 ## Current behaviour
 
@@ -18,12 +18,12 @@ gpStartModule("math")
 gpEndModule()
 ```
 
-Calling `gpEnableBenchmarks()` records that the `math` module has benchmarks. This has no visible effect on the generated build system at this time.
+Calling `gpEnableBenchmarks()` records that the `math` module has benchmarks. It has no visible effect on the generated build system right now.
 
 ## Planned behaviour
 
-When the feature is fully implemented, `gpEnableBenchmarks()` will configure a companion benchmark target that compiles sources from a `benchmarks/` subdirectory alongside the module. The benchmark target will be linked against the module under test and against a registered benchmark framework.
+When fully implemented, `gpEnableBenchmarks()` will configure a companion benchmark target that compiles sources from a `benchmarks/` subdirectory alongside the module, linked against the module under test and a registered benchmark framework.
 
 :::note
-The per-target benchmark API is designed so that calling it today will not require changes when the feature ships. Code that calls `gpEnableBenchmarks()` now will automatically gain benchmark targets in the future without modification.
+The per-target benchmark API is designed so that calling it today will not require any changes when the feature ships. Code that calls `gpEnableBenchmarks()` now will gain benchmark targets automatically once support is added.
 :::

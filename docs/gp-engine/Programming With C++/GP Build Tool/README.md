@@ -10,23 +10,23 @@ tags:
   - c++
 ---
 
-GP Build Tool (GPBT) is the CMake meta-build system used across Graphical Playground projects. Instead of writing raw CMake commands, teams declare targets and their relationships through a structured, domain-specific API. The build tool handles all compiler flags, linker settings, include path conventions, dependency ordering, and thirdparty package resolution automatically.
+GP Build Tool (GPBT) is the CMake meta-build system used across Graphical Playground projects. Instead of writing raw CMake, teams declare targets and their relationships through a structured, domain-specific API. GPBT handles compiler flags, linker settings, include path conventions, dependency ordering, and thirdparty package resolution.
 
 ## Why a custom build system?
 
-Modern AAA game engines involve dozens of modules, several platforms, multiple toolchains, and complex dependency graphs. Writing this in raw CMake leads to inconsistency: one module uses `/W4`, another forgets it; one platform sets the right output directory, another does not.
+Modern AAA game engines involve dozens of modules, several platforms, multiple toolchains, and complex dependency graphs. Writing that in raw CMake leads to inconsistency: one module uses `/W4`, another forgets it; one platform sets the right output directory, another does not.
 
-GPBT solves this by centralising all policy in one place. Every module, regardless of who wrote it or when, gets the same flags, the same warning levels, the same install rules, and the same dependency semantics. The public API is intentionally narrow and reads like documentation.
+GPBT centralises all policy in one place. Every module, regardless of who wrote it or when, gets the same flags, the same warning levels, the same install rules, and the same dependency semantics. The public API is intentionally narrow and reads like documentation.
 
 ## Key design principles
 
-**Declarative over imperative.** You describe _what_ a module is and what it depends on. GPBT resolves the _how_ automatically.
+**Declarative over imperative.** You describe _what_ a module is and what it depends on. GPBT resolves the _how_.
 
-**Phase separation.** GPBT separates target registration from target configuration. All modules are declared first, sorted by dependency order, then configured. This avoids the ordering problems that plague naive CMake projects.
+**Phase separation.** GPBT separates target registration from target configuration. All modules are declared first, sorted by dependency order, then configured. This avoids the ordering problems common in naive CMake projects.
 
 **No surprises.** Every flag, every install rule, every naming convention is consistent and documented. There are no hidden globals, no `add_compile_options()` calls scattered across the source tree.
 
-**Platform and toolchain first.** GPBT detects the platform and compiler at configuration time and applies the correct flags automatically. You never write `if(MSVC)` inside a module's `CMakeLists.txt`.
+**Platform and toolchain first.** GPBT detects the platform and compiler at configuration time and applies the correct flags. You never write `if(MSVC)` inside a module's `CMakeLists.txt`.
 
 ## Quick start
 
@@ -57,7 +57,7 @@ gpStartModule("rhi/vulkan")
 gpEndModule()
 ```
 
-That is all. GPBT infers the source files from the directory layout, applies the correct compiler flags, and wires up the include paths.
+GPBT infers the source files from the directory layout, applies the correct compiler flags, and wires up the include paths.
 
 ## Conventions used in this documentation
 

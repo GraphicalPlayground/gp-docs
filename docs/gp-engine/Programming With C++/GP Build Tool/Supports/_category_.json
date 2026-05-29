@@ -1,12 +1,4 @@
 {
   "label": "Support Matrix",
-  "position": 3,
-  "collapsible": true,
-  "collapsed": false,
-  "link": {
-    "type": "generated-index",
-    "title": "Support Matrix",
-    "description": "Supported platforms, compilers, and linkers, along with the minimum version requirements and the behavior differences applied per toolchain.",
-    "slug": "/support"
-  }
+  "position": 3
 }

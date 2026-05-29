@@ -8,7 +8,7 @@ tags:
   - setup
 ---
 
-Every project that uses GPBT must perform three setup steps in its root `CMakeLists.txt`: apply the default policy, open a build tool session, and scan the source tree.
+Every project that uses GPBT needs three setup steps in its root `CMakeLists.txt`: apply the default policy, open a build tool session, and scan the source tree.
 
 ## Apply the default policy
 
@@ -21,12 +21,12 @@ This macro applies the standard Graphical Playground project settings:
 - Enforces C++23 with no compiler extensions (`CMAKE_CXX_EXTENSIONS OFF`)
 - Sets output directories to `binaries/bin` and `binaries/lib` under the source root
 - Creates per-configuration subdirectories (`binaries/bin/Debug`, `binaries/bin/Shipping`, and so on)
-- Enables Position-Independent Code (PIC) for static libraries
+- Enables Position-Independent Code (PIC) for all targets
 
 Call this macro once, before `gpStartBuildTool()`, from the root `CMakeLists.txt`.
 
 :::tip
-`gpApplyGraphicalPlaygroundDefaultPolicy()` is intentionally not called automatically. This gives you the flexibility to apply your own settings first, or to override specific variables after calling it.
+`gpApplyGraphicalPlaygroundDefaultPolicy()` is not called automatically. This lets you apply your own settings first, or override specific variables after calling it.
 :::
 
 ## Open a build tool session
@@ -35,10 +35,10 @@ Call this macro once, before `gpStartBuildTool()`, from the root `CMakeLists.txt
 gpStartBuildTool()
 ```
 
-Calling `gpStartBuildTool()` initialises the build tool state and enters the registration phase. All target and thirdparty declarations that follow are accumulated into the global property store rather than creating CMake targets immediately.
+`gpStartBuildTool()` initialises the build tool state and enters the registration phase. All target and thirdparty declarations that follow are accumulated into the global property store rather than creating CMake targets immediately.
 
 :::warning
-`gpStartBuildTool()` may only be called once per CMake configure run. Calling it a second time produces a fatal error.
+`gpStartBuildTool()` can only be called once per CMake configure run. A second call produces a fatal error.
 :::
 
 ## Scan and end
@@ -48,7 +48,7 @@ gpBuildToolAutoScan(thirdparty source)
 gpEndBuildTool()
 ```
 
-`gpBuildToolAutoScan()` recursively discovers all `CMakeLists.txt` files under the listed directories and includes them, populating the target registry. See [Scanning](./Scanning.md) for details.
+`gpBuildToolAutoScan()` walks the listed directories looking for `CMakeLists.txt` files and registers their targets. See [Scanning](./Scanning.md) for details.
 
 `gpEndBuildTool()` closes the session and triggers the configuration phase:
 
@@ -75,6 +75,6 @@ gpEndBuildTool()
 
 ## What gets installed
 
-At the end of `gpEndBuildTool()`, all configured targets are registered to the CMake install export set named by `GPBT_INSTALL_EXPORT_NAME` (default: `GPTargets`). This allows downstream projects to consume your engine via `find_package()`.
+At the end of `gpEndBuildTool()`, all configured targets are registered to the CMake install export set named by `GPBT_INSTALL_EXPORT_NAME` (default: `GPTargets`). Downstream projects can then consume the engine via `find_package()`.
 
 The export file is installed to `lib/cmake/${GPBT_INSTALL_EXPORT_NAME}/` relative to the install prefix.
