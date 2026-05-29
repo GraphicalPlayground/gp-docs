@@ -18,7 +18,7 @@ When GPBT configures a target, it inspects the target's directory for the three 
 | Directory | Include visibility | Who can see the headers |
 | --- | --- | --- |
 | `public/` | `PUBLIC` | The module itself and any module that depends on it with any visibility |
-| `internal/` | `INTERFACE` (cross-graph) | The module itself and modules that depend on it with `INTERNAL` visibility |
+| `internal/` | `PRIVATE` (cross-graph propagation planned) | The module itself; cross-module propagation via `INTERNAL` dependency visibility is not yet implemented |
 | `private/` | `PRIVATE` | The module itself only |
 
 ## Example
@@ -43,16 +43,17 @@ GPBT will call the equivalent of:
 target_include_directories(gp-core
   PUBLIC   ${CMAKE_CURRENT_LIST_DIR}/public
   PRIVATE  ${CMAKE_CURRENT_LIST_DIR}/private
+           ${CMAKE_CURRENT_LIST_DIR}/internal
 )
 ```
 
-The `internal/` directory is handled through a separate mechanism tied to the `INTERNAL` dependency visibility level.
-
 ## The internal visibility model
 
-The `internal/` directory exists to handle a common pattern in large engines: utilities or interfaces that need to be shared across multiple modules without being part of any module's stable public API. Marking them as `PUBLIC` would expose them to all consumers; marking them as `PRIVATE` would hide them entirely.
+The `internal/` directory is designed for a common pattern in large engines: utilities or interfaces that need to be shared across multiple modules without being part of any module's stable public API. Marking them `PUBLIC` exposes them to all consumers; marking them `PRIVATE` hides them entirely. The `INTERNAL` dependency visibility is intended to fill this gap.
 
-The `INTERNAL` dependency visibility lets you express this precisely:
+:::note
+Cross-module propagation of `internal/` headers via `INTERNAL` dependency visibility is not yet fully implemented. Currently `internal/` headers are added as `PRIVATE` and are visible only to the module that owns them.
+:::
 
 ```cmake
 # core declares internal headers
@@ -70,6 +71,6 @@ gpEndModule()
 
 ## No manual include directory API
 
-GPBT does not expose a `gpAddIncludeDirectory()` macro. The directory convention is the intended and enforced mechanism. This keeps include path management consistent and prevents the gradual accumulation of hand-curated include paths that tends to drift over time.
+GPBT does not expose a `gpAddIncludeDirectory()` macro. The directory convention is the intended and enforced mechanism. This keeps include path management consistent and prevents the gradual accumulation of hand-curated include paths that drift over time.
 
-If you need to include headers from a non-standard location (such as generated headers), use `gpAddSourceDirectory()` to add the directory as a source directory, or structure the generated output to match the `public/` convention so it is discovered automatically.
+If you need to include headers from a non-standard location (such as generated headers), use `gpAddSourceDirectory()` to add the directory, or structure the generated output to match the `public/` convention so it is discovered automatically.

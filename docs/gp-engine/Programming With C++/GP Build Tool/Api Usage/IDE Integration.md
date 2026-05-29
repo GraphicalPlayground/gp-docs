@@ -18,7 +18,7 @@ GPBT provides two macros for controlling how targets appear in IDEs and how they
 gpSetFolder(folderPath)
 ```
 
-Sets the `FOLDER` property on the current target, which most IDEs (Visual Studio, Xcode, CLion) use to organise targets into a tree structure in the solution or project navigator.
+Sets the `FOLDER` property on the current target. Most IDEs (Visual Studio, Xcode, CLion) use this to organise targets into a tree in the solution or project navigator.
 
 ```cmake
 gpStartModule("rhi/d3d12")
@@ -50,7 +50,7 @@ Group thirdparty and build-tool targets under a `_Build` or `External` folder to
 gpAddAlias(aliasName)
 ```
 
-Creates an additional CMake alias for the current target. GPBT always creates a default alias following the `gp::<name>` pattern. Use `gpAddAlias()` when you need an additional alias for compatibility with a `find_package()` consumer or a specific naming convention.
+Creates an additional CMake alias for the current target. GPBT always creates a default alias following the `gp::<name>` pattern. Use `gpAddAlias()` when you need an extra alias for a `find_package()` consumer or a specific naming convention.
 
 ```cmake
 gpStartModule("math/linear-algebra")
@@ -59,4 +59,4 @@ gpStartModule("math/linear-algebra")
 gpEndModule()
 ```
 
-All aliases point to the same underlying CMake target. There is no overhead to having multiple aliases.
+All aliases point to the same underlying CMake target, so there's no overhead to having multiple.

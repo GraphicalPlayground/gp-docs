@@ -8,7 +8,7 @@ tags:
   - visualisation
 ---
 
-Understanding the dependency graph of a large engine codebase is important for identifying unwanted couplings, verifying that layering rules are respected, and onboarding new engineers. GPBT can export the full target dependency graph as a Graphviz DOT file at the end of the configuration phase.
+Understanding the dependency graph of a large engine codebase helps identify unwanted couplings, verify that layering rules are respected, and get new engineers oriented. GPBT can export the full target dependency graph as a Graphviz DOT file at the end of the configuration phase.
 
 ## Enabling the export
 
@@ -18,7 +18,7 @@ Set `GPBT_EXPORT_DEPENDENCY_GRAPH=ON` at configure time:
 cmake -S . -B build -DGPBT_EXPORT_DEPENDENCY_GRAPH=ON
 ```
 
-After a successful configure, the DOT file is written to the path specified by `GPBT_DEPENDENCY_GRAPH_FILE`. The default path is:
+After a successful configure, the DOT file is written to the path specified by `GPBT_DEPENDENCY_GRAPH_FILE`. The default is:
 
 ```text
 <cmake-binary-dir>/gpbt_dependency_graph.dot
@@ -44,7 +44,7 @@ dot -Tsvg build/gpbt_dependency_graph.dot -o dependency_graph.svg
 dot -Tpng build/gpbt_dependency_graph.dot -o dependency_graph.png
 ```
 
-For large graphs, the `fdp` or `sfdp` layout engines often produce more readable results than the default `dot` hierarchical layout:
+For large graphs, the `fdp` or `sfdp` layout engines tend to produce more readable results than the default `dot` hierarchical layout:
 
 ```bash
 sfdp -Tsvg -Goverlap=prism build/gpbt_dependency_graph.dot -o dependency_graph.svg
@@ -52,9 +52,9 @@ sfdp -Tsvg -Goverlap=prism build/gpbt_dependency_graph.dot -o dependency_graph.s
 
 ## Graph contents
 
-The exported graph includes all registered GPBT targets and the dependency edges between them, annotated by visibility. Each edge label indicates whether the dependency is `PUBLIC`, `PRIVATE`, `INTERNAL`, or `DYNAMIC`.
+The exported graph includes all registered GPBT targets and the dependency edges between them, labeled by visibility (`PUBLIC`, `PRIVATE`, `INTERNAL`, or `DYNAMIC`).
 
-Thirdparty packages are included in the graph as terminal nodes, making it straightforward to see which engine modules depend on which external libraries.
+Thirdparty packages appear as terminal nodes, so you can see at a glance which engine modules depend on which external libraries.
 
 :::tip
 Commit the rendered graph to your repository's documentation alongside this docs site. A static SVG embedded in a wiki page is often the fastest way for a new engineer to orient themselves in a large codebase.
@@ -62,7 +62,7 @@ Commit the rendered graph to your repository's documentation alongside this docs
 
 ## Exporting only, not building
 
-The dependency graph is exported during the configuration phase, before any targets are compiled. You can generate the graph without doing a full build:
+The dependency graph is written during the configuration phase, before any targets are compiled. You can get the graph without running a full build:
 
 ```bash
 cmake -S . -B build -DGPBT_EXPORT_DEPENDENCY_GRAPH=ON

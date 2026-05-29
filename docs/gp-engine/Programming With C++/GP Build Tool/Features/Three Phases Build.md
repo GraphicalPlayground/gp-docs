@@ -9,15 +9,15 @@ tags:
   - configuration
 ---
 
-One of the most common sources of subtle bugs in CMake projects is declaration order dependency: a target must be defined before another target can reference it. GPBT eliminates this problem entirely through a two-phase build lifecycle.
+In a standard CMake project, a target must be defined before another target can reference it. Declaration order becomes a constraint the project has to maintain manually — and as the codebase grows, that gets fragile. GPBT removes this constraint through a two-phase build lifecycle.
 
 ## The problem with naive CMake
 
-In a standard CMake project, `target_link_libraries()` requires the referenced target to already exist at the point of the call. This means the order in which `CMakeLists.txt` files are included determines what is valid. As a project grows, maintaining this ordering manually becomes fragile and error-prone.
+In a standard CMake project, `target_link_libraries()` requires the referenced target to already exist at the point of the call. The order in which `CMakeLists.txt` files are included determines what compiles cleanly. As a project grows, keeping that ordering correct by hand becomes a recurring source of breakage.
 
 ## How GPBT solves it
 
-GPBT splits the build process into two distinct phases within the CMake configure step.
+GPBT splits the CMake configure step into two phases.
 
 ```text
 cmake configure step
@@ -27,13 +27,13 @@ cmake configure step
 
 ### Registration phase
 
-During registration, every `CMakeLists.txt` discovered by `gpBuildToolAutoScan()` is included. Each call to `gpStartModule()`, `gpStartExecutable()`, and similar macros records the target's properties (name, type, source directory, dependencies, compile flags, and so on) into a global property store.
+During registration, every `CMakeLists.txt` discovered by `gpBuildToolAutoScan()` is included. Calls to `gpStartModule()`, `gpStartExecutable()`, and similar macros record the target's properties (name, type, source directory, dependencies, compile flags, and so on) into a global property store.
 
 No actual CMake targets (`add_library`, `add_executable`) are created at this point. API calls that only make sense during configuration, such as setting source file properties, are silently deferred.
 
 ### Configuration phase
 
-Once all targets and thirdparty packages are registered, the configuration phase begins. GPBT performs the following steps in order:
+Once all targets and thirdparty packages are registered, GPBT begins the configuration phase. The steps run in this order:
 
 1. **Resolve thirdparty packages.** Each package is resolved using the SYSTEM, BINARY, or SOURCE strategy. This creates the `gp::thirdparty::*` INTERFACE targets before any module needs them.
 2. **Topological sort.** Targets are sorted so that every module is configured after all of its dependencies.
@@ -42,7 +42,7 @@ Once all targets and thirdparty packages are registered, the configuration phase
 
 ## Practical implications
 
-Because registration always precedes configuration, you can reference any target from any other target without worrying about file inclusion order. The following is valid even if `rhi/d3d12` is discovered before `rhi/base`:
+Because registration always precedes configuration, you can reference any target from any other target without caring about file inclusion order. The following is valid even if `rhi/d3d12` is discovered before `rhi/base`:
 
 ```cmake
 gpStartModule("rhi/base")
@@ -50,7 +50,7 @@ gpStartModule("rhi/base")
 gpEndModule()
 ```
 
-GPBT resolves the reference during the configuration phase after all targets are known.
+GPBT resolves it during the configuration phase, once all targets are known.
 
 :::note
 API functions that must only run during one phase use an internal phase guard. If you call a registration-only function during configuration, it silently returns. This is intentional and allows the same `CMakeLists.txt` to be included twice without side effects.
@@ -58,7 +58,7 @@ API functions that must only run during one phase use an internal phase guard. I
 
 ## Relationship to CMake's generate step
 
-The two GPBT phases both occur within CMake's own configure step. CMake's generate step (which produces Makefiles, Visual Studio projects, and so on) happens afterward as normal. GPBT does not interfere with generation.
+Both GPBT phases happen inside CMake's configure step. CMake's generate step (Makefiles, Visual Studio projects, and so on) runs afterward as normal. GPBT does not touch generation.
 
 ```text
 cmake configure step

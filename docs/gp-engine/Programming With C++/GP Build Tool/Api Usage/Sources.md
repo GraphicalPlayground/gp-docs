@@ -8,7 +8,7 @@ tags:
   - files
 ---
 
-GPBT uses a convention-based directory layout to automatically discover source files. In most cases you do not need to call any source management API at all: the build tool finds everything it needs from the structure of the target's directory.
+GPBT uses a convention-based directory layout to discover source files automatically. In most cases you do not need to call any source management API at all: the build tool finds everything it needs from the structure of the target's directory.
 
 ## Directory layout convention
 
@@ -22,16 +22,16 @@ my-module/
   private/        <- implementation sources and private headers
 ```
 
-GPBT automatically globs for `.cpp`, `.c`, `.cxx` files in `private/` and `internal/` and adds them as sources. Header files (`.h`, `.hpp`, `.hxx`) in `public/`, `internal/`, and `private/` are also discovered and included in the IDE's file list for navigation purposes.
+GPBT automatically globs for `.cpp`, `.c`, `.cc`, and `.cxx` files in `private/` and `internal/` and adds them as sources. Header files (`.h`, `.hpp`, `.hxx`) in `public/`, `internal/`, and `private/` are also discovered and included in the IDE's file list for navigation.
 
 See [Include Directories](./Include%20Directories.md) for how these directories affect which include paths are exposed to dependents.
 
 ## Automatic discovery behaviour
 
-Source file discovery uses CMake's `file(GLOB_RECURSE ...)` internally. By default, `GPBT_CONFIGURE_DEPENDS=ON` is set, which instructs CMake to re-run the configure step when files are added to or removed from a globbed directory.
+Source file discovery uses CMake's `file(GLOB_RECURSE ...)` internally. By default, `GPBT_CONFIGURE_DEPENDS=ON` instructs CMake to re-run the configure step when files are added to or removed from a globbed directory.
 
 :::tip
-Keep `GPBT_CONFIGURE_DEPENDS=ON` during development. Disable it in CI environments where the source tree does not change between the configure and build steps, as filesystem polling adds latency to the configure step.
+Keep `GPBT_CONFIGURE_DEPENDS=ON` during development. Disable it in CI environments where the source tree does not change between configure and build, since filesystem polling adds latency to the configure step.
 :::
 
 ## Adding sources explicitly

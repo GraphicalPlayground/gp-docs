@@ -10,7 +10,7 @@ tags:
   - flags
 ---
 
-GPBT detects the active C++ compiler and applies a corresponding set of flags across all four build configurations. The detection is based on `CMAKE_CXX_COMPILER_ID` and maps to a consistent token stored in `GPBT_CURRENT_COMPILER`.
+GPBT detects the active C++ compiler and applies a corresponding set of flags across all four build configurations. Detection uses `CMAKE_CXX_COMPILER_ID` and maps to a consistent token stored in `GPBT_CURRENT_COMPILER`.
 
 ## Supported compilers
 
@@ -23,7 +23,7 @@ GPBT detects the active C++ compiler and applies a corresponding set of flags ac
 
 ## Compiler detection and override
 
-GPBT detects the compiler automatically. You do not need to set anything. The token is available at configure time:
+GPBT detects the compiler automatically. The token is available at configure time:
 
 ```bash
 cmake -S . -B build
@@ -32,47 +32,47 @@ cmake -S . -B build
 
 ## Flags applied per compiler
 
-GPBT applies different sets of flags depending on the active compiler and configuration. The following tables summarise the key flags. These are applied to every target automatically; you do not need to set them manually.
+GPBT applies different sets of flags depending on the active compiler and configuration. The tables below show the key flags. These are applied to every target automatically.
 
 ### MSVC
 
 | Configuration | Key flags |
 | --- | --- |
-| All | `/std:c++23`, `/W4`, `/WX`, `/permissive-`, `/Zc:__cplusplus` |
-| Debug | `/Od`, `/Zi`, `/RTC1` |
+| All | `/W4`, `/WX`, `/permissive-`, `/Zc:__cplusplus`, `/EHsc`, `/GS`, `/Gy`, `/GF` |
+| Debug | `/Od`, `/Zi`, `/RTC1`, `/sdl` |
 | Development | `/O2`, `/Zi` |
-| Profile | `/O2`, `/GL` (LTO) |
-| Shipping | `/O2`, `/GL` (LTO) |
+| Profile | `/O2`, `/Zi`, `/Oy-` |
+| Shipping | `/O2`, `/Ob3`, `/GL` (WPO), `/Gw`, `/GS-` |
 
 ### Clang-CL (Windows)
 
 | Configuration | Key flags |
 | --- | --- |
-| All | `/std:c++23`, `/W4`, `/WX`, `/permissive-`, `-Wextra`, `/Zc:__cplusplus` |
+| All | `/W4`, `/WX`, `/permissive-`, `-Wextra`, `/Zc:__cplusplus`, `/EHsc`, `/GS`, `/Gy`, `/GF`, `/Oy-` |
 | Debug | `/Od`, `/Zi`, `-fstack-protector-strong` |
 | Development | `/O2`, `/Zi` |
-| Profile | `/O2`, `/Zi`, `/Oy-` |
-| Shipping | `/O2`, `/GL` (LTO), `/Gw`, `-flto=thin` |
+| Profile | `/O2`, `/Zi` |
+| Shipping | `/O2`, `/GL` (WPO), `/Gw`, `-flto=thin` |
 
 ### Clang
 
 | Configuration | Key flags |
 | --- | --- |
-| All | `-std=c++23`, `-Wall`, `-Wextra`, `-Werror`, `-fvisibility=hidden` |
-| Debug | `-O0`, `-g` |
-| Development | `-O2`, `-g` |
-| Profile | `-O3`, `-flto=thin` |
-| Shipping | `-O3`, `-flto=thin` |
+| All | `-Wall`, `-Wextra`, `-Werror`, `-fvisibility=hidden`, `-ffunction-sections`, `-fdata-sections` |
+| Debug | `-O0`, `-g3`, `-fno-omit-frame-pointer`, `-fstack-protector-strong` |
+| Development | `-O2`, `-g`, `-fno-omit-frame-pointer` |
+| Profile | `-O3`, `-g`, `-fno-omit-frame-pointer`, `-fno-inline-functions` |
+| Shipping | `-O3`, `-ffast-math`, `-flto=thin`, `-fwhole-program-vtables` |
 
 ### GCC
 
 | Configuration | Key flags |
 | --- | --- |
-| All | `-std=c++23`, `-Wall`, `-Wextra`, `-Werror`, `-fvisibility=hidden` |
-| Debug | `-O0`, `-g` |
-| Development | `-O2`, `-g` |
-| Profile | `-O3`, `-flto` |
-| Shipping | `-O3`, `-flto` |
+| All | `-Wall`, `-Wextra`, `-Werror`, `-fvisibility=hidden`, `-ffunction-sections`, `-fdata-sections` |
+| Debug | `-O0`, `-g3`, `-fno-omit-frame-pointer`, `-fstack-protector-strong` |
+| Development | `-O2`, `-g`, `-fno-omit-frame-pointer` |
+| Profile | `-O3`, `-g`, `-fno-omit-frame-pointer`, `-fno-inline-functions-called-once` |
+| Shipping | `-O3`, `-ffast-math`, `-flto=auto`, `-fno-semantic-interposition` |
 
 ## C++ standard
 
@@ -80,14 +80,14 @@ GPBT enforces C++23 globally through `gpApplyGraphicalPlaygroundDefaultPolicy()`
 
 ## Strict warnings
 
-All targets are compiled with strict warnings and warnings-as-errors enabled by default. To disable this for a specific target (typically thirdparty code or legacy modules), use `gpDisableStrictWarnings()`. See [Miscellaneous Options](../Api%20Usage/Miscs%20Options.md) for details.
+All targets compile with strict warnings and warnings-as-errors enabled by default. To turn this off for a specific target (typically thirdparty code or legacy modules), use `gpDisableStrictWarnings()`. See [Miscellaneous Options](../Api%20Usage/Miscs%20Options.md) for details.
 
 ## Link-Time Optimisation
 
-LTO is applied automatically in `Profile` and `Shipping` configurations. The strategy depends on the compiler:
+LTO is applied in the `Shipping` configuration only. The strategy depends on the compiler:
 
 - **Clang**: Thin LTO (`-flto=thin`). Faster link times than full LTO with most of the optimisation benefit.
-- **GCC**: Full LTO (`-flto`). More aggressive, slower to link.
+- **GCC**: Full LTO (`-flto=auto`). More aggressive, slower to link.
 - **MSVC**: Whole Program Optimisation (`/GL` compile, `/LTCG` link).
 
-The LTO compile flag is communicated to the linker via an internal mechanism so the linker policy file always matches the compile-time setting.
+The LTO compile flag is passed to the linker via an internal property so the linker policy file always matches the compile-time setting.

@@ -8,7 +8,7 @@ tags:
   - cmake
 ---
 
-`gpAddLinkOption()` adds linker flags to a target. As with other GPBT APIs, GPBT already applies the correct per-linker and per-configuration flags automatically. Use this API for module-specific linker requirements.
+`gpAddLinkOption()` adds linker flags to a target. Like the other GPBT APIs, GPBT already applies the correct per-linker and per-configuration flags automatically — use this one for module-specific linker requirements.
 
 ## Syntax
 
@@ -22,7 +22,7 @@ gpAddLinkOption(visibility flag [flag2 ...])
 
 ### Version scripts and symbol visibility
 
-On Linux, you may want to restrict which symbols a shared library exports:
+On Linux, you can restrict which symbols a shared library exports:
 
 ```cmake
 gpStartModule("renderer/core")
@@ -46,7 +46,7 @@ gpEndExecutable()
 For GUI executables on Windows, prefer `gpSetGuiExecutable()` rather than adding `/SUBSYSTEM:WINDOWS` manually. See [Executable Specific](./Executable%20Specific.md) for details.
 :::
 
-### Forcing library inclusion
+### System library flags
 
 ```cmake
 gpStartModule("platform")

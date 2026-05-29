@@ -8,7 +8,7 @@ tags:
   - cmake
 ---
 
-`gpBuildToolAutoScan()` is the mechanism by which GPBT discovers all target and thirdparty package declarations in the source tree. Rather than requiring each subdirectory to be explicitly listed in the root `CMakeLists.txt`, GPBT finds them automatically.
+`gpBuildToolAutoScan()` discovers all target and thirdparty package declarations in the source tree. Instead of requiring each subdirectory to be explicitly listed in the root `CMakeLists.txt`, GPBT finds them automatically.
 
 ## Syntax
 
@@ -20,12 +20,12 @@ Each argument is a directory to search. Paths are relative to the calling `CMake
 
 ## How it works
 
-`gpBuildToolAutoScan()` performs a recursive search for `CMakeLists.txt` files under each listed directory. Every file found is `include()`d in the context of the current CMake scope. This means all `gpStart*` macros in those files execute during the registration phase and are recorded into the global property store.
+`gpBuildToolAutoScan()` walks each listed directory using a breadth-first queue. When it finds a subdirectory that contains a `CMakeLists.txt`, it calls `add_subdirectory()` on it. Subdirectories without a `CMakeLists.txt` are themselves queued for further traversal.
 
-The scan order within a directory is alphabetical by path. The order of the directory arguments to `gpBuildToolAutoScan()` determines the order in which directories are processed.
+The order of the directory arguments to `gpBuildToolAutoScan()` determines the order in which root directories are processed. Within each directory, traversal order depends on the filesystem.
 
 :::note
-Scan order does not affect the final configuration order. GPBT sorts all registered targets topologically at the start of the configuration phase, so the order they are discovered during scanning is irrelevant to the build.
+Scan order does not affect the final configuration order. GPBT sorts all registered targets topologically at the start of the configuration phase, so the order in which they are discovered during scanning is irrelevant to the build.
 :::
 
 ## Standard project layout
@@ -53,4 +53,4 @@ Both `thirdparty` and `source` are passed to `gpBuildToolAutoScan()` so all pack
 
 ## Excluding directories
 
-To prevent a directory from being scanned, do not include it in the `gpBuildToolAutoScan()` argument list. There is no explicit exclusion mechanism; the recommended approach is to keep all auto-discovered content under the designated root directories and keep other content (generated code, tools, documentation) outside of them.
+To prevent a directory from being scanned, leave it out of the `gpBuildToolAutoScan()` argument list. There is no explicit exclusion mechanism. The recommended approach is to keep all auto-discovered content under the designated root directories and keep other content (generated code, tools, documentation) outside of them.

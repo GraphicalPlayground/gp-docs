@@ -8,7 +8,7 @@ tags:
   - macros
 ---
 
-The GP Build Tool public API consists entirely of CMake macros with the `gp` prefix. Each macro is a thin wrapper that delegates to an internal `gpbt_` function. This separation ensures that internal behaviour can change without breaking project code.
+The GP Build Tool public API is entirely CMake macros with the `gp` prefix. Each macro is a thin wrapper that delegates to an internal `gpbt_` function, so internal behaviour can change without breaking project code.
 
 ## Including the build tool
 
@@ -18,7 +18,7 @@ Every `CMakeLists.txt` that uses the API must include the build tool module:
 include(gp-build-tool)
 ```
 
-Because the module uses `include_guard(GLOBAL)`, it is safe to include it multiple times across the source tree. Subsequent includes are no-ops.
+The module uses `include_guard(GLOBAL)`, so including it multiple times across the source tree is safe. Subsequent includes are no-ops.
 
 ## API surface
 
@@ -50,5 +50,5 @@ The public API is grouped by function. Each group is documented on its own page.
 | `gp::thirdparty::<name>` | CMake alias for a resolved thirdparty package |
 
 :::warning
-Never call `gpbt_*` functions directly from project code. These functions are internal to the build tool and their signatures may change without notice between versions.
+Do not call `gpbt_*` functions directly from project code. They are internal to the build tool and their signatures can change between versions without notice.
 :::

@@ -8,7 +8,7 @@ tags:
   - cmake
 ---
 
-GPBT applies a standard set of compiler flags to every target automatically based on the active compiler, platform, and build configuration. `gpAddCompileOption()` allows you to add flags on top of this baseline, scoped to a specific target with the usual visibility semantics.
+GPBT applies a standard set of compiler flags to every target automatically based on the active compiler, platform, and build configuration. `gpAddCompileOption()` lets you add flags on top of that baseline, scoped to a specific target with the usual visibility semantics.
 
 ## Syntax
 
@@ -20,9 +20,9 @@ gpAddCompileOption(visibility flag [flag2 ...])
 
 ## When to use this API
 
-In the vast majority of cases you should not need `gpAddCompileOption()`. GPBT's compiler files already apply the correct optimisation flags, warning levels, and debug information settings for every configuration and compiler combination.
+Most of the time you won't need `gpAddCompileOption()`. GPBT's compiler files already handle optimisation flags, warning levels, and debug information for every configuration and compiler combination.
 
-Use `gpAddCompileOption()` when you need flags that are genuinely specific to a single module, such as architecture-specific intrinsic enablement, profile-guided optimisation feedback, or relaxed aliasing rules for a particular source file group.
+Reach for this API when you need flags specific to one module: architecture intrinsics, profile-guided optimisation feedback, or relaxed aliasing rules for a particular source group.
 
 ## Basic usage
 
@@ -47,7 +47,7 @@ gpStartModule("renderer/core")
 gpEndModule()
 ```
 
-This adds `-fno-omit-frame-pointer` only in `Profile` builds, keeping frame pointers for profiler callstack reconstruction without affecting `Shipping` performance.
+This adds `-fno-omit-frame-pointer` only in `Profile` builds, preserving frame pointers for profiler callstack reconstruction without touching `Shipping` performance.
 
 ## Visibility reference
 

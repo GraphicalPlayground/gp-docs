@@ -30,7 +30,7 @@ The `visibility` argument is one of `PUBLIC`, `PRIVATE`, `INTERNAL`, or `DYNAMIC
 
 ### PUBLIC
 
-Use `PUBLIC` when the dependency is part of the module's public contract. Consumers of the module gain both the link dependency and the public include paths.
+Use `PUBLIC` when the dependency is part of the module's public contract. Consumers of the module get both the link dependency and the public include paths.
 
 ```cmake
 gpStartModule("rhi/base")
@@ -42,7 +42,7 @@ Any module that depends on `rhi/base` will also be linked against `core` and wil
 
 ### PRIVATE
 
-Use `PRIVATE` when the dependency is an implementation detail that consumers do not need to know about. The include paths are not propagated.
+Use `PRIVATE` when the dependency is an implementation detail that consumers do not need. The include paths are not propagated.
 
 ```cmake
 gpStartModule("renderer/core")
@@ -52,7 +52,7 @@ gpEndModule()
 
 ### INTERNAL
 
-`INTERNAL` is a GPBT-specific visibility level. It links the dependency privately (as `PRIVATE` does) but propagates the include paths to all modules in the same dependency graph. This is useful for modules that provide cross-cutting infrastructure (such as logging or assertion facilities) that is visible throughout the engine without being part of any module's public API.
+`INTERNAL` is a GPBT-specific visibility level. It links the dependency privately (the same as `PRIVATE` at the CMake level) but propagates the include paths to all modules in the same dependency graph. This is useful for cross-cutting infrastructure — logging, assertion facilities, and the like — that needs to be visible throughout the engine without being part of any module's public API.
 
 ```cmake
 gpStartModule("core/logging")
@@ -68,7 +68,7 @@ gpEndModule()
 
 ### DYNAMIC
 
-`DYNAMIC` records a build-order dependency without generating any link flags. Use this for modules that are loaded at runtime via `dlopen()` or `LoadLibrary()`. This ensures the module is built before the dependent, and makes the relationship explicit in the dependency graph, but does not affect linking.
+`DYNAMIC` records a build-order dependency without generating any link flags. Use this for modules loaded at runtime via `dlopen()` or `LoadLibrary()`. The module is built before the dependent and the relationship is explicit in the dependency graph, but nothing is added to the link line.
 
 ```cmake
 gpStartModule("rhi/base")
@@ -78,7 +78,7 @@ gpEndModule()
 
 ## Depending on thirdparty packages
 
-Thirdparty packages resolved by GPBT are available as `gp::thirdparty::<name>`. Treat them like any other dependency:
+Thirdparty packages resolved by GPBT are available as `gp::thirdparty::<name>`. Use them like any other dependency:
 
 ```cmake
 gpStartModule("editor/config")
@@ -90,7 +90,7 @@ gpEndModule()
 
 GPBT uses the registered dependency graph to sort all targets before configuration. A target is always configured after all of its dependencies, regardless of the order in which `CMakeLists.txt` files were discovered during scanning.
 
-If a circular dependency is detected, GPBT reports a fatal error at configuration time listing the cycle.
+If a circular dependency is detected, GPBT reports a fatal error at configuration time and lists the cycle.
 
 ## Duplicate detection
 
