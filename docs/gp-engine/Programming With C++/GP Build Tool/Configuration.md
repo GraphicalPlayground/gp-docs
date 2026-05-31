@@ -65,4 +65,10 @@ See [Graphviz Generation](./Features/Graphviz%20Generation.md) for details on re
 | `GPBT_THIRDPARTY_MODE` | `STRING` | `AUTO` | Default resolution mode for all thirdparty packages. Valid values: `AUTO`, `SOURCE`, `BINARY`. |
 | `GPBT_THIRDPARTY_UPDATES_DISCONNECTED` | `BOOL` | `ON` | Skip network checks for already-downloaded packages, dramatically reducing reconfigure time. |
 
+## Compilation options
+
+| Variable | Type | Default | Description |
+| --- | --- | --- | --- |
+| `GPBT_USE_LIBCXX` | `BOOL` | `OFF` | Use LLVM's libc++ instead of the system libstdc++. Recommended when using Clang on Linux. |
+
 See [Third Party Management](./Features/Third%20Party%20Management.md) for a full explanation of these options.
