@@ -1,63 +1,80 @@
-![](.github/assets/repo-title.svg)
+<!-- gp:protected:start -->
 
-![GitHub Workflow](https://img.shields.io/github/actions/workflow/status/GraphicalPlayground/gp-docs/deploy.yml?branch=main&label=Docusaurus%20Build&logo=github)
-![Github Deploy](https://img.shields.io/github/deployments/GraphicalPlayground/gp-docs/github-pages?label=GitHub%20Pages%20Deploy&logo=github)
-![GitHub Repo Size](https://img.shields.io/github/repo-size/GraphicalPlayground/gp-docs?logo=github)
+**Table of content**  
+[Overview](#overview)  
+┕ [Getting Started](#getting-started)  
+┕ [Prerequisites](#prerequisites)  
+┕ [Building the Docs](#building-the-docs)  
+[Documentation](#documentation)  
+[Contributing](#contributing)  
+┕ [Code of Conduct](#code-of-conduct)  
+┕ [Security](#security)  
+┕ [License](#license)  
+┕ [Donations](#donations)  
+[Contact](#contact)  
 
----
+## Overview
 
-Welcome to the central hub for [Graphical Playground](https://graphical-playground.com) documentation. This repository contains the technical guides, API references, and tutorials for the Graphical Playground ecosystem, all powered by [Docusaurus](https://docusaurus.io).
+**gp-docs** pulls documentation from `gp-engine`, `gp-actions`, `gp-build-tool`, and `gp-platform`
+and publishes it as one site at [docs.graphical-playground.com](https://docs.graphical-playground.com).
+The site runs on [Docusaurus](https://docusaurus.io/) with a handful of custom plugins:
 
-## Getting Started
+- TailwindCSS: utility-first styles on top of the Docusaurus theme
+- CopyPageButton: one-click export of any page to markdown
+- AEORank: relevance scoring for search and cross-references
+- remarkPath: fixes relative asset paths across source packages
+- KaTeX: math rendering for shader and linear algebra pages
+- Algolia: version-scoped search index
+- Prism: syntax highlighting with a custom theme
 
-To get a local instance of the documentation site up and running for development, follow these steps:
+The build enforces strict link checking. A dead link anywhere in the aggregated output will fail
+`npm run build`, so run a full build before opening a PR.
 
-1. **Clone the Repository**:
+### Getting Started
+
+Clone the repo:
+
 ```bash
 git clone https://github.com/GraphicalPlayground/gp-docs.git
 cd gp-docs
 ```
 
-2. **Install Dependencies**:
+Then install dependencies:
+
 ```bash
 npm install
-# or
-yarn install
 ```
 
-3. **Start the Development Server**:
+### Prerequisites
+
+Node.js v20 or later (LTS recommended). npm comes bundled with it, no separate install needed.
+No C++ compiler, CMake, or graphics driver is required.
+
+### Building the Docs
+
+Start a local dev server:
+
 ```bash
-npm start
-# or
-yarn start
+npm run start
 ```
 
-The site will be available at `http://localhost:3000`.
+The site opens at `http://localhost:3000`. File changes reload without a full rebuild.
 
-## Project Structure
+To run a full production build and catch broken links:
 
-Understanding where files live is key to efficient contribution:
+```bash
+npm run build
+```
 
-- `docs/`: Contains the markdown files for the documentation content.
-- `src/`: Contains custom React components and styles for the site.
-- `static/`: Contains static assets like images and icons used in the documentation.
-- `docusaurus.config.js`: The main configuration file for Docusaurus.
-- `sidebars.js`: Defines the structure of the documentation sidebar.
+A broken anchor, missing asset, or stale cross-reference will fail here with a specific error. To
+preview the built output locally:
 
-## Deployment
+```bash
+npm run serve
+```
 
-This project uses **GitHub Actions** for Continuous Integration and Deployment.
-- **Build Check**: Every Pull Request triggers a build test to ensure no broken links or syntax errors.
-- **Automatic Deploy**: Pushing to the `main` branch automatically builds the site and deploys it to **GitHub Pages**.
+## Documentation
 
-## Contributing
+The full docs are at [docs.graphical-playground.com](https://docs.graphical-playground.com).
 
-We welcome contributions from the community! If you have suggestions for improving the documentation or want to add new content, please read our [Contributing Guidelines](CONTRIBUTING.md) and submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE.md) file for details.
-
----
-
-Maintained by the **GraphicalPlayground Team**. [Visit the Live Docs](https://docs.graphical-playground.com)
+<!-- gp:protected:end -->
