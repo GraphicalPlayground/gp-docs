@@ -197,7 +197,7 @@ gpStartBuildTool()
 gpEndBuildTool()
 ```
 
-The custom target must be a valid CMake target before the CONFIGURATION phase starts — that is, resolved before `gpEndBuildTool()` runs.
+The custom target must be a valid CMake target before the CONFIGURATION phase starts, that is, resolved before `gpEndBuildTool()` runs.
 
 ---
 

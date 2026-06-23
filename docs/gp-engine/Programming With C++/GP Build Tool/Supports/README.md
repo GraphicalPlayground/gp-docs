@@ -9,7 +9,7 @@ tags:
   - linkers
 ---
 
-GPBT supports a fixed set of platforms, compilers, and linkers. The correct flags are picked up automatically from what CMake detects at configure time — nothing to configure manually.
+GPBT supports a fixed set of platforms, compilers, and linkers. The correct flags are picked up automatically from what CMake detects at configure time, nothing to configure manually.
 
 ## Quick reference
 

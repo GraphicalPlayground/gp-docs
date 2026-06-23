@@ -24,7 +24,7 @@ GPBT detects the target platform at configure time and sets `GPBT_CURRENT_PLATFO
 | FreeBSD | `FreeBSD` | `CMAKE_SYSTEM_NAME == "FreeBSD"` |
 | Linux | `Linux` | `UNIX` is set (and not Apple, Android, or FreeBSD) |
 
-Detection follows a priority order. Android is checked before the more general UNIX check; iOS is checked before APPLE. This matters for cross-compiled targets — an Android build on a macOS host is identified as Android, not macOS.
+Detection follows a priority order. Android is checked before the more general UNIX check; iOS is checked before APPLE. This matters for cross-compiled targets, an Android build on a macOS host is identified as Android, not macOS.
 
 ## Platform-specific CMakeLists.txt behaviour
 

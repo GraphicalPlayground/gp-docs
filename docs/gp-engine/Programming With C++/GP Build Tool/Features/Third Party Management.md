@@ -13,7 +13,7 @@ Managing thirdparty dependencies in a game engine is genuinely awkward: differen
 
 ## Core concepts
 
-Each thirdparty dependency is described in a package descriptor — a `CMakeLists.txt` placed under your project's `thirdparty/` directory. The descriptor declares where to find the package and under what conditions each source is valid. GPBT resolves it during the configuration phase and creates a `gp::thirdparty::<name>` CMake alias that any module can reference through `gpAddDependency()`.
+Each thirdparty dependency is described in a package descriptor, a `CMakeLists.txt` placed under your project's `thirdparty/` directory. The descriptor declares where to find the package and under what conditions each source is valid. GPBT resolves it during the configuration phase and creates a `gp::thirdparty::<name>` CMake alias that any module can reference through `gpAddDependency()`.
 
 ## Resolution priority
 

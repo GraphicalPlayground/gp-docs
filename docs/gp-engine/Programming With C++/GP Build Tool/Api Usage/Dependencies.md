@@ -52,7 +52,7 @@ gpEndModule()
 
 ### INTERNAL
 
-`INTERNAL` is a GPBT-specific visibility level. It links the dependency privately (the same as `PRIVATE` at the CMake level) but propagates the include paths to all modules in the same dependency graph. This is useful for cross-cutting infrastructure — logging, assertion facilities, and the like — that needs to be visible throughout the engine without being part of any module's public API.
+`INTERNAL` is a GPBT-specific visibility level. It links the dependency privately (the same as `PRIVATE` at the CMake level) but propagates the include paths to all modules in the same dependency graph. This is useful for cross-cutting infrastructure, logging, assertion facilities, and the like, that needs to be visible throughout the engine without being part of any module's public API.
 
 ```cmake
 gpStartModule("core/logging")

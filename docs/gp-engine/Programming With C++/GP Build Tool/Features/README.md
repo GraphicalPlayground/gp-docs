@@ -20,6 +20,7 @@ GP Build Tool addresses several specific challenges that come up in AAA game eng
 | [Monolithic Build](./Monolithic%20Build.md) | Combine all modules into a single library for distribution or link-time optimisation |
 | [Graphviz Generation](./Graphviz%20Generation.md) | Export the target dependency graph as a Graphviz DOT file |
 | [Mermaid Generation](./Mermaid%20Generation.md) | Export the target dependency graph as a Mermaid flowchart |
+| [Sanitizers](./Sanitizers.md) | Per-build sanitizer support: ASan, TSan, MSan, and UBSan applied automatically to all non-Shipping targets |
 | [Benchmarks](./Benchmarks.md) | Per-target benchmark infrastructure (reserved) |
 | [ISPC Integration](./ISPC%20Integration.md) | Compile ISPC kernels as part of the standard build pipeline (planned) |
 | [Shader Pipeline Integration](./Shader%20Pipeline%20Integration.md) | Integrate shader compilation into the CMake build graph (planned) |

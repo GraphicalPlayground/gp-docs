@@ -1,7 +1,7 @@
 ---
 sidebar_position: 9
 title: Unit Tests
-description: Per-target unit test infrastructure in GPBT — automatic test executable generation, CTest integration, and support for GoogleTest, Catch2, and custom frameworks.
+description: Per-target unit test infrastructure in GPBT, automatic test executable generation, CTest integration, and support for GoogleTest, Catch2, and custom frameworks.
 tags:
   - testing
   - unit tests

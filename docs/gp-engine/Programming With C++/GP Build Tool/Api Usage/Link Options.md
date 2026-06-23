@@ -8,7 +8,7 @@ tags:
   - cmake
 ---
 
-`gpAddLinkOption()` adds linker flags to a target. Like the other GPBT APIs, GPBT already applies the correct per-linker and per-configuration flags automatically — use this one for module-specific linker requirements.
+`gpAddLinkOption()` adds linker flags to a target. Like the other GPBT APIs, GPBT already applies the correct per-linker and per-configuration flags automatically, use this one for module-specific linker requirements.
 
 ## Syntax
 

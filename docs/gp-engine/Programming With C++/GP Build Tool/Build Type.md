@@ -38,7 +38,7 @@ Fully optimised, debug symbols stripped, assertions disabled. Use it for perform
 
 ### Shipping
 
-The final product configuration: fully optimised, no debug information, no assertions, logging stripped. Only use it when preparing a build for distribution — it is not suitable for development or profiling.
+The final product configuration: fully optimised, no debug information, no assertions, logging stripped. Only use it when preparing a build for distribution, it is not suitable for development or profiling.
 
 :::warning
 Never develop or iterate against the `Shipping` configuration. Missing assertions and stripped logging will hide bugs that would otherwise surface immediately in `Development`.

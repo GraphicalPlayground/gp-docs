@@ -16,7 +16,7 @@ Every adjustable build tool behaviour is exposed as a CMake cache variable. Set 
 cmake -S . -B build -DGPBT_LOG_VERBOSE_ENABLED=ON -DGPBT_THIRDPARTY_MODE=SOURCE
 ```
 
-All variables prefixed with `GPBT_` belong to the build tool. Do not use this prefix in your own project code — a future GPBT version may introduce a conflict.
+All variables prefixed with `GPBT_` belong to the build tool. Do not use this prefix in your own project code, a future GPBT version may introduce a conflict.
 
 ## General options
 
@@ -72,3 +72,22 @@ See [Graphviz Generation](./Features/Graphviz%20Generation.md) for details on re
 | `GPBT_USE_LIBCXX` | `BOOL` | `OFF` | Use LLVM's libc++ instead of the system libstdc++. Recommended when using Clang on Linux. |
 
 See [Third Party Management](./Features/Third%20Party%20Management.md) for a full explanation of these options.
+
+## Sanitizer options
+
+| Variable | Type | Default | Description |
+| --- | --- | --- | --- |
+| `GPBT_SANITIZER_ADDRESS` | `BOOL` | `OFF` | Enable AddressSanitizer (ASan) for all targets. Detects buffer overflows (heap, stack, global), use-after-free, and use-after-return at roughly 2x runtime overhead. |
+| `GPBT_SANITIZER_THREAD` | `BOOL` | `OFF` | Enable ThreadSanitizer (TSan) for all targets. Detects data races and lock-order inversions. Mutually exclusive with ASan and MSan. |
+| `GPBT_SANITIZER_MEMORY` | `BOOL` | `OFF` | Enable MemorySanitizer (MSan) for all targets. Detects reads from uninitialized memory. Clang on Linux only; not supported with GCC or on macOS. Mutually exclusive with ASan and TSan. |
+| `GPBT_SANITIZER_UNDEFINED_BEHAVIOR` | `BOOL` | `OFF` | Enable UndefinedBehaviorSanitizer (UBSan) for all targets. Detects signed integer overflow, null pointer dereferences, misaligned accesses, and other C++ undefined behavior. Can run alongside ASan or TSan. |
+
+Sanitizers apply to `Debug`, `Development`, and `Profile`. They are excluded from `Shipping`, which uses LTO, `-ffast-math`, and `-fomit-frame-pointer`, all of which conflict with sanitizer runtimes.
+
+`ASan`, `TSan`, and `MSan` are mutually exclusive. Enabling more than one produces a fatal configure error.
+
+:::note Platform limitations
+MSan requires an instrumented libc and only works with Clang on Linux. The Apple libc on macOS is not instrumented, so it is silently skipped there. On Windows, only ASan is supported (`/fsanitize=address`); TSan, MSan, and UBSan have no runtime on MSVC or Clang-CL.
+:::
+
+See [Sanitizers](./Features/Sanitizers.md) for usage examples and platform details.

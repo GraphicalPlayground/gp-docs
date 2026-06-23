@@ -9,7 +9,7 @@ tags:
   - configuration
 ---
 
-In a standard CMake project, a target must be defined before another target can reference it. Declaration order becomes a constraint the project has to maintain manually — and as the codebase grows, that gets fragile. GPBT removes this constraint through a two-phase build lifecycle.
+In a standard CMake project, a target must be defined before another target can reference it. Declaration order becomes a constraint the project has to maintain manually, and as the codebase grows, that gets fragile. GPBT removes this constraint through a two-phase build lifecycle.
 
 ## The problem with naive CMake
 

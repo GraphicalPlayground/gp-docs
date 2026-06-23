@@ -15,7 +15,7 @@ Shader pipeline integration is planned for a future release. This page documents
 
 ## Motivation
 
-GPU shaders are a first-class part of a game engine's codebase, but they are often compiled outside the main build system — through ad-hoc scripts or separate tooling. That creates real problems: stale shader artefacts, no dependency tracking between shaders and the C++ code that loads them, and inconsistent optimisation settings across build configurations.
+GPU shaders are a first-class part of a game engine's codebase, but they are often compiled outside the main build system, through ad-hoc scripts or separate tooling. That creates real problems: stale shader artefacts, no dependency tracking between shaders and the C++ code that loads them, and inconsistent optimisation settings across build configurations.
 
 GPBT's shader pipeline integration aims to bring shaders into the CMake build graph with the same dependency tracking, platform awareness, and per-configuration control as regular C++ targets.
 
@@ -31,7 +31,7 @@ gpStartModule("rhi/d3d12")
 gpEndModule()
 ```
 
-GPBT will invoke the correct shader compiler for the target platform — DXC for HLSL on Windows, glslangValidator for GLSL, the Xcode Metal toolchain for MSL — and embed or install the compiled artefacts alongside the module binary.
+GPBT will invoke the correct shader compiler for the target platform, DXC for HLSL on Windows, glslangValidator for GLSL, the Xcode Metal toolchain for MSL, and embed or install the compiled artefacts alongside the module binary.
 
 ## Planned shader compiler support
 

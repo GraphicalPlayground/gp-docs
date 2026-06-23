@@ -52,6 +52,10 @@ GPBT applies linker-specific flags per configuration. These complement the compi
 | --- | --- |
 | All | `-fuse-ld=lld` |
 | Shipping | `-Wl,--gc-sections`, `-Wl,-O3`, `-Wl,--as-needed`, `-flto=thin` |
+| Non-Shipping (when ASan enabled) | `-fsanitize=address` |
+| Non-Shipping (when TSan enabled) | `-fsanitize=thread` |
+| Non-Shipping (when MSan enabled) | `-fsanitize=memory` (Linux only) |
+| Non-Shipping (when UBSan enabled) | `-fsanitize=undefined` |
 
 ### LD (GNU)
 
@@ -59,6 +63,9 @@ GPBT applies linker-specific flags per configuration. These complement the compi
 | --- | --- |
 | All | `-Wl,--gc-sections` |
 | Shipping | `-Wl,-O3`, `-Wl,--as-needed`, `-flto=auto` |
+| Non-Shipping (when ASan enabled) | `-fsanitize=address` |
+| Non-Shipping (when TSan enabled) | `-fsanitize=thread` |
+| Non-Shipping (when UBSan enabled) | `-fsanitize=undefined` |
 
 ### MSVC Link
 
@@ -66,13 +73,18 @@ GPBT applies linker-specific flags per configuration. These complement the compi
 | --- | --- |
 | Shipping | `/LTCG`, `/OPT:REF`, `/OPT:ICF` |
 
+When `/fsanitize=address` is in the compile options, the compiler links the ASan runtime automatically. No linker flag is needed.
+
 ### LD64
 
 | Configuration | Key flags |
 | --- | --- |
 | Shipping | `-Wl,-dead_strip`, `-flto=thin` |
+| Non-Shipping (when ASan enabled) | `-fsanitize=address` |
+| Non-Shipping (when TSan enabled) | `-fsanitize=thread` |
+| Non-Shipping (when UBSan enabled) | `-fsanitize=undefined` |
 
-`-dead_strip` is Apple's equivalent of `--gc-sections` for Mach-O targets. `-flto=thin` mirrors the compile-time ThinLTO flag from the Clang compiler policy.
+`-dead_strip` is Apple's equivalent of `--gc-sections` for Mach-O targets. `-flto=thin` mirrors the compile-time ThinLTO flag set by the Clang compiler policy. MSan is absent from the table because the Apple libc is not instrumented; GPBT never emits that flag on Darwin.
 
 ## Why LLD on Clang?
 

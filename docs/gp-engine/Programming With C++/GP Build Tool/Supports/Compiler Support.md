@@ -91,3 +91,20 @@ LTO is applied in the `Shipping` configuration only. The strategy depends on the
 - **MSVC**: Whole Program Optimisation (`/GL` compile, `/LTCG` link).
 
 The LTO compile flag is passed to the linker via an internal property so the linker policy file always matches the compile-time setting.
+
+## Sanitizer support
+
+The four sanitizer options apply to every target when enabled, in all non-Shipping configurations.
+
+| Sanitizer | GCC (Linux) | Clang (Linux) | Clang (macOS) | MSVC | Clang-CL |
+| --- | --- | --- | --- | --- | --- |
+| `GPBT_SANITIZER_ADDRESS` | Yes | Yes | Yes | Yes (`/fsanitize=address`) | Yes |
+| `GPBT_SANITIZER_THREAD` | Yes | Yes | Yes | No | No |
+| `GPBT_SANITIZER_MEMORY` | No | Yes | No | No | No |
+| `GPBT_SANITIZER_UNDEFINED_BEHAVIOR` | Yes | Yes | Yes | No | No |
+
+ASan, TSan, and MSan are mutually exclusive. Enabling more than one produces a fatal configure error. UBSan can run alongside any of the three.
+
+MSan requires Clang and an instrumented libc, which limits it to Linux. The Apple libc on macOS is not instrumented, so MSan is silently skipped there even with Clang. GCC does not ship an instrumented libc.
+
+See [Sanitizers](../Features/Sanitizers.md) for usage examples and [Configuration](../Configuration.md) for the option reference.

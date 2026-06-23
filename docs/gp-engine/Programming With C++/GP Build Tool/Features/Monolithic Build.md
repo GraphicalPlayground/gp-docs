@@ -12,7 +12,7 @@ By default, GPBT builds each module as a separate shared library, which gives fa
 
 ## What monolithic mode does
 
-When `GPBT_IS_MONOLITHIC` is `ON`, all modules are built as static libraries and linked into one combined archive — a single `.a` or `.lib` file containing the entire engine, rather than dozens of individual shared objects.
+When `GPBT_IS_MONOLITHIC` is `ON`, all modules are built as static libraries and linked into one combined archive, a single `.a` or `.lib` file containing the entire engine, rather than dozens of individual shared objects.
 
 ## When to use it
 
@@ -20,7 +20,7 @@ Monolithic builds are useful in two situations.
 
 Shipping builds with Link-Time Optimisation (LTO). LTO can only optimise across translation units the linker sees simultaneously. A monolithic build exposes the entire codebase to the linker at once, making cross-module inlining, dead-code elimination, and devirtualisation possible in ways that per-module shared libraries cannot support.
 
-Platform constraints. Some platforms — particularly consoles and mobile targets — prefer or require statically linked binaries. Monolithic mode produces the correct output format without changing how individual modules are written.
+Platform constraints. Some platforms, particularly consoles and mobile targets, prefer or require statically linked binaries. Monolithic mode produces the correct output format without changing how individual modules are written.
 
 ## Enabling monolithic mode
 
